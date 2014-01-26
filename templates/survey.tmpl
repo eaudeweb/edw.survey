@@ -1,15 +1,21 @@
 <script id="question-template" type="text/x-underscore-template">
     <div class="question">
-        <h2>
-            <button class="delete-question">X</button>
-            Question: <%= name %></h2>
-        <div class="question-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <button class="delete-question btn btn-danger btn-xs">
+                    <span class="glyphicon glyphicon-remove-sign"></span></button>
+                Question: <%= name %></h2>
+            </div>
+            <div class="panel-body">
+                <div class="question-body"></div>
+            </div>
         </div>
+        <h2>
     </div>
 </script>
 <script id="textField-template" type="text/x-underscore-template">
-    <input type="text" id="textField" name="textField" value="Some text." />
+    <input type="text" id="textField" name="textField" value="Text input field" class="form-control" />
 </script>
 <script id="labelField-template" type="text/x-underscore-template">
-    <label for="textField">Some label text</label>
+    <label for="textField">Label field</label>
 </script>

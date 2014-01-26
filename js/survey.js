@@ -37,8 +37,11 @@
         this.template = Templates.compiled.question;
       },
       defaults: function(){
-        this.title = "the first!";
-        this.fields = new FieldsList();
+        var def = {
+          name:  "the first!",
+          fields: new FieldsList()
+        };
+        return def;
       }
     });
 
@@ -49,6 +52,7 @@
 
     var FieldView = Backbone.View.extend({
       tagName: "li",
+      //className: "list-group-item",
       model: null,
       render: function(){
         this.$el.html(this.model.template());
@@ -141,7 +145,7 @@
       },
 
       addQuestion: function(){
-        this.questionsView.collection.create();
+        this.questionsView.collection.create({});
       },
 
       displayQuestion: function(question){

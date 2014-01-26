@@ -1,26 +1,40 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <title>Survey pre-pre-alpha</title>
 
+  <link rel="stylesheet" href="./bootstrap/css/bootstrap.css" />
   <link rel="stylesheet" href="css/survey.css" />
 
   <script src="js/jquery-2.0.3.min.js"></script>
   <script src="js/underscore-min.js"></script>
   <script src="js/backbone-min.js"></script>
   <script src="js/backbone.localStorage.js"></script>
+  <script src="./bootstrap/js/bootstrap.js"></script>
   <script src="js/survey.js"></script>
 </head>
 <body>
 
-
-<div id="application">
-  <div id="workshop">
-    <ul id="questions-listing"></ul>
+<div class="container" id="application">
+  <h1>Survey - create</h1>
+  <div class="row">
+    <div id="workshop" class="col-lg-7">
+      <ul id="questions-listing" class="list-unstyled"></ul>
+    </div>
+    <div id="sidebar" class="col-lg-5">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <button id="add-question" class="btn btn-primary">Add question</button>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">Fields</div>
+        <div class="panel-body">
+          <ul id="fields-listing" class="list-unstyled"></ul>
+        </div>
+      </div>
+    </div>
   </div>
-  <div id="sidebar">
-    <ul id="fields-listing"></ul>
-  </div>
-  <button id="add-question">Add question</button>
 </div>
 
 </body>
