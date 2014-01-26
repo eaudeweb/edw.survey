@@ -33,9 +33,12 @@
     });
 
     var Question = Backbone.Model.extend({
+      initialize: function(){
+        this.template = Templates.compiled.question;
+      },
       defaults: function(){
-        this.title = "Question";
-        this.fields = [];
+        this.title = "the first!";
+        this.fields = new FieldsList();
       }
     });
 
@@ -44,24 +47,66 @@
       localStorage: new Backbone.LocalStorage("survey-backbone")
     });
 
-    var Questions = new QuestionList();
-
     var FieldView = Backbone.View.extend({
       tagName: "li",
+      model: null,
       render: function(){
         this.$el.html(this.model.template());
         return this;
       }
     });
 
+    var QuestionView = Backbone.View.extend({
+      tagName: "li",
+      model: null,
+
+      events: {
+        "click .delete-question": "deleteQuestion"
+      },
+
+      initialize: function(){
+        this.listenTo(this.model, 'destroy', this.remove);
+      },
+
+      render: function(){
+        this.$el.html(this.model.template(this.model.toJSON()));
+        return this;
+      },
+
+      deleteQuestion: function(){
+        this.model.destroy();
+      }
+
+    });
+
+    var QuestionsView = Backbone.View.extend({
+      el: $("#workshop ul#questions-listing"),
+      collection: null,
+      initialize: function(){
+        this.collection = new QuestionList();
+        this.collection.fetch();
+      },
+
+      render: function(){
+        if (_.isEmpty(this.collection)) {
+          return;
+        }
+        this.collection.each(function(question){
+          this.renderOne(question);
+        }, this);
+      },
+      renderOne: function(question){
+        var view = new QuestionView({model: question});
+        this.$el.append(view.render().el);
+      }
+    });
 
     var FieldsView = Backbone.View.extend({
       el: $("#sidebar ul#fields-listing"),
       collection: null,
       initialize: function(){
-        var Fields = new FieldsList();
-        Fields.add([new TextField(), new LabelField()]);
-        this.collection = Fields;
+        this.collection = new FieldsList();
+        this.collection.add([new TextField(), new LabelField()]);
       },
       render: function(){
         this.collection.each(function(field){
@@ -76,15 +121,31 @@
 
       el: $("#application"),
 
-      sidebar: null,
-      workshop: null,
-
       initialize: function(){
         this.sidebar = $("#sidebar");
         this.workshop = $("#workshop");
+
+        this.fieldsView = new FieldsView();
+        this.questionsView = new QuestionsView();
+
+        this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
+      },
+
+      events: {
+        "click #add-question": "addQuestion"
       },
 
       render: function(){
+        this.questionsView.render();
+        this.fieldsView.render();
+      },
+
+      addQuestion: function(){
+        this.questionsView.collection.create();
+      },
+
+      displayQuestion: function(question){
+        this.questionsView.renderOne(question);
       }
     });
 
@@ -94,8 +155,6 @@
         Templates.load(response);
         var application = new AppView();
         application.render();
-
-        new FieldsView().render();
       }
     });
   });

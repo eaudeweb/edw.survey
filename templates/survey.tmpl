@@ -1,5 +1,11 @@
 <script id="question-template" type="text/x-underscore-template">
-    question: <%= name %>
+    <div class="question">
+        <h2>
+            <button class="delete-question">X</button>
+            Question: <%= name %></h2>
+        <div class="question-body">
+        </div>
+    </div>
 </script>
 <script id="textField-template" type="text/x-underscore-template">
     <input type="text" id="textField" name="textField" value="Some text." />
