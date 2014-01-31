@@ -16,13 +16,32 @@
       }
     };
 
+    var FieldMapping = {
+      init: function(){
+        this.labelField = LabelField;
+        this.textField = TextField;
+      }
+    };
+
     var TextField = Backbone.Model.extend({
+      defaults: function(){
+        return {
+          type: "textField",
+          question_cid: ""
+        };
+      },
       initialize: function(){
         this.template = Templates.compiled.textField;
       }
     });
 
     var LabelField = Backbone.Model.extend({
+      defaults: function(){
+        return {
+          type: "labelField",
+          question_cid: ""
+        };
+      },
       initialize: function(){
         this.template = Templates.compiled.labelField;
       }
@@ -42,6 +61,21 @@
           fields: new FieldsList()
         };
         return def;
+      },
+
+      parse: function(response){
+        var fields = new FieldsList();
+        _.each(response.fields, function(val, idx, list){
+          val.question_cid = this.cid;
+          fields.add(new FieldMapping[val.type](val));
+        }, this);
+        response.fields = fields;
+        return response;
+      },
+
+      addField: function(model){
+        this.get("fields").add(model);
+        this.save();
       }
     });
 
@@ -50,17 +84,22 @@
       localStorage: new Backbone.LocalStorage("survey-backbone")
     });
 
-    var FieldView = Backbone.View.extend({
+    var FieldView = Backbone.DragDrop.DraggableView.extend({
       tagName: "li",
       //className: "list-group-item",
       model: null,
       render: function(){
         this.$el.html(this.model.template());
         return this;
+      },
+
+      dragStart: function(dataTransfer, e){
+        return this.model.clone();
       }
+
     });
 
-    var QuestionView = Backbone.View.extend({
+    var QuestionView = Backbone.DragDrop.DroppableView.extend({
       tagName: "li",
       model: null,
 
@@ -69,16 +108,32 @@
       },
 
       initialize: function(){
+        Backbone.DragDrop.DroppableView.prototype.initialize.apply(this);
         this.listenTo(this.model, 'destroy', this.remove);
+        this.listenTo(this.model, 'change', this.render);
       },
 
       render: function(){
         this.$el.html(this.model.template(this.model.toJSON()));
+        var model_fields = this.model.get("fields");
+        model_fields.each(function(field){
+          this.renderField(field);
+        }, this);
         return this;
+      },
+
+      renderField: function(field){
+        var view = new FieldView({model: field});
+        $(".question-body", this.$el).append(view.render().el);
       },
 
       deleteQuestion: function(){
         this.model.destroy();
+      },
+
+      drop: function(data, dataTransfer, e){
+        data.set("question_cid", this.model.cid);
+        this.model.addField(data);
       }
 
     });
@@ -145,7 +200,7 @@
       },
 
       addQuestion: function(){
-        this.questionsView.collection.create({});
+        this.questionsView.collection.create();
       },
 
       displayQuestion: function(question){
@@ -157,6 +212,7 @@
       url: "./templates/survey.tmpl",
       success: function(response){
         Templates.load(response);
+        FieldMapping.init();
         var application = new AppView();
         application.render();
       }
