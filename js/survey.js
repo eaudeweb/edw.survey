@@ -94,7 +94,7 @@
       },
 
       dragStart: function(dataTransfer, e){
-        return this.model.clone();
+        return this.model;
       }
 
     });
@@ -132,8 +132,15 @@
       },
 
       drop: function(data, dataTransfer, e){
-        data.set("question_cid", this.model.cid);
-        this.model.addField(data);
+        var new_data = data;
+        var cid = data.get("question_cid");
+        if (cid !== ""){
+          var question = application.questionsView.collection.get(cid);
+          question.get("fields").remove(data);
+          question.save();
+        }
+        new_data.set("question_cid", this.model.cid);
+        this.model.addField(new_data);
       }
 
     });
@@ -208,12 +215,14 @@
       }
     });
 
+    var application = null;
+
     $.ajax({
       url: "./templates/survey.tmpl",
       success: function(response){
         Templates.load(response);
         FieldMapping.init();
-        var application = new AppView();
+        application = new AppView();
         application.render();
       }
     });
