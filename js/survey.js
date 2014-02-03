@@ -5,7 +5,8 @@
       sources: [
         {"name": "question", "target": "#question-template"},
         {"name": "labelField", "target": "#labelField-template"},
-        {"name": "textField", "target": "#textField-template"}
+        {"name": "textField", "target": "#textField-template"},
+        {"name": "FieldTemplate", "target": "#Field-template"}
       ],
       compiled: {},
       load: function(data){
@@ -96,6 +97,7 @@
       tagName: "li",
       //className: "list-group-item",
       model: null,
+      template: null,
 
       events: {
         "click .glyphicon-trash": "deleteField",
@@ -105,6 +107,9 @@
 
       initialize: function(){
         Backbone.DragDrop.DraggableView.prototype.initialize.apply(this);
+
+        this.template = Templates.compiled.FieldTemplate;
+
         this.listenTo(this.model, "change", this.render);
         this.listenTo(this.model, "destroy", this.remove);
       },
@@ -123,7 +128,10 @@
       },
 
       render: function(){
-        this.$el.html(this.model.template(this.model.attributes));
+        var modelTemplate = this.model.template(this.model.attributes);
+        this.$el.html(this.template(this.model.attributes));
+        $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
+        $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
         return this;
       },
 
