@@ -73,6 +73,12 @@
         return response;
       },
 
+      removeField: function(data){
+        this.get("fields").remove(data);
+        this.save();
+        this.trigger("change");
+      },
+
       addField: function(model){
         this.get("fields").add(model);
         this.save();
@@ -99,7 +105,7 @@
       },
 
       render: function(){
-        this.$el.html(this.model.template());
+        this.$el.html(this.model.template(this.model.attributes));
         return this;
       },
 
@@ -131,7 +137,7 @@
       },
 
       render: function(){
-        this.$el.html(this.model.template(this.model.toJSON()));
+        this.$el.html(this.model.template(this.model.attributes));
         var model_fields = this.model.get("fields");
         model_fields.each(function(field){
           this.renderField(field);
@@ -153,8 +159,7 @@
         var cid = data.get("question_cid");
         if (cid !== ""){
           var question = application.questionsView.collection.get(cid);
-          question.get("fields").remove(data);
-          question.save();
+          question.removeField(data);
         }
         new_data.set("question_cid", this.model.cid);
         this.model.addField(new_data);
