@@ -88,9 +88,26 @@
       tagName: "li",
       //className: "list-group-item",
       model: null,
+
+      events: {
+        "click .glyphicon-trash": "deleteField"
+      },
+
+      initialize: function(){
+        Backbone.DragDrop.DraggableView.prototype.initialize.apply(this);
+        this.listenTo(this.model, "destroy", this.remove);
+      },
+
       render: function(){
         this.$el.html(this.model.template());
         return this;
+      },
+
+      deleteField: function(){
+        var question = application.questionsView.collection.get(this.model.get("question_cid"));
+        question.get("fields").remove(this.model.toJSON());
+        this.model.destroy();
+        question.save();
       },
 
       dragStart: function(dataTransfer, e){
@@ -109,8 +126,8 @@
 
       initialize: function(){
         Backbone.DragDrop.DroppableView.prototype.initialize.apply(this);
-        this.listenTo(this.model, 'destroy', this.remove);
-        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, "destroy", this.remove);
+        this.listenTo(this.model, "change", this.render);
       },
 
       render: function(){
