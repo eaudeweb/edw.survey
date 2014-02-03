@@ -1,18 +1,14 @@
-/*div#application {
-    margin: 0 auto;
-    width: 1024px;
+.view-mode.edit-mode {
+    display: block;
 }
 
-div#workshop {
-    width: 80%;
-    border: 1px solid blue;
-    height: 500px;
-    float: left;
+.edit-mode {
+    display: none;
 }
-div#sidebar {
-    width: 19.5%;
-    border: 1px solid blue;
-    height: 500px;
-    float: right;
-}*/
 
+.editing .edit-mode {
+    display: block;
+}
+.editing .view-mode {
+    display: none;
+}

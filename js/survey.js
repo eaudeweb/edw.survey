@@ -27,6 +27,7 @@
       defaults: function(){
         return {
           type: "textField",
+          value: "TEXT FIELD",
           question_cid: ""
         };
       },
@@ -39,6 +40,7 @@
       defaults: function(){
         return {
           type: "labelField",
+          value: "LABEL FIELD",
           question_cid: ""
         };
       },
@@ -96,12 +98,28 @@
       model: null,
 
       events: {
-        "click .glyphicon-trash": "deleteField"
+        "click .glyphicon-trash": "deleteField",
+        "click .glyphicon-edit": "startEdit",
+        "blur .value-grabber, click .glyphicon-check": "endEdit"
       },
 
       initialize: function(){
         Backbone.DragDrop.DraggableView.prototype.initialize.apply(this);
+        this.listenTo(this.model, "change", this.render);
         this.listenTo(this.model, "destroy", this.remove);
+      },
+
+      startEdit: function(){
+        this.input = this.$('.edit-mode .value-grabber');
+        this.$el.addClass("editing");
+        this.input.focus();
+      },
+
+      endEdit: function(){
+        this.$el.removeClass("editing");
+        this.model.set({value: this.input.val()});
+        var question = application.questionsView.collection.get(this.model.get("question_cid"));
+        question.save();
       },
 
       render: function(){
