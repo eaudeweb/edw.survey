@@ -12,23 +12,32 @@
   <script src="js/lib/backbone.localStorage.js"></script>
   <script src="js/lib/backbone.dragdrop.js"></script>
   <script src="./bootstrap/js/bootstrap.js"></script>
-  <script src="js/survey.js"></script>
+  <script src="js/survey.edit.questions.js"></script>
   <script src="js/app/utils.js"></script>
   <script src="js/app/fields.js"></script>
   <script src="js/app/questions.js"></script>
+  <script src="js/app/edit.questions.fields.js"></script>
+  <script src="js/app/edit.questions.questions.js"></script>
 </head>
 <body>
 
 <div class="container" id="application">
-  <h1>Survey - view</h1>
+  <h1>Survey - create</h1>
   <div class="row">
-    <div id="content" class="col-lg-7">
+    <div id="workshop" class="col-lg-7">
       <ul id="questions-listing" class="list-unstyled"></ul>
     </div>
     <div id="sidebar" class="col-lg-5">
       <div class="panel panel-default">
         <div class="panel-body">
-          <a href="./edit.questions.html" id="edit-questions" class="btn btn-warning">Edit questions</a>
+          <button id="add-question" class="btn btn-success">Add question</button>
+          <a href="./index.html" id="survey-index" class="btn btn-primary">View survey</a>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">Fields</div>
+        <div class="panel-body">
+          <ul id="fields-listing" class="list-unstyled"></ul>
         </div>
       </div>
     </div>

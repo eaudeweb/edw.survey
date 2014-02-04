@@ -8,28 +8,87 @@
     if(window.edw === undefined) { window.edw = { version: "1.0" }; }
     var edw = window.edw;
     if(edw.survey === undefined) { edw.survey = {}; }
-    if(edw.survey.edit === undefined) { edw.survey.edit = {}; }
+    if(edw.survey.view === undefined) { edw.survey.view = {}; }
 
 
-    edw.survey.edit.questions = {
+    edw.survey.view = {
       Templates: {
-        sources: [],
-        compiled: {},
-        load: function(data){
-          var html = $(data);
-          _.each(this.sources, function(value, key, list){
-            this.compiled[value.name] = _.template(html.filter(value.target).html());
-          }, this);
-        }
+        sources: [
+        ]
       }
     };
 
-    var App = edw.survey.edit.questions;
+    var App = edw.survey.view;
+
+    App.QuestionList = Backbone.Collection.extend({
+      model: App.Question,
+      //localStorage: new Backbone.LocalStorage("QuestionListEdit")
+      localStorage: function(){
+        var edit = "QuestionListEdit";
+        var view = "QuestionListAnswers";
+        var view_storage = localStorage.getItem(view);
+        var edit_storage = localStorage.getItem(edit);
+
+        var copyStorageKeys = function(){
+          _.each(edit_storage.split(","), function(val){
+            var viewKey = view + "-" + val;
+            var editKey = edit + "-" + val;
+            localStorage.setItem(viewKey, localStorage.getItem(editKey));
+          }, this);
+
+        };
+
+        if (_.has(localStorage, view) === true){
+          if (view_storage != edit_storage){
+            localStorage.removeItem(view);
+            localStorage.setItem(view, edit_storage);
+            copyStorageKeys();
+          }
+        } else {
+          localStorage.setItem(view, edit_storage);
+          copyStorageKeys();
+        }
+        return new Backbone.LocalStorage(view);
+      }()
+    });
+
+
+    App.FieldView = Backbone.View.extend({
+      tagName: "li",
+
+      render: function(){
+        this.$el.html(this.model.template(this.model.attributes));
+        return this;
+      }
+
+    });
+
+
+    App.QuestionView = Backbone.View.extend({
+      tagName: "li",
+      model: null,
+
+      render: function(){
+        this.$el.html(this.model.template(this.model.attributes));
+        var model_fields = this.model.get("fields");
+        model_fields.each(function(field){
+          this.renderField(field);
+        }, this);
+        return this;
+      },
+
+      renderField: function(field){
+        var view = new App.FieldView({model: field});
+        $(".question-body", this.$el).append(view.render().el);
+      }
+
+    });
 
     App.QuestionsView = Backbone.View.extend({
-      el: $("#workshop ul#questions-listing"),
+      el: $("#content ul#questions-listing"),
       collection: null,
       initialize: function(){
+        App.QuestionList.model = App.Question;
         this.collection = new App.QuestionList();
         this.collection.fetch();
       },
@@ -48,21 +107,6 @@
       }
     });
 
-    App.FieldsView = Backbone.View.extend({
-      el: $("#sidebar ul#fields-listing"),
-      collection: null,
-      initialize: function(){
-        this.collection = new App.FieldsList();
-        this.collection.add([new App.TextField(), new App.LabelField()]);
-      },
-      render: function(){
-        this.collection.each(function(field){
-          var view = new App.FieldView({model: field});
-          this.$el.append(view.render().el);
-        }, this);
-      }
-    });
-
 
     App.AppView = Backbone.View.extend({
 
@@ -72,7 +116,6 @@
         this.sidebar = $("#sidebar");
         this.workshop = $("#workshop");
 
-        this.fieldsView = new App.FieldsView();
         this.questionsView = new App.QuestionsView();
 
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
@@ -84,11 +127,10 @@
 
       render: function(){
         this.questionsView.render();
-        this.fieldsView.render();
       },
 
-      addQuestion: function(){
-        this.questionsView.collection.create();
+      getQuestion: function(cid){
+        return this.questionsView.collection.get(cid);
       },
 
       displayQuestion: function(question){

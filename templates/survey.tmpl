@@ -2,9 +2,7 @@
     <div class="question">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <button class="delete-question btn btn-danger btn-xs">
-                    <span class="glyphicon glyphicon-remove-sign"></span></button>
-                Question: <%= name %></h2>
+                <%= name %></h2>
             </div>
             <div class="panel-body">
                 <div class="question-body"></div>
@@ -13,35 +11,9 @@
         <h2>
     </div>
 </script>
-<script id="Field-template" type="text/x-underscore-template">
-    <div class="view-mode">
-        <span class="glyphicon glyphicon-th"></span>
-        <span class="contents">
-            <!-- Contents via Backbone View -->
-        </span>
-        <span class="glyphicon glyphicon-trash"></span>
-        <span class="glyphicon glyphicon-edit"></span>
-    </div>
-    <div class="edit-mode">
-        <span class="contents">
-            <!-- Contents via Backbone View -->
-        </span>
-        <span class="glyphicon glyphicon-check"></span>
-    </div>
-</script>
 <script id="textField-template" type="text/x-underscore-template">
-    <div class="view-mode">
         <input type="text" id="textField" name="textField" value="<%= value %>" />
-    </div>
-    <div class="edit-mode">
-        <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
-    </div>
 </script>
 <script id="labelField-template" type="text/x-underscore-template">
-    <div class="view-mode">
         <label for="textField"><%= value %></label>
-    </div>
-    <div class="edit-mode">
-        <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
-    </div>
 </script>
