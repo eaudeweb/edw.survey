@@ -1,7 +1,3 @@
-.view-mode.edit-mode {
-    display: block;
-}
-
 .edit-mode {
     display: none;
 }
