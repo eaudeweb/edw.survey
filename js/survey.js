@@ -1,30 +1,41 @@
 (function($){
   $(document).ready(function(){
 
-    var Templates = {
-      sources: [
-        {"name": "question", "target": "#question-template"},
-        {"name": "labelField", "target": "#labelField-template"},
-        {"name": "textField", "target": "#textField-template"},
-        {"name": "FieldTemplate", "target": "#Field-template"}
-      ],
-      compiled: {},
-      load: function(data){
-        var html = $(data);
-        _.each(this.sources, function(value, key, list){
-          this.compiled[value.name] = _.template(html.filter(value.target).html());
-        }, this);
+
+    if(window.edw === undefined) { window.edw = { version: "1.0" }; }
+    var edw = window.edw;
+    if(edw.survey === undefined) { edw.survey = {}; }
+    if(edw.survey.edit === undefined) { edw.survey.edit = {}; }
+
+
+    edw.survey.edit.questions = {
+      Templates: {
+        sources: [
+          {"name": "question", "target": "#question-template"},
+          {"name": "labelField", "target": "#labelField-template"},
+          {"name": "textField", "target": "#textField-template"},
+          {"name": "FieldTemplate", "target": "#Field-template"}
+        ],
+        compiled: {},
+        load: function(data){
+          var html = $(data);
+          _.each(this.sources, function(value, key, list){
+            this.compiled[value.name] = _.template(html.filter(value.target).html());
+          }, this);
+        }
+      },
+
+      FieldMapping: {
+        init: function(){
+          this.labelField = App.LabelField;
+          this.textField = App.TextField;
+        }
       }
     };
+    var App = edw.survey.edit.questions;
 
-    var FieldMapping = {
-      init: function(){
-        this.labelField = LabelField;
-        this.textField = TextField;
-      }
-    };
 
-    var TextField = Backbone.Model.extend({
+    App.TextField = Backbone.Model.extend({
       defaults: function(){
         return {
           type: "textField",
@@ -33,11 +44,11 @@
         };
       },
       initialize: function(){
-        this.template = Templates.compiled.textField;
+        this.template = App.Templates.compiled.textField;
       }
     });
 
-    var LabelField = Backbone.Model.extend({
+    App.LabelField = Backbone.Model.extend({
       defaults: function(){
         return {
           type: "labelField",
@@ -46,31 +57,31 @@
         };
       },
       initialize: function(){
-        this.template = Templates.compiled.labelField;
+        this.template = App.Templates.compiled.labelField;
       }
     });
 
-    var FieldsList = Backbone.Collection.extend({
+    App.FieldsList = Backbone.Collection.extend({
       localStorage: new Backbone.LocalStorage("survey-backbone")
     });
 
-    var Question = Backbone.Model.extend({
+    App.Question = Backbone.Model.extend({
       initialize: function(){
-        this.template = Templates.compiled.question;
+        this.template = App.Templates.compiled.question;
       },
       defaults: function(){
         var def = {
           name:  "the first!",
-          fields: new FieldsList()
+          fields: new App.FieldsList()
         };
         return def;
       },
 
       parse: function(response){
-        var fields = new FieldsList();
+        var fields = new App.FieldsList();
         _.each(response.fields, function(val, idx, list){
           val.question_cid = this.cid;
-          fields.add(new FieldMapping[val.type](val));
+          fields.add(new App.FieldMapping[val.type](val));
         }, this);
         response.fields = fields;
         return response;
@@ -88,12 +99,12 @@
       }
     });
 
-    var QuestionList = Backbone.Collection.extend({
-      model: Question,
+    App.QuestionList = Backbone.Collection.extend({
+      model: App.Question,
       localStorage: new Backbone.LocalStorage("survey-backbone")
     });
 
-    var FieldView = Backbone.DragDrop.DraggableView.extend({
+    App.FieldView = Backbone.DragDrop.DraggableView.extend({
       tagName: "li",
       //className: "list-group-item",
       model: null,
@@ -108,7 +119,7 @@
       initialize: function(){
         Backbone.DragDrop.DraggableView.prototype.initialize.apply(this);
 
-        this.template = Templates.compiled.FieldTemplate;
+        this.template = App.Templates.compiled.FieldTemplate;
 
         this.listenTo(this.model, "change", this.render);
         this.listenTo(this.model, "destroy", this.remove);
@@ -123,7 +134,7 @@
       endEdit: function(){
         this.$el.removeClass("editing");
         this.model.set({value: this.input.val()});
-        var question = application.questionsView.collection.get(this.model.get("question_cid"));
+        var question = App.application.questionsView.collection.get(this.model.get("question_cid"));
         question.save();
       },
 
@@ -136,7 +147,7 @@
       },
 
       deleteField: function(){
-        var question = application.questionsView.collection.get(this.model.get("question_cid"));
+        var question = App.application.questionsView.collection.get(this.model.get("question_cid"));
         question.get("fields").remove(this.model.toJSON());
         this.model.destroy();
         question.save();
@@ -148,7 +159,7 @@
 
     });
 
-    var QuestionView = Backbone.DragDrop.DroppableView.extend({
+    App.QuestionView = Backbone.DragDrop.DroppableView.extend({
       tagName: "li",
       model: null,
 
@@ -172,7 +183,7 @@
       },
 
       renderField: function(field){
-        var view = new FieldView({model: field});
+        var view = new App.FieldView({model: field});
         $(".question-body", this.$el).append(view.render().el);
       },
 
@@ -184,7 +195,7 @@
         var new_data = data;
         var cid = data.get("question_cid");
         if (cid !== ""){
-          var question = application.questionsView.collection.get(cid);
+          var question = App.application.questionsView.collection.get(cid);
           question.removeField(data);
         }
         new_data.set("question_cid", this.model.cid);
@@ -193,11 +204,11 @@
 
     });
 
-    var QuestionsView = Backbone.View.extend({
+    App.QuestionsView = Backbone.View.extend({
       el: $("#workshop ul#questions-listing"),
       collection: null,
       initialize: function(){
-        this.collection = new QuestionList();
+        this.collection = new App.QuestionList();
         this.collection.fetch();
       },
 
@@ -210,28 +221,28 @@
         }, this);
       },
       renderOne: function(question){
-        var view = new QuestionView({model: question});
+        var view = new App.QuestionView({model: question});
         this.$el.append(view.render().el);
       }
     });
 
-    var FieldsView = Backbone.View.extend({
+    App.FieldsView = Backbone.View.extend({
       el: $("#sidebar ul#fields-listing"),
       collection: null,
       initialize: function(){
-        this.collection = new FieldsList();
-        this.collection.add([new TextField(), new LabelField()]);
+        this.collection = new App.FieldsList();
+        this.collection.add([new App.TextField(), new App.LabelField()]);
       },
       render: function(){
         this.collection.each(function(field){
-          var view = new FieldView({model: field});
+          var view = new App.FieldView({model: field});
           this.$el.append(view.render().el);
         }, this);
       }
     });
 
 
-    var AppView = Backbone.View.extend({
+    App.AppView = Backbone.View.extend({
 
       el: $("#application"),
 
@@ -239,8 +250,8 @@
         this.sidebar = $("#sidebar");
         this.workshop = $("#workshop");
 
-        this.fieldsView = new FieldsView();
-        this.questionsView = new QuestionsView();
+        this.fieldsView = new App.FieldsView();
+        this.questionsView = new App.QuestionsView();
 
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
       },
@@ -263,15 +274,13 @@
       }
     });
 
-    var application = null;
-
     $.ajax({
       url: "./templates/survey.tmpl",
       success: function(response){
-        Templates.load(response);
-        FieldMapping.init();
-        application = new AppView();
-        application.render();
+        App.Templates.load(response);
+        App.FieldMapping.init();
+        App.application = new App.AppView();
+        App.application.render();
       }
     });
   });
