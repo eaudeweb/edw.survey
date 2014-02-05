@@ -20,6 +20,10 @@
       App.Templates.sources.push(val);
     });
 
+    App.FieldsList = Backbone.Collection.extend({
+      localStorage: new Backbone.LocalStorage("FieldsListView")
+    });
+
     App.Question = Backbone.Model.extend({
       initialize: function(){
         this.template = App.Templates.compiled.question;

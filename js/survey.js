@@ -21,8 +21,9 @@
     var App = edw.survey.view;
 
     App.QuestionList = Backbone.Collection.extend({
-      model: App.Question,
-      //localStorage: new Backbone.LocalStorage("QuestionListEdit")
+      initialize: function(){
+        this.model = App.Question;
+      },
       localStorage: function(){
         var edit = "QuestionListEdit";
         var view = "QuestionListAnswers";

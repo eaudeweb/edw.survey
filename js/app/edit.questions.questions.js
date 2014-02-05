@@ -13,11 +13,6 @@
       App.Templates.sources.push(val);
     });
 
-    App.FieldsList = Backbone.Collection.extend({
-      localStorage: new Backbone.LocalStorage("FieldsListView")
-    });
-
-
     App.Question = App.Question.extend({
       removeField: function(data){
         this.get("fields").remove(data);
