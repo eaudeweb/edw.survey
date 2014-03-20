@@ -6,7 +6,7 @@
 
     var App = window.edw.survey.edit.questions;
 
-    App.FieldView = Backbone.DragDrop.DraggableView.extend({
+    App.FieldView = Backbone.View.extend({
       tagName: "li",
       //className: "list-group-item",
       model: null,
@@ -19,9 +19,15 @@
       },
 
       initialize: function(){
-        Backbone.DragDrop.DraggableView.prototype.initialize.apply(this);
-
         this.template = App.Templates.compiled.FieldTemplate;
+
+        this.$el.draggable({
+          handle: ".glyphicon-th",
+          revert: true,
+          helper: "clone"
+        });
+
+        this.$el.data("backbone-view", this.model);
 
         this.listenTo(this.model, "change", this.render);
         this.listenTo(this.model, "destroy", this.remove);
@@ -53,10 +59,6 @@
         question.get("fields").remove(this.model.toJSON());
         this.model.destroy();
         question.save();
-      },
-
-      dragStart: function(dataTransfer, e){
-        return this.model;
       }
 
     });

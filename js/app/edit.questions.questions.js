@@ -31,7 +31,7 @@
       localStorage: new Backbone.LocalStorage("QuestionListEdit")
     });
 
-    App.QuestionView = Backbone.DragDrop.DroppableView.extend({
+    App.QuestionView = Backbone.View.extend({
       tagName: "li",
       model: null,
 
@@ -40,7 +40,13 @@
       },
 
       initialize: function(){
-        Backbone.DragDrop.DroppableView.prototype.initialize.apply(this);
+        Backbone.View.prototype.initialize.apply(this);
+
+
+        this.$el.droppable({
+          drop: _.bind(this.drop, this)
+        });
+
         this.listenTo(this.model, "destroy", this.remove);
         this.listenTo(this.model, "change", this.render);
       },
@@ -63,7 +69,9 @@
         this.model.destroy();
       },
 
-      drop: function(data, dataTransfer, e){
+      drop: function(event, ui){
+        var elem = $(ui.draggable);
+        var data = elem.data("backbone-view");
         var new_data = data;
         var cid = data.get("question_cid");
         if (cid !== ""){
