@@ -48,11 +48,13 @@
       collection: null,
       initialize: function(){
         this.collection = new App.FieldsList();
-        this.collection.add([new App.TextField(), new App.LabelField()]);
+        this.collection.add([new App.TextField(), new App.LabelField(), new App.TableLayout()]);
       },
       render: function(){
         this.collection.each(function(field){
-          var view = new App.FieldView({model: field});
+          var fieldType = field.get("type");
+          var viewer = App.FieldMapping[fieldType].viewer;
+          var view = new viewer({model: field});
           this.$el.append(view.render().el);
         }, this);
       }

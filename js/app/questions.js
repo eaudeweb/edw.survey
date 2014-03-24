@@ -40,7 +40,8 @@
         var fields = new App.FieldsList();
         _.each(response.fields, function(val, idx, list){
           val.question_cid = this.cid;
-          fields.add(new App.FieldMapping[val.type](val));
+          var constructor = App.FieldMapping[val.type].constructor;
+          fields.add(new constructor(val));
         }, this);
         response.fields = fields;
         return response;

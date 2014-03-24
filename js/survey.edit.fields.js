@@ -48,7 +48,7 @@
       collection: null,
       initialize: function(){
         this.collection = new App.FieldsList();
-        this.collection.add([new App.TextField(), new App.LabelField()]);
+        this.collection.add([new App.TextField(), new App.LabelField(), new App.TableLayout()]);
       },
       render: function(){
         this.collection.each(function(field){

@@ -15,7 +15,8 @@
 
     var templates = [
       {"name": "labelField", "target": "#labelField-template"},
-      {"name": "textField", "target": "#textField-template"}
+      {"name": "textField", "target": "#textField-template"},
+      {"name": "tableLayout", "target": "#tableLayout-template"}
     ];
     _.each(templates, function(val){
       App.Templates.sources.push(val);
@@ -23,8 +24,18 @@
 
     App.FieldMapping =  {
       init: function(){
-        this.labelField = App.LabelField;
-        this.textField = App.TextField;
+        this.labelField = {
+          constructor: App.LabelField,
+          viewer: App.FieldView
+        };
+        this.textField = {
+          constructor: App.TextField,
+          viewer: App.FieldView
+        };
+        this.tableLayout = {
+          constructor: App.TableLayout,
+          viewer: App.TableLayoutView
+        };
       }
     };
 
@@ -51,6 +62,23 @@
       },
       initialize: function(){
         this.template = App.Templates.compiled.labelField;
+      }
+    });
+
+    App.TableLayout = Backbone.Model.extend({
+      defaults: function(){
+        return {
+          type: "tableLayout",
+          value: "TABLE LAYOUT",
+          question_cid: ""
+        };
+      },
+      initialize: function(){
+        this.template = App.Templates.compiled.tableLayout;
+      },
+
+      startEdit: function(){
+        console.log("aaaa");
       }
     });
 

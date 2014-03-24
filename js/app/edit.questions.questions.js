@@ -44,7 +44,9 @@
 
 
         this.$el.droppable({
-          drop: _.bind(this.drop, this)
+          hoverClass: "question-droppable",
+          drop: _.bind(this.drop, this),
+          tolerance: "pointer"
         });
 
         this.listenTo(this.model, "destroy", this.remove);
@@ -61,7 +63,9 @@
       },
 
       renderField: function(field){
-        var view = new App.FieldView({model: field});
+        var fieldType = field.get("type");
+        var viewer = App.FieldMapping[fieldType].viewer;
+        var view = new viewer({model: field});
         $(".question-body", this.$el).append(view.render().el);
       },
 

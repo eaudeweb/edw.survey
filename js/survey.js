@@ -64,6 +64,8 @@
 
     });
 
+    App.TableLayoutView = App.FieldView.extend({});
+
 
     App.QuestionView = Backbone.View.extend({
       tagName: "li",
@@ -79,7 +81,9 @@
       },
 
       renderField: function(field){
-        var view = new App.FieldView({model: field});
+        var fieldType = field.get("type");
+        var viewer = App.FieldMapping[fieldType].viewer;
+        var view = new viewer({model: field});
         $(".question-body", this.$el).append(view.render().el);
       }
 

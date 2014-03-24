@@ -15,7 +15,7 @@
       events: {
         "click .glyphicon-trash": "deleteField",
         "click .glyphicon-edit": "startEdit",
-        "blur .value-grabber, click .glyphicon-check": "endEdit"
+        "click .glyphicon-check": "endEdit"
       },
 
       initialize: function(){
@@ -58,6 +58,30 @@
         var question = App.application.getQuestion(this.model.get("question_cid"));
         question.get("fields").remove(this.model.toJSON());
         this.model.destroy();
+        question.save();
+      }
+
+    });
+
+    App.TableLayoutView = App.FieldView.extend({
+
+      initialize: function(){
+        App.FieldView.prototype.initialize.apply(this);
+      },
+
+      startEdit: function(){
+        console.log("starting edit on table layout");
+        this.$el.addClass("editing");
+        this.$el.find(".edit-mode td").droppable({
+          hoverClass: "tableLayout-droppable",
+          greedy: true,
+          tolerance: "pointer"
+        });
+      },
+
+      endEdit: function(){
+        this.$el.removeClass("editing");
+        var question = App.application.getQuestion(this.model.get("question_cid"));
         question.save();
       }
 
