@@ -75,26 +75,22 @@
       render: function(){
         this.$el.html(this.model.template(this.model.attributes));
 
-        var view_tables = this.$el.find(".view-mode table");
+        var view_table = this.$el.find("table").get(0);
         var fields = this.fields.where({"tableLayoutCID": this.model.get("field_id")});
         _.each(fields, function(field){
           var fieldType = field.get("type");
-          var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
+          field = new App.FieldMapping[fieldType].constructor(field.toJSON());
           var viewer = App.FieldMapping[fieldType].viewer;
-          var view = new viewer({model: newmodel});
+          var view = new viewer({model: field});
 
-          var rowIndex = newmodel.get("rowPosition");
-          var columnIndex = newmodel.get("columnPosition");
+          var rowIndex = field.get("rowPosition");
+          var columnIndex = field.get("columnPosition");
 
-          _.each(view_tables, function(table){
-            var view_table = table;
-            $(view_table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
-          }, this);
+          $(view_table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
 
         }, this);
         return this;
       }
-
 
     });
 
@@ -156,10 +152,6 @@
         this.questionsView = new App.QuestionsView();
 
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
-      },
-
-      events: {
-        "click #add-question": "addQuestion"
       },
 
       render: function(){

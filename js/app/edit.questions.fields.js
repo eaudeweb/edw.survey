@@ -21,16 +21,19 @@
       initialize: function(){
         this.template = App.Templates.compiled.FieldTemplate;
 
+        this.initDraggable();
+
+        this.listenTo(this.model, "change", this.render);
+        this.listenTo(this.model, "destroy", this.remove);
+      },
+
+      initDraggable: function(){
         this.$el.draggable({
           handle: ".glyphicon-th",
           revert: true,
           helper: "clone"
         });
-
         this.$el.data("backbone-view", this.model);
-
-        this.listenTo(this.model, "change", this.render);
-        this.listenTo(this.model, "destroy", this.remove);
       },
 
       startEdit: function(){
@@ -65,6 +68,12 @@
 
     App.TableLayoutView = App.FieldView.extend({
 
+      events: {
+        "click .tableLayout.glyphicon-trash": "deleteField",
+        "click .tableLayout.glyphicon-edit": "startEdit",
+        "click .tableLayout.glyphicon-check": "endEdit"
+      },
+
       initialize: function(){
         App.FieldView.prototype.initialize.apply(this);
         this.fields = new App.FieldsList();
@@ -90,7 +99,6 @@
         new_data.set("rowPosition", rowIndex);
         new_data.set("columnPosition", columnIndex);
         new_data.set("tableLayoutCID", this.model.get("field_id"));
-        console.log(this.model);
         this.fields.create(new_data.toJSON());
         this.fields.fetch();
         //this.endEdit();
@@ -103,9 +111,6 @@
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
         $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
 
-        console.log("AAAAAAA");
-
-
         this.$el.find("td").droppable({
           hoverClass: "tableLayout-droppable",
           accept: "#fields-listing .ui-draggable",
@@ -114,19 +119,19 @@
           drop: _.bind(this.drop, this)
         });
 
-        var view_tables = this.$el.find(".view-mode table");
+        var view_tables = this.$el.find("table");
         var fields = this.fields.where({"tableLayoutCID": this.model.get("field_id")});
         _.each(fields, function(field){
           var fieldType = field.get("type");
           var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
           var viewer = App.FieldMapping[fieldType].viewer;
-          var view = new viewer({model: newmodel});
 
           var rowIndex = newmodel.get("rowPosition");
           var columnIndex = newmodel.get("columnPosition");
 
           _.each(view_tables, function(table){
             var view_table = table;
+            var view = new viewer({model: newmodel});
             $(view_table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
           }, this);
 

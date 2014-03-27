@@ -2,10 +2,10 @@
     display: none;
 }
 
-.editing .edit-mode {
+.editing > .edit-mode {
     display: block;
 }
-.editing .view-mode {
+.editing > .view-mode {
     display: none;
 }
 

@@ -76,7 +76,8 @@
       },
 
       events: {
-        "click #add-question": "addQuestion"
+        "click #add-question": "addQuestion",
+        "click #clear-data": "clearData"
       },
 
       render: function(){
@@ -86,6 +87,11 @@
 
       addQuestion: function(){
         this.questionsView.collection.create();
+      },
+
+      clearData: function(){
+        window.localStorage.clear();
+        window.location.reload();
       },
 
       getQuestion: function(cid){

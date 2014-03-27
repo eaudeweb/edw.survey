@@ -15,18 +15,18 @@
 </script>
 <script id="Field-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <span class="glyphicon glyphicon-th"></span>
+        <span class="<%= type %> glyphicon glyphicon-th"></span>
         <span class="contents">
             <!-- Contents via Backbone View -->
         </span>
-        <span class="glyphicon glyphicon-trash"></span>
-        <span class="glyphicon glyphicon-edit"></span>
+        <span class="<%= type %> glyphicon glyphicon-trash"></span>
+        <span class="<%= type %> glyphicon glyphicon-edit"></span>
     </div>
     <div class="edit-mode">
         <span class="contents">
             <!-- Contents via Backbone View -->
         </span>
-        <span class="glyphicon glyphicon-check"></span>
+        <span class="<%= type %> glyphicon glyphicon-check"></span>
     </div>
 </script>
 <script id="textField-template" type="text/x-underscore-template">
