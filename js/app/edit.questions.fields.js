@@ -67,22 +67,71 @@
 
       initialize: function(){
         App.FieldView.prototype.initialize.apply(this);
+        this.fields = new App.FieldsList();
+        this.fields.fetch();
       },
 
       startEdit: function(){
-        console.log("starting edit on table layout");
         this.$el.addClass("editing");
-        this.$el.find(".edit-mode td").droppable({
-          hoverClass: "tableLayout-droppable",
-          greedy: true,
-          tolerance: "pointer"
-        });
       },
 
       endEdit: function(){
         this.$el.removeClass("editing");
-        var question = App.application.getQuestion(this.model.get("question_cid"));
-        question.save();
+        //var question = App.application.getQuestion(this.model.get("question_cid"));
+        //question.save();
+      },
+
+      drop: function(evt, ui){
+        var elem = $(ui.draggable);
+        var data = elem.data("backbone-view");
+        var new_data = data;
+        var rowIndex = evt.target.parentNode.rowIndex;
+        var columnIndex = evt.target.cellIndex;
+        new_data.set("rowPosition", rowIndex);
+        new_data.set("columnPosition", columnIndex);
+        new_data.set("tableLayoutCID", this.model.get("field_id"));
+        console.log(this.model);
+        this.fields.create(new_data.toJSON());
+        this.fields.fetch();
+        //this.endEdit();
+        this.render();
+      },
+
+      render: function(){
+        var modelTemplate = this.model.template(this.model.attributes);
+        this.$el.html(this.template(this.model.attributes));
+        $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
+        $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
+
+        console.log("AAAAAAA");
+
+
+        this.$el.find("td").droppable({
+          hoverClass: "tableLayout-droppable",
+          accept: "#fields-listing .ui-draggable",
+          greedy: true,
+          tolerance: "pointer",
+          drop: _.bind(this.drop, this)
+        });
+
+        var view_tables = this.$el.find(".view-mode table");
+        var fields = this.fields.where({"tableLayoutCID": this.model.get("field_id")});
+        _.each(fields, function(field){
+          var fieldType = field.get("type");
+          var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
+          var viewer = App.FieldMapping[fieldType].viewer;
+          var view = new viewer({model: newmodel});
+
+          var rowIndex = newmodel.get("rowPosition");
+          var columnIndex = newmodel.get("columnPosition");
+
+          _.each(view_tables, function(table){
+            var view_table = table;
+            $(view_table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
+          }, this);
+
+        }, this);
+        return this;
       }
 
     });

@@ -75,11 +75,8 @@
       },
       initialize: function(){
         this.template = App.Templates.compiled.tableLayout;
-      },
-
-      startEdit: function(){
-        console.log("aaaa");
       }
+
     });
 
   });

@@ -83,6 +83,7 @@
           question.removeField(data);
         }
         new_data.set("question_cid", this.model.cid);
+        new_data.set("field_id", new Date().getTime());
         this.model.addField(new_data);
       }
 
