@@ -30,14 +30,14 @@
       },
       defaults: function(){
         var def = {
-          name:  "the first!",
-          fields: new App.FieldsList()
+          name:  "the first!"//,
+          //fields: new App.FieldsList()
         };
         return def;
       },
       genUUID: function(){
         this.set("uuid", new Date().getTime());
-      },
+      }/*,
       parse: function(response){
         var fields = new App.FieldsList();
         _.each(response.fields, function(val, idx, list){
@@ -46,7 +46,7 @@
         }, this);
         response.fields = fields;
         return response;
-      }
+      }*/
     });
 
   });

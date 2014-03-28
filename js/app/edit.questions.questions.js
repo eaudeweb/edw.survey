@@ -13,19 +13,6 @@
       App.Templates.sources.push(val);
     });
 
-    App.Question = App.Question.extend({
-      removeField: function(data){
-        this.get("fields").remove(data);
-        this.save();
-        this.trigger("change");
-      },
-
-      addField: function(model){
-        this.get("fields").add(model);
-        this.save();
-      }
-    });
-
     App.QuestionList = Backbone.Collection.extend({
       model: App.Question,
       localStorage: new Backbone.LocalStorage("QuestionListEdit")
@@ -51,12 +38,13 @@
 
         this.listenTo(this.model, "destroy", this.remove);
         this.listenTo(this.model, "change", this.render);
+        this.listenTo(App.application.fields, "change reset add remove", this.render);
       },
 
       render: function(){
         this.$el.html(this.model.template(this.model.attributes));
-        var model_fields = this.model.get("fields");
-        model_fields.each(function(field){
+        var fields = App.application.fields.where({parentID: this.model.get("uuid")});
+        _.each(fields, function(field){
           this.renderField(field);
         }, this);
         return this;
@@ -64,8 +52,9 @@
 
       renderField: function(field){
         var fieldType = field.get("type");
+        var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
         var viewer = App.FieldMapping[fieldType].viewer;
-        var view = new viewer({model: field});
+        var view = new viewer({model: newmodel});
         $(".question-body", this.$el).append(view.render().el);
       },
 
@@ -73,20 +62,27 @@
         this.model.destroy();
       },
 
+      removeField: function(data){
+        App.application.fields.findWhere(data.toJSON()).destroy();
+      },
+
+      addField: function(model){
+        App.application.fields.add(model).save();
+      },
+
       drop: function(event, ui){
         var elem = $(ui.draggable);
         var data = elem.data("backbone-view");
-        var new_data = data;
-        var parentID = data.get("parentID");
+        var field = new App.FieldMapping[data.get("type")].constructor(data.toJSON());
+        var parentID = field.get("parentID");
         if (parentID){
-          var question = App.application.getQuestion(parentID);
-          question.removeField(data);
+          this.removeField(data);
         }
-        new_data.set("parentID", this.model.get("uuid"));
-        if (!new_data.get("uuid")){
-          new_data.genUUID();
+        field.set("parentID", this.model.get("uuid"));
+        if (!field.get("uuid")){
+          field.genUUID();
         }
-        this.model.addField(new_data);
+        this.addField(field);
       }
 
     });

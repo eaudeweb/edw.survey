@@ -68,8 +68,7 @@
 
       initialize: function(){
         App.FieldView.prototype.initialize.apply(this);
-        this.fields = new App.FieldsList();
-        this.fields.fetch();
+        this.fields = App.application.fields;
       },
 
       render: function(){
@@ -101,8 +100,8 @@
 
       render: function(){
         this.$el.html(this.model.template(this.model.attributes));
-        var model_fields = this.model.get("fields");
-        model_fields.each(function(field){
+        var fields = App.application.fields.where({parentID: this.model.get("uuid")});
+        _.each(fields, function(field){
           this.renderField(field);
         }, this);
         return this;
@@ -110,8 +109,9 @@
 
       renderField: function(field){
         var fieldType = field.get("type");
+        var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
         var viewer = App.FieldMapping[fieldType].viewer;
-        var view = new viewer({model: field});
+        var view = new viewer({model: newmodel});
         $(".question-body", this.$el).append(view.render().el);
       }
 
@@ -150,6 +150,8 @@
         this.workshop = $("#workshop");
 
         this.questionsView = new App.QuestionsView();
+        this.fields = new App.FieldsList();
+        this.fields.fetch();
 
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
       },

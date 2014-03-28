@@ -42,11 +42,16 @@
         this.input.focus();
       },
 
+      getParent: function(){
+        var question = App.application.getQuestion(this.model.get("parentID"));
+        return question;
+      },
+
       endEdit: function(){
         this.$el.removeClass("editing");
-        this.model.set({value: this.input.val()});
-        var question = App.application.getQuestion(this.model.get("parentID"));
-        question.save();
+        App.application.fields.get(this.model).set({value: this.input.val()}).save();
+        //this.model.save();
+        this.getParent().save();
       },
 
       render: function(){
@@ -58,10 +63,7 @@
       },
 
       deleteField: function(){
-        var question = App.application.getQuestion(this.model.get("parentID"));
-        question.get("fields").remove(this.model.toJSON());
-        this.model.destroy();
-        question.save();
+        App.application.fields.get(this.model).destroy();
       }
 
     });
@@ -76,8 +78,7 @@
 
       initialize: function(){
         App.FieldView.prototype.initialize.apply(this);
-        this.fields = new App.FieldsList();
-        this.fields.fetch();
+        this.fields = App.application.fields;
       },
 
       startEdit: function(){

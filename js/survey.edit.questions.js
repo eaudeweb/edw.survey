@@ -71,6 +71,8 @@
 
         this.fieldsView = new App.FieldsView();
         this.questionsView = new App.QuestionsView();
+        this.fields = new App.FieldsList();
+        this.fields.fetch();
 
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
       },
@@ -86,8 +88,9 @@
       },
 
       addQuestion: function(){
-        var question = this.questionsView.collection.create();
-        question.genUUID();
+        var question = this.questionsView.collection.create({
+          uuid: new Date().getTime()
+        });
       },
 
       clearData: function(){
