@@ -77,13 +77,15 @@
         var elem = $(ui.draggable);
         var data = elem.data("backbone-view");
         var new_data = data;
-        var cid = data.get("question_cid");
-        if (cid !== ""){
-          var question = App.application.getQuestion(cid);
+        var uuid = data.get("parentID");
+        if (uuid){
+          var question = App.application.getQuestion(uuid);
           question.removeField(data);
         }
-        new_data.set("question_cid", this.model.cid);
-        new_data.set("field_id", new Date().getTime());
+        new_data.set("parentID", this.model.get("uuid"));
+        if (!new_data.get("uuid")){
+          new_data.genUUID();
+        }
         this.model.addField(new_data);
       }
 

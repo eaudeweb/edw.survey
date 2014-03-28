@@ -94,8 +94,8 @@
         window.location.reload();
       },
 
-      getQuestion: function(cid){
-        return this.questionsView.collection.get(cid);
+      getQuestion: function(uuid){
+        return this.questionsView.collection.findWhere({ uuid: uuid });
       },
 
       displayQuestion: function(question){

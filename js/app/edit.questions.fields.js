@@ -45,7 +45,7 @@
       endEdit: function(){
         this.$el.removeClass("editing");
         this.model.set({value: this.input.val()});
-        var question = App.application.getQuestion(this.model.get("question_cid"));
+        var question = App.application.getQuestion(this.model.get("parentID"));
         question.save();
       },
 
@@ -58,7 +58,7 @@
       },
 
       deleteField: function(){
-        var question = App.application.getQuestion(this.model.get("question_cid"));
+        var question = App.application.getQuestion(this.model.get("parentID"));
         question.get("fields").remove(this.model.toJSON());
         this.model.destroy();
         question.save();
@@ -86,7 +86,7 @@
 
       endEdit: function(){
         this.$el.removeClass("editing");
-        //var question = App.application.getQuestion(this.model.get("question_cid"));
+        //var question = App.application.getQuestion(this.model.get("parentID"));
         //question.save();
       },
 
@@ -98,7 +98,10 @@
         var columnIndex = evt.target.cellIndex;
         new_data.set("rowPosition", rowIndex);
         new_data.set("columnPosition", columnIndex);
-        new_data.set("tableLayoutCID", this.model.get("field_id"));
+        new_data.set("parentID", this.model.get("uuid"));
+        if (!new_data.get("uuid")){
+          new_data.set("uuid", new Date().getTime());
+        }
         this.fields.create(new_data.toJSON());
         this.fields.fetch();
         //this.endEdit();
@@ -120,7 +123,7 @@
         });
 
         var view_tables = this.$el.find("table");
-        var fields = this.fields.where({"tableLayoutCID": this.model.get("field_id")});
+        var fields = this.fields.where({"parentID": this.model.get("uuid")});
         _.each(fields, function(field){
           var fieldType = field.get("type");
           var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());

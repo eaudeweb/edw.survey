@@ -76,7 +76,7 @@
         this.$el.html(this.model.template(this.model.attributes));
 
         var view_table = this.$el.find("table").get(0);
-        var fields = this.fields.where({"tableLayoutCID": this.model.get("field_id")});
+        var fields = this.fields.where({"parentID": this.model.get("uuid")});
         _.each(fields, function(field){
           var fieldType = field.get("type");
           field = new App.FieldMapping[fieldType].constructor(field.toJSON());
@@ -158,8 +158,8 @@
         this.questionsView.render();
       },
 
-      getQuestion: function(cid){
-        return this.questionsView.collection.get(cid);
+      getQuestion: function(uuid){
+        return this.questionsView.collection.findWhere({ uuid: uuid });
       },
 
       displayQuestion: function(question){

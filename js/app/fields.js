@@ -39,12 +39,23 @@
       }
     };
 
-    App.TextField = Backbone.Model.extend({
+    App.Field = Backbone.Model.extend({
+      fieldCopy: function(){
+        var original = this;
+        var copy = original;
+        copy.genUUID();
+        return copy;
+      },
+      genUUID: function(){
+        this.set("uuid", new Date().getTime());
+      }
+    });
+
+    App.TextField = App.Field.extend({
       defaults: function(){
         return {
           type: "textField",
-          value: "TEXT FIELD",
-          question_cid: ""
+          value: "TEXT FIELD"
         };
       },
       initialize: function(){
@@ -52,12 +63,11 @@
       }
     });
 
-    App.LabelField = Backbone.Model.extend({
+    App.LabelField = App.Field.extend({
       defaults: function(){
         return {
           type: "labelField",
-          value: "LABEL FIELD",
-          question_cid: ""
+          value: "LABEL FIELD"
         };
       },
       initialize: function(){
@@ -65,12 +75,11 @@
       }
     });
 
-    App.TableLayout = Backbone.Model.extend({
+    App.TableLayout = App.Field.extend({
       defaults: function(){
         return {
           type: "tableLayout",
-          value: "TABLE LAYOUT",
-          question_cid: ""
+          value: "TABLE LAYOUT"
         };
       },
       initialize: function(){
