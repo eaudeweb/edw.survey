@@ -86,7 +86,8 @@
       },
 
       addQuestion: function(){
-        this.questionsView.collection.create();
+        var question = this.questionsView.collection.create();
+        question.genUUID();
       },
 
       clearData: function(){

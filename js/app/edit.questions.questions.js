@@ -77,9 +77,9 @@
         var elem = $(ui.draggable);
         var data = elem.data("backbone-view");
         var new_data = data;
-        var uuid = data.get("parentID");
-        if (uuid){
-          var question = App.application.getQuestion(uuid);
+        var parentID = data.get("parentID");
+        if (parentID){
+          var question = App.application.getQuestion(parentID);
           question.removeField(data);
         }
         new_data.set("parentID", this.model.get("uuid"));

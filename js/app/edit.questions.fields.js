@@ -86,8 +86,8 @@
 
       endEdit: function(){
         this.$el.removeClass("editing");
-        //var question = App.application.getQuestion(this.model.get("parentID"));
-        //question.save();
+        var question = App.application.getQuestion(this.model.get("parentID"));
+        question.save();
       },
 
       drop: function(evt, ui){

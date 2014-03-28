@@ -27,7 +27,6 @@
     App.Question = Backbone.Model.extend({
       initialize: function(){
         this.template = App.Templates.compiled.question;
-        this.set("uuid", new Date().getTime());
       },
       defaults: function(){
         var def = {
@@ -36,11 +35,12 @@
         };
         return def;
       },
-
+      genUUID: function(){
+        this.set("uuid", new Date().getTime());
+      },
       parse: function(response){
         var fields = new App.FieldsList();
         _.each(response.fields, function(val, idx, list){
-          val.parentID = this.get("uuid");
           var constructor = App.FieldMapping[val.type].constructor;
           fields.add(new constructor(val));
         }, this);
