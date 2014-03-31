@@ -20,15 +20,15 @@
 <script id="tableLayout-template" type="text/x-underscore-template">
         <table class="tableLayout">
             <tbody>
-                <tr>
-                    <td></td> <td></td> <td></td>
-                </tr>
-                <tr>
-                    <td></td> <td></td> <td></td>
-                </tr>
-                <tr>
-                    <td></td> <td></td> <td></td>
-                </tr>
+            <% for(var i = 0; i < rows; i++) {
+                    var row = ["<tr>"];
+                    for(var j = 0; j < cols; j++){
+                        row.push("<td></td>");
+                    }
+                    row.push("</tr>");
+                    print(row.join(""));
+                }
+             %>
             </tbody>
         </table>
 </script>

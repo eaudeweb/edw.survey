@@ -27,6 +27,7 @@
       initialize: function(){
         this.collection = new App.QuestionList();
         this.collection.fetch();
+
       },
 
       render: function(){
@@ -79,6 +80,8 @@
         this.fields.fetch();
 
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
+        this.listenTo(this.questionsView.collection, "remove", this.fieldCleanup);
+        this.listenTo(this.fields, "remove", this.fieldCleanup);
       },
 
       events: {
@@ -108,7 +111,16 @@
 
       displayQuestion: function(question){
         this.questionsView.renderOne(question);
+      },
+
+      fieldCleanup: function(question){
+        var uuid = question.get("uuid");
+        var questionFields = App.application.fields.where({parentID: uuid});
+        _.each(questionFields, function(field){
+          field.destroy();
+        });
       }
+
     });
 
     $.ajax({
