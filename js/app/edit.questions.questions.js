@@ -52,9 +52,8 @@
 
       renderField: function(field){
         var fieldType = field.get("type");
-        var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
         var viewer = App.FieldMapping[fieldType].viewer;
-        var view = new viewer({model: newmodel});
+        var view = new viewer({model: field});
         $(".question-body", this.$el).append(view.render().el);
       },
 
@@ -73,7 +72,7 @@
       drop: function(event, ui){
         var elem = $(ui.draggable);
         var data = elem.data("backbone-view");
-        var field = new App.FieldMapping[data.get("type")].constructor(data.toJSON());
+        var field = new App.Field(data.toJSON());
         var parentID = field.get("parentID");
         if (parentID){
           this.removeField(data);

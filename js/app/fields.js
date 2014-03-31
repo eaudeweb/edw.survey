@@ -25,15 +25,12 @@
     App.FieldMapping =  {
       init: function(){
         this.labelField = {
-          constructor: App.LabelField,
           viewer: App.FieldView
         };
         this.textField = {
-          constructor: App.TextField,
           viewer: App.FieldView
         };
         this.tableLayout = {
-          constructor: App.TableLayout,
           viewer: App.TableLayoutView
         };
       }
@@ -48,47 +45,10 @@
       },
       genUUID: function(){
         this.set("uuid", new Date().getTime());
-      }
-    });
-
-    App.TextField = App.Field.extend({
-      defaults: function(){
-        return {
-          type: "textField",
-          value: "TEXT FIELD"
-        };
       },
-      initialize: function(){
-        this.template = App.Templates.compiled.textField;
+      renderTemplate: function(){
+        return App.Templates.compiled[this.get("type")](this.attributes);
       }
     });
-
-    App.LabelField = App.Field.extend({
-      defaults: function(){
-        return {
-          type: "labelField",
-          value: "LABEL FIELD"
-        };
-      },
-      initialize: function(){
-        this.template = App.Templates.compiled.labelField;
-      }
-    });
-
-    App.TableLayout = App.Field.extend({
-      defaults: function(){
-        return {
-          type: "tableLayout",
-          value: "TABLE LAYOUT",
-          rows: 3,
-          cols: 3
-        };
-      },
-      initialize: function(){
-        this.template = App.Templates.compiled.tableLayout;
-      }
-
-    });
-
   });
 })(jQuery);

@@ -21,6 +21,7 @@
     });
 
     App.FieldsList = Backbone.Collection.extend({
+      model: App.Field,
       localStorage: new Backbone.LocalStorage("FieldsListView")
     });
 
@@ -37,16 +38,7 @@
       },
       genUUID: function(){
         this.set("uuid", new Date().getTime());
-      }/*,
-      parse: function(response){
-        var fields = new App.FieldsList();
-        _.each(response.fields, function(val, idx, list){
-          var constructor = App.FieldMapping[val.type].constructor;
-          fields.add(new constructor(val));
-        }, this);
-        response.fields = fields;
-        return response;
-      }*/
+      }
     });
 
   });

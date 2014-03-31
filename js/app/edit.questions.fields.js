@@ -9,8 +9,6 @@
     App.FieldView = Backbone.View.extend({
       tagName: "li",
       //className: "list-group-item",
-      model: null,
-      template: null,
 
       events: {
         "click .glyphicon-trash": "deleteField",
@@ -55,7 +53,7 @@
       },
 
       render: function(){
-        var modelTemplate = this.model.template(this.model.attributes);
+        var modelTemplate = this.model.renderTemplate();
         this.$el.html(this.template(this.model.attributes));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
         $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
@@ -162,7 +160,7 @@
       },
 
       render: function(){
-        var modelTemplate = this.model.template(this.model.attributes);
+        var modelTemplate = this.model.renderTemplate();
         this.$el.html(this.template(this.model.attributes));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
 
@@ -172,13 +170,13 @@
         var fields = this.fields.where({"parentID": this.model.get("uuid")});
         _.each(fields, function(field){
           var fieldType = field.get("type");
-          var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
+          //var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
           var viewer = App.FieldMapping[fieldType].viewer;
 
-          var rowIndex = newmodel.get("rowPosition");
-          var columnIndex = newmodel.get("columnPosition");
+          var rowIndex = field.get("rowPosition");
+          var columnIndex = field.get("columnPosition");
 
-          var view = new viewer({model: newmodel});
+          var view = new viewer({model: field});
           $(table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
 
         }, this);

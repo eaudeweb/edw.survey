@@ -58,7 +58,7 @@
       tagName: "li",
 
       render: function(){
-        this.$el.html(this.model.template(this.model.attributes));
+        this.$el.html(this.model.renderTemplate());
         return this;
       }
 
@@ -72,13 +72,12 @@
       },
 
       render: function(){
-        this.$el.html(this.model.template(this.model.attributes));
+        this.$el.html(this.model.renderTemplate());
 
         var view_table = this.$el.find("table").get(0);
         var fields = this.fields.where({"parentID": this.model.get("uuid")});
         _.each(fields, function(field){
           var fieldType = field.get("type");
-          field = new App.FieldMapping[fieldType].constructor(field.toJSON());
           var viewer = App.FieldMapping[fieldType].viewer;
           var view = new viewer({model: field});
 
@@ -109,9 +108,9 @@
 
       renderField: function(field){
         var fieldType = field.get("type");
-        var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
+        //var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
         var viewer = App.FieldMapping[fieldType].viewer;
-        var view = new viewer({model: newmodel});
+        var view = new viewer({model: field});
         $(".question-body", this.$el).append(view.render().el);
       }
 
