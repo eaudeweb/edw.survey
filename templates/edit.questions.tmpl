@@ -37,12 +37,36 @@
         <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
     </div>
 </script>
+<script id="radioField-template" type="text/x-underscore-template">
+    <div class="view-mode">
+        <label><input name="<%= name %>" value="<%= value %>" type="radio"></input><%= value %></label>
+    </div>
+    <div class="edit-mode">
+        Value: <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
+        Name: <input type="text" class="name-grabber" name="name-grabber" value="<%= name %>"/>
+    </div>
+</script>
 <script id="labelField-template" type="text/x-underscore-template">
     <div class="view-mode">
         <label for="textField"><%= value %></label>
     </div>
     <div class="edit-mode">
         <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
+    </div>
+</script>
+<script id="selectField-template" type="text/x-underscore-template">
+    <div class="view-mode">
+        <select for="textField">
+            <% var options = value.split("\n"); %>
+            <% for(var i = 0; i < options.length; i++) {
+                    var val = options[i];
+                    print('<option value="' + val + '">' + val + '</option>');
+                }
+            %>
+        </select>
+    </div>
+    <div class="edit-mode">
+        <textarea class="value-grabber" name="value-grabber" value="<%= value %>"><%= value %></textarea>
     </div>
 </script>
 <script id="tableLayout-template" type="text/x-underscore-template">

@@ -47,8 +47,7 @@
 
       endEdit: function(){
         this.$el.removeClass("editing");
-        App.application.fields.get(this.model).set({value: this.input.val()}).save();
-        //this.model.save();
+        this.model.set({value: this.input.val()}).save();
         this.getParent().save();
       },
 
@@ -62,6 +61,16 @@
 
       deleteField: function(){
         App.application.fields.get(this.model).destroy();
+      }
+
+    });
+
+    App.RadioFieldView = App.FieldView.extend({
+
+      endEdit: function(){
+        var name = this.$('.edit-mode .name-grabber');
+        this.model.set({name: name.val()}).save();
+        App.FieldView.prototype.endEdit.apply(this);
       }
 
     });
@@ -170,7 +179,6 @@
         var fields = this.fields.where({"parentID": this.model.get("uuid")});
         _.each(fields, function(field){
           var fieldType = field.get("type");
-          //var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
           var viewer = App.FieldMapping[fieldType].viewer;
 
           var rowIndex = field.get("rowPosition");

@@ -64,6 +64,8 @@
 
     });
 
+    App.RadioFieldView = App.FieldView.extend({});
+
     App.TableLayoutView = App.FieldView.extend({
 
       initialize: function(){

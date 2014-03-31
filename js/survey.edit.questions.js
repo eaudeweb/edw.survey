@@ -52,6 +52,8 @@
         this.collection.add([
           new App.Field({type: "textField", value: "TEXT FIELD"}),
           new App.Field({type: "labelField", value: "LABEL FIELD"}),
+          new App.Field({type: "selectField", value: "option1\noption2\noption3"}),
+          new App.Field({type: "radioField", value: "somevalue", name: "radioinputs"}),
           new App.Field({type: "tableLayout", rows: 3, cols: 3})
           ]);
       },

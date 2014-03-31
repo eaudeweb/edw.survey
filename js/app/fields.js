@@ -16,6 +16,8 @@
     var templates = [
       {"name": "labelField", "target": "#labelField-template"},
       {"name": "textField", "target": "#textField-template"},
+      {"name": "selectField", "target": "#selectField-template"},
+      {"name": "radioField", "target": "#radioField-template"},
       {"name": "tableLayout", "target": "#tableLayout-template"}
     ];
     _.each(templates, function(val){
@@ -29,6 +31,12 @@
         };
         this.textField = {
           viewer: App.FieldView
+        };
+        this.selectField = {
+          viewer: App.FieldView
+        };
+        this.radioField = {
+          viewer: App.RadioFieldView
         };
         this.tableLayout = {
           viewer: App.TableLayoutView

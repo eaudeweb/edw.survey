@@ -17,6 +17,19 @@
 <script id="labelField-template" type="text/x-underscore-template">
         <label for="textField"><%= value %></label>
 </script>
+<script id="selectField-template" type="text/x-underscore-template">
+        <select for="textField">
+            <% var options = value.split("\n"); %>
+            <% for(var i = 0; i < options.length; i++) {
+                    var val = options[i];
+                    print('<option value="' + val + '">' + val + '</option>');
+                }
+            %>
+        </select>
+</script>
+<script id="radioField-template" type="text/x-underscore-template">
+        <label><input name="<%= name %>" value="<%= value %>" type="radio"></input><%= value %></label>
+</script>
 <script id="tableLayout-template" type="text/x-underscore-template">
         <table class="tableLayout">
             <tbody>

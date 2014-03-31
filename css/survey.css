@@ -1,3 +1,7 @@
+.view-mode, .edit-mode {
+    padding: 5px;
+}
+
 .edit-mode {
     display: none;
 }
