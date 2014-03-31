@@ -79,7 +79,9 @@
       defaults: function(){
         return {
           type: "tableLayout",
-          value: "TABLE LAYOUT"
+          value: "TABLE LAYOUT",
+          rows: 3,
+          cols: 3
         };
       },
       initialize: function(){
