@@ -20,6 +20,9 @@
 <script id="textBlockField-template" type="text/x-underscore-template">
         <p><%= _.escape(value) %></p>
 </script>
+<script id="richTextBlockField-template" type="text/x-underscore-template">
+        <p><%= value %></p>
+</script>
 <script id="selectField-template" type="text/x-underscore-template">
         <select for="textField">
             <% var options = value.split("\n"); %>
