@@ -29,9 +29,9 @@
         <span class="<%= type %> glyphicon glyphicon-check"></span>
     </div>
 </script>
-<script id="textField-template" type="text/x-underscore-template">
+<script id="textInputField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <input type="text" id="textField" name="textField" value="<%= value %>" />
+        <input type="text" id="textInputField" name="textInputField" value="<%= value %>" />
     </div>
     <div class="edit-mode">
         <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
@@ -42,13 +42,13 @@
         <label><input name="<%= name %>" value="<%= value %>" type="radio"></input><%= value %></label>
     </div>
     <div class="edit-mode">
-        Value: <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
-        Name: <input type="text" class="name-grabber" name="name-grabber" value="<%= name %>"/>
+        <label>Value: <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/></label><br />
+        <label>Name: <input type="text" class="name-grabber" name="name-grabber" value="<%= name %>"/></label>
     </div>
 </script>
 <script id="labelField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <label for="textField"><%= value %></label>
+        <label><%= value %></label>
     </div>
     <div class="edit-mode">
         <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
@@ -56,7 +56,7 @@
 </script>
 <script id="selectField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <select for="textField">
+        <select>
             <% var options = value.split("\n"); %>
             <% for(var i = 0; i < options.length; i++) {
                     var val = options[i];

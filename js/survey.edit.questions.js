@@ -50,10 +50,10 @@
       initialize: function(){
         this.collection = new App.FieldsList();
         this.collection.add([
-          new App.Field({type: "textField", value: "TEXT FIELD"}),
+          new App.Field({type: "textInputField", value: "TEXT INPUT"}),
           new App.Field({type: "labelField", value: "LABEL FIELD"}),
           new App.Field({type: "selectField", value: "option1\noption2\noption3"}),
-          new App.Field({type: "radioField", value: "somevalue", name: "radioinputs"}),
+          new App.Field({type: "radioField", value: "I LIKE", name: "radioinputs"}),
           new App.Field({type: "tableLayout", rows: 3, cols: 3})
           ]);
       },

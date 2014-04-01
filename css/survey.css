@@ -6,6 +6,10 @@
     display: none;
 }
 
+.edit-mode textarea.value-grabber {
+    height: 100px;
+}
+
 .editing > .edit-mode {
     display: block;
 }
@@ -32,4 +36,5 @@ table.tableLayout td {
     min-width: 50px;
     height: 50px;
     text-align: center;
+    padding: 10px;
 }

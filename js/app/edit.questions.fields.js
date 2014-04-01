@@ -48,7 +48,6 @@
       endEdit: function(){
         this.$el.removeClass("editing");
         this.model.set({value: this.input.val()}).save();
-        this.getParent().save();
       },
 
       render: function(){
@@ -154,16 +153,16 @@
       drop: function(evt, ui){
         var elem = $(ui.draggable);
         var data = elem.data("backbone-view");
-        var new_data = data;
+        var new_data = data.toJSON();
         var rowIndex = evt.target.parentNode.rowIndex;
         var columnIndex = evt.target.cellIndex;
-        new_data.set("rowPosition", rowIndex);
-        new_data.set("columnPosition", columnIndex);
-        new_data.set("parentID", this.model.get("uuid"));
-        if (!new_data.get("uuid")){
-          new_data.set("uuid", new Date().getTime());
+        new_data.rowPosition = rowIndex;
+        new_data.columnPosition = columnIndex;
+        new_data.parentID = this.model.get("uuid");
+        if (!new_data.uuid){
+          new_data.uuid = new Date().getTime();
         }
-        this.fields.create(new_data.toJSON());
+        this.fields.create(new_data);
         this.fields.fetch();
         this.render();
       },
