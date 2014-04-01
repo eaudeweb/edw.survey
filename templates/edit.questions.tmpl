@@ -10,7 +10,6 @@
                 <div class="question-body"></div>
             </div>
         </div>
-        <h2>
     </div>
 </script>
 <script id="Field-template" type="text/x-underscore-template">
@@ -52,6 +51,22 @@
     </div>
     <div class="edit-mode">
         <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
+    </div>
+</script>
+<script id="textBlockField-template" type="text/x-underscore-template">
+    <div class="view-mode">
+        <p><%= _.escape(value) %></p>
+    </div>
+    <div class="edit-mode">
+        <textarea class="value-grabber" name="value-grabber" value="<%= value %>"><%= value %></textarea>
+    </div>
+</script>
+<script id="richTextBlockField-template" type="text/x-underscore-template">
+    <div class="view-mode">
+        <p><%= value %></p>
+    </div>
+    <div class="edit-mode">
+        <textarea class="value-grabber" id="<%= type %>-<%= uuid %>" name="value-grabber" value="<%= value %>"><%= value %></textarea>
     </div>
 </script>
 <script id="selectField-template" type="text/x-underscore-template">

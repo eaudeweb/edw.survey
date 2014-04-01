@@ -17,6 +17,9 @@
 <script id="labelField-template" type="text/x-underscore-template">
         <label><%= value %></label>
 </script>
+<script id="textBlockField-template" type="text/x-underscore-template">
+        <p><%= _.escape(value) %></p>
+</script>
 <script id="selectField-template" type="text/x-underscore-template">
         <select for="textField">
             <% var options = value.split("\n"); %>

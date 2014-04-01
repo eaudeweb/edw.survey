@@ -51,6 +51,8 @@
         this.collection = new App.FieldsList();
         this.collection.add([
           new App.Field({type: "textInputField", value: "TEXT INPUT"}),
+          new App.Field({type: "richTextBlockField", value: "RICH TEXT BLOCK", uuid: null}),
+          new App.Field({type: "textBlockField", value: "TEXT BLOCK"}),
           new App.Field({type: "labelField", value: "LABEL FIELD"}),
           new App.Field({type: "selectField", value: "option1\noption2\noption3"}),
           new App.Field({type: "radioField", value: "I LIKE", name: "radioinputs"}),

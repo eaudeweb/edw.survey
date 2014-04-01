@@ -38,3 +38,12 @@ table.tableLayout td {
     text-align: center;
     padding: 10px;
 }
+
+
+#fields-listing .glyphicon {
+    display: none;
+}
+
+#fields-listing .glyphicon.glyphicon-th {
+    display: inline;
+}

@@ -74,6 +74,37 @@
 
     });
 
+    App.RichTextBlockFieldView = App.FieldView.extend({
+
+      initialize: function(){
+        App.FieldView.prototype.initialize.apply(this);
+        this.on("render", this.tinyMCEInit);
+      },
+
+      render: function(){
+        var modelTemplate = this.model.renderTemplate();
+        this.$el.html(this.template(this.model.attributes));
+        $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
+        $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
+        this.trigger("render");
+        return this;
+      },
+
+      tinyMCEInit: function(){
+        var selector = "textarea#" + this.model.get("type") + "-" + this.model.get("uuid");
+        if (this.model.get("uuid") !== null){
+          console.log(selector, $(selector));
+          tinymce.init({
+              selector: "textarea",
+              schema: "html5",
+              add_unload_trigger: false,
+              inline: true,
+              statusbar: false
+          });
+        }
+      }
+    });
+
     App.TableLayoutView = App.FieldView.extend({
 
       events: {
@@ -184,6 +215,7 @@
           var columnIndex = field.get("columnPosition");
 
           var view = new viewer({model: field});
+          console.log($(table.rows[rowIndex].cells[columnIndex]));
           $(table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
 
         }, this);

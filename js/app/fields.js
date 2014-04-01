@@ -16,6 +16,8 @@
     var templates = [
       {"name": "labelField", "target": "#labelField-template"},
       {"name": "textInputField", "target": "#textInputField-template"},
+      {"name": "textBlockField", "target": "#textBlockField-template"},
+      {"name": "richTextBlockField", "target": "#richTextBlockField-template"},
       {"name": "selectField", "target": "#selectField-template"},
       {"name": "radioField", "target": "#radioField-template"},
       {"name": "tableLayout", "target": "#tableLayout-template"}
@@ -27,6 +29,12 @@
     App.FieldMapping =  {
       init: function(){
         this.labelField = {
+          viewer: App.FieldView
+        };
+        this.richTextBlockField = {
+          viewer: App.RichTextBlockFieldView
+        };
+        this.textBlockField = {
           viewer: App.FieldView
         };
         this.textInputField = {
