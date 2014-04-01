@@ -1,5 +1,25 @@
+.view-mode .glyphicon,
+.edit-mode .glyphicon {
+    border: 1px solid #dddddd;
+    padding: 3px;
+    border-radius: 5px;
+    width: initial !important;
+}
+
+.view-mode .glyphicon:hover,
+.edit-mode .glyphicon:hover {
+    background: #dddddd;
+}
+
+div.contents {
+    margin-top: 10px;
+}
+
 .view-mode, .edit-mode {
     padding: 5px;
+    padding-top: 10px;
+    border: 1px dotted #dddddd;
+    margin: 5px;
 }
 
 .edit-mode {
