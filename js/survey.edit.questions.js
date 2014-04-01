@@ -134,6 +134,12 @@
         App.FieldMapping.init();
         App.application = new App.AppView();
         App.application.render();
+        tinymce.init({
+            selector: "textarea.wants-tmce",
+            schema: "html5",
+            add_unload_trigger: false,
+            statusbar: false
+        });
       }
     });
   });

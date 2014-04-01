@@ -78,7 +78,7 @@
 
       initialize: function(){
         App.FieldView.prototype.initialize.apply(this);
-        this.on("render", this.tinyMCEInit);
+        //this.on("render", this.tinyMCEInit);
       },
 
       render: function(){
@@ -86,7 +86,6 @@
         this.$el.html(this.template(this.model.attributes));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
         $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
-        this.trigger("render");
         return this;
       },
 
