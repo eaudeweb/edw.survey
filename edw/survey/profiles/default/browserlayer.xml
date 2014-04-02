@@ -1,0 +1,6 @@
+<layers>
+  <layer
+    name="edw.survey"
+    interface="edw.survey.interfaces.ISurveyInstalled"
+  />
+</layers>

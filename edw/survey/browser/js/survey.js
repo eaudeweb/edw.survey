@@ -173,7 +173,7 @@
     });
 
     $.ajax({
-      url: "./templates/survey.tmpl",
+      url: "./js/templates/survey.tmpl",
       success: function(response){
         App.Templates.load(response);
         App.FieldMapping.init();

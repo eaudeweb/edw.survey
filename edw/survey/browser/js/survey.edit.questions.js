@@ -132,7 +132,7 @@
     });
 
     $.ajax({
-      url: "./templates/edit.questions.tmpl",
+      url: "./js/templates/edit.questions.tmpl",
       success: function(response){
         App.Templates.load(response);
         App.FieldMapping.init();
