@@ -19,7 +19,8 @@
       {"name": "textBlockField", "target": "#textBlockField-template"},
       {"name": "richTextBlockField", "target": "#richTextBlockField-template"},
       {"name": "selectField", "target": "#selectField-template"},
-      {"name": "radioField", "target": "#radioField-template"},
+      {"name": "radioField", "target": "#checkboxField-template"},
+      {"name": "checkboxField", "target": "#checkboxField-template"},
       {"name": "tableLayout", "target": "#tableLayout-template"}
     ];
     _.each(templates, function(val){
@@ -47,7 +48,10 @@
           viewer: App.FieldView
         };
         this.radioField = {
-          viewer: App.RadioFieldView
+          viewer: App.CheckboxFieldView
+        };
+        this.checkboxField = {
+          viewer: App.CheckboxFieldView
         };
         this.tableLayout = {
           viewer: App.TableLayoutView

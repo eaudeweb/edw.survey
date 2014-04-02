@@ -36,13 +36,25 @@
         <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
     </div>
 </script>
-<script id="radioField-template" type="text/x-underscore-template">
+<script id="checkboxField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <label><input name="<%= name %>" value="<%= value %>" type="radio"></input><%= value %></label>
+        <label><input name="<%= name %>" value="<%= value %>" type="<%= fieldType %>"></input><%= value %></label>
     </div>
     <div class="edit-mode">
-        <label>Value: <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/></label><br />
-        <label>Name: <input type="text" class="name-grabber" name="name-grabber" value="<%= name %>"/></label>
+        <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
+        <select class="group-grabber" name="group-grabber">
+            <%
+                for (var i=1;i<=7; i++){
+                    if("group" + i === group){
+                        var elem = '<option value="group'+ i +'" selected="selected">Group ' + i + '</option>';
+                    } else {
+                        var elem = '<option value="group'+ i +'">Group ' + i + '</option>';
+                    }
+                    print(elem);
+                }
+
+            %>
+        </select>
     </div>
 </script>
 <script id="labelField-template" type="text/x-underscore-template">
@@ -63,7 +75,7 @@
 </script>
 <script id="richTextBlockField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <p><%= value %></p>
+        <div><%= value %></div>
     </div>
     <div class="edit-mode">
         <textarea class="value-grabber wants-tmce" id="<%= type %>-<%= uuid %>" name="value-grabber" value="<%= value %>"><%= value %></textarea>

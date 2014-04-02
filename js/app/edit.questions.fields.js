@@ -64,12 +64,38 @@
 
     });
 
-    App.RadioFieldView = App.FieldView.extend({
+    App.CheckboxFieldView = App.FieldView.extend({
+
+      startEdit: function(){
+
+        var formatter = function(option){
+          return '<div class="group-color group-color-chooser '+ option.id +'"></div>';
+        };
+
+        this.$("select.group-grabber").select2({
+          formatResult: formatter,
+          formatSelection: formatter,
+          escapeMarkup: function(m) { return m; }
+        });
+        App.FieldView.prototype.startEdit.apply(this);
+      },
 
       endEdit: function(){
-        var name = this.$('.edit-mode .name-grabber');
-        this.model.set({name: name.val()}).save();
+        var group = this.$('.edit-mode select.group-grabber');
+        this.model.set({group: group.val()}).save();
+
+        var fieldslist = App.application.fieldsView.collection;
+        var field = fieldslist.findWhere({type: this.model.get("type")});
+        field.set("group", this.model.get("group"));
+
         App.FieldView.prototype.endEdit.apply(this);
+      },
+
+      render: function(){
+        App.FieldView.prototype.render.apply(this);
+        this.$el.addClass("group-color");
+        this.$el.addClass(this.model.get("group"));
+        return this;
       }
 
     });
@@ -78,7 +104,11 @@
 
       initialize: function(){
         App.FieldView.prototype.initialize.apply(this);
-        //this.on("render", this.tinyMCEInit);
+      },
+
+      startEdit: function(){
+        this.$el.addClass("editing");
+        this.tinyMCEInit();
       },
 
       render: function(){
@@ -89,15 +119,20 @@
         return this;
       },
 
+      endEdit: function(){
+        this.$el.removeClass("editing");
+        var selector = this.model.get("type") + "-" + this.model.get("uuid");
+        var tmceContent = tinyMCE.get(selector).getContent();
+        this.model.set({value: tmceContent}).save();
+      },
+
       tinyMCEInit: function(){
         var selector = "textarea#" + this.model.get("type") + "-" + this.model.get("uuid");
         if (this.model.get("uuid") !== null){
-          console.log(selector, $(selector));
           tinymce.init({
               selector: "textarea",
               schema: "html5",
               add_unload_trigger: false,
-              inline: true,
               statusbar: false
           });
         }
@@ -214,7 +249,6 @@
           var columnIndex = field.get("columnPosition");
 
           var view = new viewer({model: field});
-          console.log($(table.rows[rowIndex].cells[columnIndex]));
           $(table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
 
         }, this);

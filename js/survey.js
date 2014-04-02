@@ -64,7 +64,7 @@
 
     });
 
-    App.RadioFieldView = App.FieldView.extend({});
+    App.CheckboxFieldView = App.FieldView.extend({});
 
     App.RichTextBlockFieldView = App.FieldView.extend({});
 

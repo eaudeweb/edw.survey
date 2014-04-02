@@ -55,11 +55,15 @@
           new App.Field({type: "textBlockField", value: "TEXT BLOCK"}),
           new App.Field({type: "labelField", value: "LABEL FIELD"}),
           new App.Field({type: "selectField", value: "option1\noption2\noption3"}),
-          new App.Field({type: "radioField", value: "I LIKE", name: "radioinputs"}),
+          new App.Field({type: "radioField", fieldType: "radio", value: "I LIKE", group: "group1"}),
+          new App.Field({type: "checkboxField", fieldType: "checkbox", value: "I LIKE", group: "group1"}),
           new App.Field({type: "tableLayout", rows: 3, cols: 3})
           ]);
+
+        this.listenTo(this.collection, "change", this.render);
       },
       render: function(){
+        this.$el.empty();
         this.collection.each(function(field){
           var fieldType = field.get("type");
           var viewer = App.FieldMapping[fieldType].viewer;
@@ -134,12 +138,6 @@
         App.FieldMapping.init();
         App.application = new App.AppView();
         App.application.render();
-        tinymce.init({
-            selector: "textarea.wants-tmce",
-            schema: "html5",
-            add_unload_trigger: false,
-            statusbar: false
-        });
       }
     });
   });

@@ -11,6 +11,28 @@
     background: #dddddd;
 }
 
+
+.group-color-chooser {
+    width: 16px;
+    height: 16px;
+    border: 1px solid black;
+    margin-left: 5px;
+}
+
+.select2-chosen .group-color-chooser {
+    margin-top: 5px;
+    margin-left: 3px;
+}
+
+.group-color.group1 { background: #ffe6e6; }
+.group-color.group2 { background: #e6ffe6; }
+.group-color.group3 { background: #e6e6ff; }
+.group-color.group4 { background: #fff6e6; }
+.group-color.group5 { background: #eed6ee; }
+.group-color.group6 { background: #7c7582; }
+.group-color.group7 { background: #ffffe6; }
+
+
 div.contents {
     margin-top: 10px;
 }
