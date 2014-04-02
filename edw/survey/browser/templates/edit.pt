@@ -1,12 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Survey pre-pre-alpha</title>
+<html metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone" >
 
+<metal:block fill-slot="top_slot"
+  tal:define="disable_column_one python:request.set('disable_plone.leftcolumn',1);
+              disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+
+<metal:styleslot fill-slot="style_slot">
   <link rel="stylesheet" href="++resource++edw.survey.static/bootstrap/css/bootstrap.css" />
   <link rel="stylesheet" href="++resource++edw.survey.static/css/survey.css" />
   <link rel="stylesheet" href="++resource++edw.survey.static/js/lib/select2-3.4.6/select2.css" />
+</metal:styleslot>
 
+<metal:javascriptslot fill-slot="javascript_head_slot">
   <script src="++resource++edw.survey.static/js/lib/jquery-2.0.3.min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/jquery-ui.min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/underscore-min.js"></script>
@@ -21,34 +26,38 @@
   <script src="++resource++edw.survey.static/js/app/questions.js"></script>
   <script src="++resource++edw.survey.static/js/app/edit.questions.fields.js"></script>
   <script src="++resource++edw.survey.static/js/app/edit.questions.questions.js"></script>
-</head>
+</metal:javascriptslot>
+
 <body>
 
-<div class="container" id="application">
-  <h1>Survey - create</h1>
-  <div class="row">
-    <div id="workshop" class="col-lg-8">
-      <ul id="questions-listing" class="list-unstyled"></ul>
-    </div>
-    <div id="sidebar" class="col-lg-4">
-      <div data-spy="affix">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <button id="add-question" class="btn btn-success">Add question</button>
-            <a href="@@survey_view" id="survey-index" class="btn btn-primary">View survey</a>
-            <button id="clear-data" class="btn btn-danger">Clear data</button>
+<metal:main fill-slot="main">
+  <div class="container" id="application">
+    <h1>Survey - create</h1>
+    <div class="row">
+      <div id="workshop" class="col-lg-8">
+        <ul id="questions-listing" class="list-unstyled"></ul>
+      </div>
+      <div id="sidebar" class="col-lg-4">
+        <div data-spy="affix">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <button id="add-question" class="btn btn-success">Add question</button>
+              <a href="@@survey_view" id="survey-index" class="btn btn-primary">View survey</a>
+              <button id="clear-data" class="btn btn-danger">Clear data</button>
+            </div>
           </div>
-        </div>
-        <div class="panel panel-default">
-          <div class="panel-heading">Toolbox</div>
-          <div class="panel-body">
-            <ul id="fields-listing" class="list-unstyled"></ul>
+          <div class="panel panel-default">
+            <div class="panel-heading">Toolbox</div>
+            <div class="panel-body">
+              <ul id="fields-listing" class="list-unstyled"></ul>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</metal:main>
 
 </body>
-</html
+
+</html>
