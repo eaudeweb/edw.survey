@@ -132,7 +132,7 @@
     });
 
     $.ajax({
-      url: "./js/templates/edit.questions.tmpl",
+      url: "++resource++edw.survey.static/js/templates/edit.questions.tmpl",
       success: function(response){
         App.Templates.load(response);
         App.FieldMapping.init();
