@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="edw.survey">
+
+  <class class=".survey.Survey">
+    <implements interface="..interfaces.ISurvey" />
+  </class>
+
+</configure>

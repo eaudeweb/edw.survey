@@ -4,8 +4,8 @@
     i18n_domain="edw">
 
     <browser:page
-        name="survey_view"
-        for="*"
+        name="view"
+        for="edw.survey.interfaces.ISurvey"
         template="templates/view.pt"
         layer="edw.survey.interfaces.ISurveyInstalled"
         permission="zope2.View"
@@ -13,10 +13,10 @@
 
     <browser:page
         name="survey_edit"
-        for="*"
+        for="edw.survey.interfaces.ISurvey"
         template="templates/edit.pt"
         layer="edw.survey.interfaces.ISurveyInstalled"
-        permission="zope2.View"
+        permission="cmf.ModifyPortalContent"
         />
 
     <browser:resourceDirectory
