@@ -89,3 +89,17 @@ table.tableLayout td {
 #fields-listing .glyphicon.glyphicon-th {
     display: inline;
 }
+
+
+/* Plone fixes */
+
+#content div.bootstrap .btn-primary:hover, #content div.bootstrap .btn-primary:focus, #content div.bootstrap .btn-primary:active, #content div.bootstrap .btn-primary.active, .open > .dropdown-toggle#content div.bootstrap .btn-primary {
+    color: #fff !important;
+}
+#content div.bootstrap .btn-warning:hover, #content div.bootstrap .btn-warning:focus, #content div.bootstrap .btn-warning:active, #content div.bootstrap .btn-warning.active, .open > .dropdown-toggle#content div.bootstrap .btn-warning {
+    color: #fff !important;
+}
+
+#content div.bootstrap ul {
+    margin-left: 0px;
+}

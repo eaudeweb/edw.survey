@@ -26,20 +26,22 @@
 <body>
 
 <metal:main fill-slot="main">
+  <div class="bootstrap">
   <div class="container" id="application">
     <h1>Survey - view</h1>
     <div class="row">
-      <div id="content" class="col-lg-8">
+      <div id="displayarea" class="col-lg-8">
         <ul id="questions-listing" class="list-unstyled"></ul>
       </div>
       <div id="sidebar" class="col-lg-4">
         <div class="panel panel-default">
           <div class="panel-body">
-            <a href="@@survey_edit" id="edit-questions" class="btn btn-warning">Edit questions</a>
+            <a href="survey_edit" id="edit-questions" class="btn btn-warning">Edit questions</a>
           </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
 </metal:main>
 

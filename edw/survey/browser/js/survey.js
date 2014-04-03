@@ -121,7 +121,7 @@
     });
 
     App.QuestionsView = Backbone.View.extend({
-      el: $("#content ul#questions-listing"),
+      el: $("#displayarea ul#questions-listing"),
       collection: null,
       initialize: function(){
         App.QuestionList.model = App.Question;

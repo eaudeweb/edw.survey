@@ -31,6 +31,7 @@
 <body>
 
 <metal:main fill-slot="main">
+  <div class="bootstrap">
   <div class="container" id="application">
     <h1>Survey - create</h1>
     <div class="row">
@@ -38,11 +39,12 @@
         <ul id="questions-listing" class="list-unstyled"></ul>
       </div>
       <div id="sidebar" class="col-lg-4">
-        <div data-spy="affix">
+        <!--div data-spy="affix"-->
+        <div>
           <div class="panel panel-default">
             <div class="panel-body">
               <button id="add-question" class="btn btn-success">Add question</button>
-              <a href="@@survey_view" id="survey-index" class="btn btn-primary">View survey</a>
+              <a href="view" id="survey-index" class="btn btn-primary">View survey</a>
               <button id="clear-data" class="btn btn-danger">Clear data</button>
             </div>
           </div>
@@ -55,6 +57,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </metal:main>
 
