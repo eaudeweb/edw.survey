@@ -32,15 +32,14 @@
 
 <metal:main fill-slot="main">
   <div class="bootstrap">
-  <div class="container" id="application">
+  <div id="application">
     <h1>Survey - create</h1>
     <div class="row">
-      <div id="workshop" class="col-lg-8">
+      <div id="workshop" class="col-lg-9">
         <ul id="questions-listing" class="list-unstyled"></ul>
       </div>
-      <div id="sidebar" class="col-lg-4">
-        <!--div data-spy="affix"-->
-        <div>
+      <div id="sidebar" class="col-lg-3">
+        <div data-spy="affix" data-offset-top="300">
           <div class="panel panel-default">
             <div class="panel-body">
               <button id="add-question" class="btn btn-success">Add question</button>

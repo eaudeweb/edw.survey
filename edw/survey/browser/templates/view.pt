@@ -27,7 +27,7 @@
 
 <metal:main fill-slot="main">
   <div class="bootstrap">
-  <div class="container" id="application">
+  <div id="application">
     <h1>Survey - view</h1>
     <div class="row">
       <div id="displayarea" class="col-lg-8">

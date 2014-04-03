@@ -74,7 +74,7 @@ table.tableLayout tr {
     border-collapse: collapse;
 }
 
-table.tableLayout td {
+#content div.bootstrap table.tableLayout td {
     min-width: 50px;
     height: 50px;
     text-align: center;
@@ -91,6 +91,14 @@ table.tableLayout td {
 }
 
 
+.affix {
+    right: 1%;
+    /*top: 20px;*/
+    bottom: 0px;
+    width: 25%;
+    z-index: 1;
+}
+
 /* Plone fixes */
 
 #content div.bootstrap .btn-primary:hover, #content div.bootstrap .btn-primary:focus, #content div.bootstrap .btn-primary:active, #content div.bootstrap .btn-primary.active, .open > .dropdown-toggle#content div.bootstrap .btn-primary {
@@ -102,4 +110,7 @@ table.tableLayout td {
 
 #content div.bootstrap ul {
     margin-left: 0px;
+}
+#content div.bootstrap p, #content div.bootstrap table, #content div.bootstrap dl {
+    margin-bottom: 0px;
 }
