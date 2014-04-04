@@ -5,9 +5,6 @@
   $(document).ready(function(){
 
     Backbone.emulateHTTP = true;
-    tinyMCE.baseURL="/++resource++edw.survey.static/js/lib/tinymce/js/tinymce";
-    tinymce.suffix = ".min";
-
 
     var App = null;
 

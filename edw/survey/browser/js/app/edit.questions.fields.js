@@ -6,6 +6,10 @@
 
     var App = window.edw.survey.edit.questions;
 
+    tinyMCE.baseURL="/++resource++edw.survey.static/js/lib/tinymce/js/tinymce";
+    tinymce.suffix = ".min";
+
+
     App.FieldView = Backbone.View.extend({
       tagName: "li",
       //className: "list-group-item",
