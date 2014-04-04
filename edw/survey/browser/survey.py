@@ -16,7 +16,19 @@ QUESTIONS = []
 FIELDS = []
 
 
-class Collection(BrowserView):
+class CommonView(BrowserView):
+
+    @property
+    def storage(self):
+        annotations = IAnnotations(self.context)
+        annotation = annotations.setdefault(PROJECTNAME, OOBTree())
+        store = annotation.get(self.storage_name, [])
+        if not store or not isinstance(store, PersistentList):
+            annotation[self.storage_name] = PersistentList(store)
+        return annotation[self.storage_name]
+
+
+class Collection(CommonView, BrowserView):
     implements(IPublishTraverse)
 
     def __call__(self, *args, **kwargs):
@@ -79,15 +91,6 @@ class Collection(BrowserView):
         idx = self.getIndex(self.storage, self.request_uuid)
         del self.storage[idx]
 
-    @property
-    def storage(self):
-        annotations = IAnnotations(self.context)
-        annotation = annotations.setdefault(PROJECTNAME, OOBTree())
-        store = annotation.get(self.storage_name, [])
-        if not store or not isinstance(store, PersistentList):
-            annotation[self.storage_name] = PersistentList(store)
-        return annotation[self.storage_name]
-
 
 class Fields(Collection):
 
@@ -97,4 +100,31 @@ class Fields(Collection):
 class Questions(Collection):
 
     storage_name = "questions"
+
+class SubmitAnswerView(CommonView, BrowserView):
+    def save(self):
+        return self.request
+
+
+class ImportExportView(CommonView, BrowserView):
+
+    def importer(self):
+        data = json.loads(self.request.importfile.read())
+        for question in data["questions"]:
+            annotations = IAnnotations(self.context)
+            annotation = annotations.setdefault(PROJECTNAME, OOBTree())
+            store = annotation.get("questions")
+            store.append(PersistentDict(question))
+
+
+    def exporter(self):
+        annotations = IAnnotations(self.context)
+        annotation = annotations.setdefault(PROJECTNAME, OOBTree())
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        header("Content-Disposition", "attachment;filename=export.json")
+        data = {}
+        data["fields"] = [dict(x) for x in annotation["fields"]]
+        data["questions"] = [dict(x) for x in annotation["questions"]]
+        return json.dumps(data, indent=2)
 

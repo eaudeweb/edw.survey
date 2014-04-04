@@ -35,6 +35,33 @@
         permission="zope2.View"
         />
 
+    <browser:page
+        name="answer"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.SubmitAnswerView"
+        attribute="save"
+        permission="zope2.View"
+        />
+
+    <browser:page
+        name="export"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.ImportExportView"
+        attribute="exporter"
+        permission="zope2.View"
+        />
+
+    <browser:page
+        name="import"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.ImportExportView"
+        attribute="importer"
+        permission="zope2.View"
+        />
+
     <browser:resourceDirectory
         name="edw.survey.static"
         directory="."

@@ -31,7 +31,10 @@
     <h1>Survey - view</h1>
     <div class="row">
       <div id="displayarea" class="col-lg-8">
-        <ul id="questions-listing" class="list-unstyled"></ul>
+        <form action="answer" method="POST">
+          <ul id="questions-listing" class="list-unstyled"></ul>
+          <input class="btn btn-primary" type="submit" value="Save" />
+        </form>
       </div>
       <div id="sidebar" class="col-lg-4">
         <div class="panel panel-default">
