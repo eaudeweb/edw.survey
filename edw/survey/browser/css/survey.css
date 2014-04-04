@@ -90,15 +90,14 @@ table.tableLayout tr {
     display: inline;
 }
 
-
+/*
 .affix {
     right: 1%;
-    /*top: 20px;*/
     bottom: 0px;
     width: 25%;
     z-index: 1;
 }
-
+*/
 /* Plone fixes */
 
 #content div.bootstrap .btn-primary:hover, #content div.bootstrap .btn-primary:focus, #content div.bootstrap .btn-primary:active, #content div.bootstrap .btn-primary.active, .open > .dropdown-toggle#content div.bootstrap .btn-primary {

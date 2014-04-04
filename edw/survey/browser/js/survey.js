@@ -21,10 +21,11 @@
     var App = edw.survey.view;
 
     App.QuestionList = Backbone.Collection.extend({
+      url: "questions",
       initialize: function(){
         this.model = App.Question;
-      },
-      localStorage: function(){
+      }//,
+      /*localStorage: function(){
         var edit = "QuestionListEdit";
         var view = "QuestionListAnswers";
         var view_storage = localStorage.getItem(view);
@@ -50,7 +51,7 @@
           copyStorageKeys();
         }
         return new Backbone.LocalStorage(view);
-      }()
+      }()*/
     });
 
 
@@ -100,6 +101,10 @@
     App.QuestionView = Backbone.View.extend({
       tagName: "li",
       model: null,
+
+      initialize: function(){
+        this.listenTo(App.application.fields, "add", this.render);
+      },
 
       render: function(){
         this.$el.html(this.model.template(this.model.attributes));

@@ -4,6 +4,8 @@
 (function($){
   $(document).ready(function(){
 
+    Backbone.emulateHTTP = true;
+
     var App = null;
 
     if(window.edw.survey.view !== undefined){

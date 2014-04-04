@@ -16,7 +16,7 @@
   <script src="++resource++edw.survey.static/js/lib/jquery-ui.min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/underscore-min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/backbone-min.js"></script>
-  <script src="++resource++edw.survey.static/js/lib/backbone.localStorage.js"></script>
+  <!--script src="++resource++edw.survey.static/js/lib/backbone.localStorage.js"></script-->
   <script src="++resource++edw.survey.static/js/lib/tinymce/js/tinymce/tinymce.min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/select2-3.4.6/select2.min.js"></script>
   <script src="++resource++edw.survey.static/bootstrap/js/bootstrap.js"></script>
@@ -39,7 +39,8 @@
         <ul id="questions-listing" class="list-unstyled"></ul>
       </div>
       <div id="sidebar" class="col-lg-3">
-        <div data-spy="affix" data-offset-top="300">
+        <!--div data-spy="affix" data-offset-top="300"-->
+        <div>
           <div class="panel panel-default">
             <div class="panel-body">
               <button id="add-question" class="btn btn-success">Add question</button>

@@ -21,11 +21,13 @@
     });
 
     App.FieldsList = Backbone.Collection.extend({
-      model: App.Field,
-      localStorage: new Backbone.LocalStorage("FieldsListView")
+      url: "fields",
+      model: App.Field//,
+      //localStorage: new Backbone.LocalStorage("FieldsListView")
     });
 
     App.Question = Backbone.Model.extend({
+      idAttribute: "uuid",
       initialize: function(){
         this.template = App.Templates.compiled.question;
       },

@@ -6,6 +6,8 @@
 
     var App = window.edw.survey.edit.questions;
 
+    tinyMCE.baseURL="/++resource++edw.survey.static/js/lib/tinymce/js/tinymce";
+
     App.FieldView = Backbone.View.extend({
       tagName: "li",
       //className: "list-group-item",
@@ -133,6 +135,7 @@
               selector: "textarea",
               schema: "html5",
               add_unload_trigger: false,
+              theme_url: tinyMCE.baseURL + "/themes/modern/theme.min.js",
               statusbar: false
           });
         }

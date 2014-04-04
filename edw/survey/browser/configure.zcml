@@ -19,6 +19,22 @@
         permission="cmf.ModifyPortalContent"
         />
 
+    <browser:view
+        name="questions"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.Questions"
+        permission="zope2.View"
+        />
+
+    <browser:view
+        name="fields"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.Fields"
+        permission="zope2.View"
+        />
+
     <browser:resourceDirectory
         name="edw.survey.static"
         directory="."

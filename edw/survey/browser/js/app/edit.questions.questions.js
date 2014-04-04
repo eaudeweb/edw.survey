@@ -14,8 +14,9 @@
     });
 
     App.QuestionList = Backbone.Collection.extend({
-      model: App.Question,
-      localStorage: new Backbone.LocalStorage("QuestionListEdit")
+      url: "questions",
+      model: App.Question//,
+      //localStorage: new Backbone.LocalStorage("QuestionListEdit")
     });
 
     App.QuestionView = Backbone.View.extend({

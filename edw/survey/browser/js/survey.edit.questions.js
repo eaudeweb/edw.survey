@@ -109,7 +109,7 @@
       },
 
       clearData: function(){
-        window.localStorage.clear();
+        //window.localStorage.clear();
         window.location.reload();
       },
 
