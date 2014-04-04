@@ -6,8 +6,6 @@
 
     var App = window.edw.survey.edit.questions;
 
-    tinyMCE.baseURL="/++resource++edw.survey.static/js/lib/tinymce/js/tinymce";
-
     App.FieldView = Backbone.View.extend({
       tagName: "li",
       //className: "list-group-item",
@@ -126,17 +124,20 @@
         var selector = this.model.get("type") + "-" + this.model.get("uuid");
         var tmceContent = tinyMCE.get(selector).getContent();
         this.model.set({value: tmceContent}).save();
+        tinymce.remove();
       },
 
       tinyMCEInit: function(){
         var selector = "textarea#" + this.model.get("type") + "-" + this.model.get("uuid");
         if (this.model.get("uuid") !== null){
           tinymce.init({
-              selector: "textarea",
-              schema: "html5",
-              add_unload_trigger: false,
-              theme_url: tinyMCE.baseURL + "/themes/modern/theme.min.js",
-              statusbar: false
+            selector: selector,
+            schema: "html5",
+            plugins: "fullscreen code",
+            toolbar: false,
+            add_unload_trigger: false,
+            removed_menuitems: "newdocument",
+            statusbar: true
           });
         }
       }
