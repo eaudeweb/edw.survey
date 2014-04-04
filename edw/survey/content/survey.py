@@ -1,19 +1,12 @@
 """Definition of the Survey content type
 """
 
-from datetime import datetime
-
 from zope.interface import implements
-from zope.annotation.interfaces import IAnnotations
 
-from BTrees.OOBTree import OOBTree
-from persistent.dict import PersistentDict
-from persistent.list import PersistentList
 
 from Products.Archetypes import atapi
 from Products.ATContentTypes.content import folder
 from Products.ATContentTypes.content import schemata
-from Products.CMFCore.utils import getToolByName
 
 # -*- Message Factory Imported Here -*-
 

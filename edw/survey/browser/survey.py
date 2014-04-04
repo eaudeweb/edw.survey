@@ -1,7 +1,15 @@
 import json
+from datetime import datetime
 from zope.interface import implements
 from Products.Five.browser import BrowserView
 from zope.publisher.interfaces import IPublishTraverse
+from zope.annotation.interfaces import IAnnotations
+from BTrees.OOBTree import OOBTree
+from persistent.dict import PersistentDict
+from persistent.list import PersistentList
+
+from Products.CMFCore.utils import getToolByName
+from edw.survey.config import PROJECTNAME
 
 
 QUESTIONS = []
@@ -51,42 +59,42 @@ class Collection(BrowserView):
             if item["uuid"] == int(uuid):
                 return idx
 
-
-class Fields(Collection):
     def create(self):
-        FIELDS.append(self.payload)
+        data = PersistentDict(self.payload)
+        self.storage.append(data)
 
     def read(self):
         header = self.request.RESPONSE.setHeader
         header("Content-Type", "application/json")
-        return json.dumps(FIELDS, indent=2)
+        data = [dict(x) for x in self.storage]
+        return json.dumps(data, indent=2)
 
     def update(self):
-        idx = self.getIndex(FIELDS, self.request_uuid)
+        idx = self.getIndex(self.storage, self.request_uuid)
         if not idx:
             return self.create();
-        FIELDS[idx] = self.payload
+        self.storage[idx] = PersistentDict(self.payload)
 
     def delete(self):
-        idx = self.getIndex(FIELDS, self.request_uuid)
-        del FIELDS[idx]
+        idx = self.getIndex(self.storage, self.request_uuid)
+        del self.storage[idx]
+
+    @property
+    def storage(self):
+        annotations = IAnnotations(self.context)
+        annotation = annotations.setdefault(PROJECTNAME, OOBTree())
+        store = annotation.get(self.storage_name, [])
+        if not store or not isinstance(store, PersistentList):
+            annotation[self.storage_name] = PersistentList(store)
+        return annotation[self.storage_name]
+
+
+class Fields(Collection):
+
+    storage_name = "fields"
 
 
 class Questions(Collection):
-    def create(self):
-        QUESTIONS.append(self.payload)
 
-    def read(self):
-        header = self.request.RESPONSE.setHeader
-        header("Content-Type", "application/json")
-        return json.dumps(QUESTIONS, indent=2)
+    storage_name = "questions"
 
-    def update(self):
-        idx = self.getIndex(QUESTIONS, self.request_uuid)
-        if not idx:
-            return self.create();
-        QUESTIONS[idx] = self.payload
-
-    def delete(self):
-        idx = self.getIndex(QUESTIONS, self.request_uuid)
-        del QUESTIONS[idx]

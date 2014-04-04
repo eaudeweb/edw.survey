@@ -157,7 +157,10 @@
       initialize: function(){
         App.FieldView.prototype.initialize.apply(this);
         this.fields = App.application.fields;
-        this.listenTo(this.fields, "change", this.cleanupFields);
+        this.listenTo(this.fields, "change", function(){
+          this.cleanupFields();
+          this.render();
+        });
       },
 
       startEdit: function(){
@@ -173,8 +176,6 @@
       adjustSize: function(dimension, amount){
         var dim = this.model.get(dimension);
         App.application.fields.get(this.model).set(dimension, dim + amount).save();
-        //this.cleanupFields();
-        this.render();
       },
 
       addColumn: function(){
@@ -231,8 +232,6 @@
           new_data.uuid = new Date().getTime();
         }
         this.fields.create(new_data);
-        this.fields.fetch();
-        this.render();
       },
 
       render: function(){
