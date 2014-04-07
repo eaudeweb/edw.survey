@@ -103,8 +103,10 @@
       },
 
       addQuestion: function(){
+        var length = this.questionsView.collection.length + 1;
         var question = this.questionsView.collection.create({
-          uuid: new Date().getTime()
+          uuid: new Date().getTime(),
+          name: '#' + length
         });
       },
 

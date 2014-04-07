@@ -24,7 +24,11 @@
       model: null,
 
       events: {
-        "click .delete-question": "deleteQuestion"
+        "click .delete-question": "deleteQuestion",
+        "dblclick .panel-heading": "startEdit",
+        "click .btn-question-save": "endEdit",
+        "click .btn-question-cancel": "cancelEdit",
+        "keyup .name-grabber": "handleKeyUp",
       },
 
       initialize: function(){
@@ -60,6 +64,31 @@
 
       deleteQuestion: function(){
         this.model.destroy();
+      },
+      
+      startEdit: function(){
+        this.input = this.$(".edit-mode .name-grabber");
+        this.$el.find(".panel").addClass("editing");
+        this.input.focus();
+      },
+
+      endEdit: function(){
+        this.$el.find(".panel").removeClass("editing");
+        this.model.set({name: this.input.val()}).save();
+      },
+
+      cancelEdit: function() {
+        this.$el.find(".panel").removeClass("editing");
+      },
+
+      handleKeyUp: function(e) {
+        var code = e.keyCode || e.which;
+
+        if(code == 13) {
+         this.endEdit();
+        } else if(code == 27) {
+          this.cancelEdit();
+        }
       },
 
       removeField: function(data){

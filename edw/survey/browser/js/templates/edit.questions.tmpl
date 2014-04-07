@@ -1,10 +1,15 @@
 <script id="question-template" type="text/x-underscore-template">
     <div class="question">
         <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-heading view-mode">
                 <button class="delete-question btn btn-danger btn-xs">
                     <span class="glyphicon glyphicon-remove-sign"></span></button>
                 Question: <%= name %></h2>
+            </div>
+            <div class="panel-heading edit-mode">
+                <input type="text" class="name-grabber" name="name-grabber" value="<%= name %>"/>
+                <button class="btn btn-xs btn-question-save">Save</button>
+                <button class="btn btn-xs btn-question-cancel">Cancel</button>
             </div>
             <div class="panel-body">
                 <div class="question-body"></div>
