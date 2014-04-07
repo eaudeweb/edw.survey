@@ -110,11 +110,12 @@ class ImportExportView(CommonView, BrowserView):
 
     def importer(self):
         data = json.loads(self.request.importfile.read())
-        for question in data["questions"]:
-            annotations = IAnnotations(self.context)
-            annotation = annotations.setdefault(PROJECTNAME, OOBTree())
-            store = annotation.get("questions")
-            store.append(PersistentDict(question))
+        storage_names = [Fields.storage_name, Questions.storage_name]
+        annotations = IAnnotations(self.context)
+        annotation = annotations.setdefault(PROJECTNAME, OOBTree())
+        for name in storage_names:
+            annotation[name] = PersistentList()
+            annotation[name].extend([PersistentDict(x) for x in data[name]])
 
 
     def exporter(self):
