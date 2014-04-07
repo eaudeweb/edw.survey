@@ -30,31 +30,62 @@
     App.FieldMapping =  {
       init: function(){
         this.labelField = {
-          viewer: App.FieldView
+          viewer: App.FieldView,
+          valueGetter: function(){ return false; }
         };
         this.richTextBlockField = {
-          viewer: App.RichTextBlockFieldView
+          viewer: App.RichTextBlockFieldView,
+          valueGetter: function(){ return false; }
         };
         this.textBlockField = {
-          viewer: App.FieldView
+          viewer: App.FieldView,
+          valueGetter: function(){ return false; }
         };
         this.textInputField = {
-          viewer: App.FieldView
+          viewer: App.FieldView,
+          valueGetter: function(elem){
+            return elem.find("input").val();
+          }
         };
         this.textField = {
-          viewer: App.FieldView
+          viewer: App.FieldView,
+          valueGetter: function(){ return false; }
         };
         this.selectField = {
-          viewer: App.FieldView
+          viewer: App.FieldView,
+          valueGetter: function(elem){
+            return elem.find("select").val();
+          }
         };
         this.radioField = {
-          viewer: App.CheckboxFieldView
+          viewer: App.CheckboxFieldView,
+          valueGetter: function(elem){
+            var input = elem.find("input");
+            var value;
+            if (input.is(":checked")){
+              value = input.val();
+            } else {
+              value = false;
+            }
+            return value;
+          }
         };
         this.checkboxField = {
-          viewer: App.CheckboxFieldView
+          viewer: App.CheckboxFieldView,
+          valueGetter: function(elem){
+            var input = elem.find("input");
+            var value;
+            if (input.is(":checked")){
+              value = input.val();
+            } else {
+              value = false;
+            }
+            return value;
+          }
         };
         this.tableLayout = {
-          viewer: App.TableLayoutView
+          viewer: App.TableLayoutView,
+          valueGetter: function(){ return false; }
         };
       }
     };

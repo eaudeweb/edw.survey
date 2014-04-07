@@ -120,7 +120,11 @@
         //var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
         var viewer = App.FieldMapping[fieldType].viewer;
         var view = new viewer({model: field});
-        $(".question-body", this.$el).append(view.render().el);
+        var rendered_view = view.render();
+        var rendered_el = $(rendered_view.el);
+        rendered_el.addClass("survey-field ");
+        rendered_el.data("field-data", field.toJSON());
+        $(".question-body", this.$el).append(rendered_el);
       }
 
     });
@@ -174,6 +178,21 @@
 
       displayQuestion: function(question){
         this.questionsView.renderOne(question);
+      },
+
+      getAnswer: function(){
+        var answer = {};
+        var formfields = $(".survey-field");
+        _.each(formfields, function(elem){
+          var $elem = $(elem);
+          var data = $elem.data("field-data");
+          var value = App.FieldMapping[data.type].valueGetter($elem);
+          answer[data.uuid] = {
+            field: data,
+            answer: value
+          };
+        }, this);
+        return answer;
       }
     });
 
@@ -184,6 +203,21 @@
         App.FieldMapping.init();
         App.application = new App.AppView();
         App.application.render();
+        $("form[action='answer']").on("submit", function(evt){
+          evt.preventDefault();
+          var answer = App.application.getAnswer();
+          $.ajax({
+            url: "answer",
+            cache: false,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(answer),
+            success: function(response){
+              console.log("sent!");
+            }
+          });
+          return false;
+        });
       }
     });
   });

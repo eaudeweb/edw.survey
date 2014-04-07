@@ -36,6 +36,15 @@
         />
 
     <browser:page
+        name="clear"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.ClearDataView"
+        attribute="clear"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="answer"
         for="edw.survey.interfaces.ISurvey"
         layer="edw.survey.interfaces.ISurveyInstalled"

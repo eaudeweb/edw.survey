@@ -1,4 +1,8 @@
 import json
+import hashlib
+import random
+
+from time import time
 from datetime import datetime
 from zope.interface import implements
 from Products.Five.browser import BrowserView
@@ -18,14 +22,15 @@ FIELDS = []
 
 class CommonView(BrowserView):
 
-    @property
-    def storage(self):
+    def get_storage(self, default=PersistentList):
         annotations = IAnnotations(self.context)
         annotation = annotations.setdefault(PROJECTNAME, OOBTree())
         store = annotation.get(self.storage_name, [])
-        if not store or not isinstance(store, PersistentList):
-            annotation[self.storage_name] = PersistentList(store)
+        if not store or not isinstance(store, default):
+            annotation[self.storage_name] = default(store)
         return annotation[self.storage_name]
+
+    storage = property(get_storage)
 
 
 class Collection(CommonView, BrowserView):
@@ -101,9 +106,54 @@ class Questions(Collection):
 
     storage_name = "questions"
 
+
+class ClearDataView(CommonView):
+    def clear(self):
+        annotations = IAnnotations(self.context)
+        annotations[PROJECTNAME] = OOBTree()
+        self.context.plone_utils.addPortalMessage("Survey data cleared.", 'info')
+        return self.request.RESPONSE.redirect(self.context.absolute_url() + "/survey_edit")
+
+
+
 class SubmitAnswerView(CommonView, BrowserView):
+
+    storage_name = "answers"
+
+
+    @property
+    def storage(self):
+        return self.get_storage(default=PersistentDict)
+
+    def generateToken(self):
+        cookie = self.request.cookies.get("surveyid", "")
+        if cookie:
+            return cookie
+        seed = "{0}{1}".format(time(), random.random())
+        token = hashlib.sha1(seed).hexdigest()
+        self.request.RESPONSE.setCookie("surveyid", token, path=self.context.absolute_url())
+        return token
+
+    def getUserId(self):
+        portal_membership = getToolByName(self.context, 'portal_membership')
+        if portal_membership.isAnonymousUser():
+            return self.generateToken()
+        else:
+            return portal_membership.getAuthenticatedMember().getId()
+
     def save(self):
-        return self.request
+        self.request.stdin.seek(0)
+        payload = json.loads(self.request.stdin.read())
+        userid = self.getUserId()
+        self.storage[userid] = PersistentDict()
+        for key, value in payload.items():
+            answer = value["answer"]
+            if answer:
+                self.storage[userid][key] = value["answer"]
+
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        return json.dumps(dict(self.storage[userid]), indent=2)
 
 
 class ImportExportView(CommonView, BrowserView):
@@ -116,6 +166,8 @@ class ImportExportView(CommonView, BrowserView):
         for name in storage_names:
             annotation[name] = PersistentList()
             annotation[name].extend([PersistentDict(x) for x in data[name]])
+        self.context.plone_utils.addPortalMessage("Import successful.", 'info')
+        return self.request.RESPONSE.redirect(self.context.absolute_url() + "/survey_edit")
 
 
     def exporter(self):
