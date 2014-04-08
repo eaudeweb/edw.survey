@@ -1,4 +1,4 @@
-/*global Backbone */
+/*global Backbone document console jQuery*/
 
 
 (function($){
@@ -24,34 +24,7 @@
       url: "questions",
       initialize: function(){
         this.model = App.Question;
-      }//,
-      /*localStorage: function(){
-        var edit = "QuestionListEdit";
-        var view = "QuestionListAnswers";
-        var view_storage = localStorage.getItem(view);
-        var edit_storage = localStorage.getItem(edit);
-
-        var copyStorageKeys = function(){
-          _.each(edit_storage.split(","), function(val){
-            var viewKey = view + "-" + val;
-            var editKey = edit + "-" + val;
-            localStorage.setItem(viewKey, localStorage.getItem(editKey));
-          }, this);
-
-        };
-
-        if (_.has(localStorage, view) === true){
-          if (view_storage != edit_storage){
-            localStorage.removeItem(view);
-            localStorage.setItem(view, edit_storage);
-            copyStorageKeys();
-          }
-        } else {
-          localStorage.setItem(view, edit_storage);
-          copyStorageKeys();
-        }
-        return new Backbone.LocalStorage(view);
-      }()*/
+      }
     });
 
 
@@ -117,7 +90,6 @@
 
       renderField: function(field){
         var fieldType = field.get("type");
-        //var newmodel = new App.FieldMapping[fieldType].constructor(field.toJSON());
         var viewer = App.FieldMapping[fieldType].viewer;
         var view = new viewer({model: field});
         var rendered_view = view.render();
@@ -213,7 +185,7 @@
             contentType: "application/json",
             data: JSON.stringify(answer),
             success: function(response){
-              console.log("sent!");
+              window.location.reload();
             }
           });
           return false;

@@ -54,6 +54,15 @@
         />
 
     <browser:page
+        name="view_answers"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.AnswersView"
+	template="templates/answers.pt"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="export"
         for="edw.survey.interfaces.ISurvey"
         layer="edw.survey.interfaces.ISurveyInstalled"

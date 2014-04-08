@@ -1,0 +1,59 @@
+<html metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone" >
+
+<metal:block fill-slot="top_slot"
+  tal:define="disable_column_one python:request.set('disable_plone.leftcolumn',1);
+              disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+
+<metal:styleslot fill-slot="style_slot">
+  <link rel="stylesheet" href="++resource++edw.survey.static/bootstrap/css/bootstrap.css" />
+  <link rel="stylesheet" href="++resource++edw.survey.static/css/survey.css" />
+  <link rel="stylesheet" href="++resource++edw.survey.static/js/lib/select2-3.4.6/select2.css" />
+</metal:styleslot>
+
+<metal:javascriptslot fill-slot="javascript_head_slot">
+  <script src="++resource++edw.survey.static/js/lib/jquery-2.0.3.min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/jquery-ui.min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/underscore-min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/backbone-min.js"></script>
+  <!--script src="++resource++edw.survey.static/js/lib/backbone.localStorage.js"></script-->
+  <script src="++resource++edw.survey.static/js/lib/tinymce/js/tinymce/tinymce.min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/select2-3.4.6/select2.min.js"></script>
+  <script src="++resource++edw.survey.static/bootstrap/js/bootstrap.js"></script>
+  <script src="++resource++edw.survey.static/js/survey.edit.questions.js"></script>
+  <script src="++resource++edw.survey.static/js/app/utils.js"></script>
+  <script src="++resource++edw.survey.static/js/app/fields.js"></script>
+  <script src="++resource++edw.survey.static/js/app/questions.js"></script>
+  <script src="++resource++edw.survey.static/js/app/edit.questions.fields.js"></script>
+  <script src="++resource++edw.survey.static/js/app/edit.questions.questions.js"></script>
+</metal:javascriptslot>
+
+<body>
+
+<metal:main fill-slot="main">
+  <div class="bootstrap" tal:define="answers view/answers">
+    <table class="table">
+      <thead>
+	<tr><th>User id</th><th>Answer</th></tr>
+      </thead>
+      <tbody>
+	<tr tal:repeat="userid python:answers.keys()">
+	  <td tal:content="userid"></td>
+	  <td tal:define="useranswers python:answers[userid]">
+	    <ul class="list-unstyled">
+	      <li tal:repeat="fieldid python: useranswers.keys()">
+		<span tal:replace="fieldid"/>:
+		<span tal:replace="python:useranswers[fieldid]" />
+	      </li>
+	    </ul>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+  </div>
+</metal:main>
+
+</body>
+
+</html>

@@ -3,7 +3,6 @@ import hashlib
 import random
 
 from time import time
-from datetime import datetime
 from zope.interface import implements
 from Products.Five.browser import BrowserView
 from zope.publisher.interfaces import IPublishTraverse
@@ -89,7 +88,7 @@ class Collection(CommonView, BrowserView):
     def update(self):
         idx = self.getIndex(self.storage, self.request_uuid)
         if not idx:
-            return self.create();
+            return self.create()
         self.storage[idx] = PersistentDict(self.payload)
 
     def delete(self):
@@ -107,19 +106,27 @@ class Questions(Collection):
     storage_name = "questions"
 
 
+class AnswersCollection(Collection):
+    pass
+
+
+class AnswersFields(Collection):
+    storage_name = "answerfields"
+
+
 class ClearDataView(CommonView):
     def clear(self):
         annotations = IAnnotations(self.context)
         annotations[PROJECTNAME] = OOBTree()
-        self.context.plone_utils.addPortalMessage("Survey data cleared.", 'info')
-        return self.request.RESPONSE.redirect(self.context.absolute_url() + "/survey_edit")
-
+        message = "Survey data cleared."
+        self.context.plone_utils.addPortalMessage(message, 'info')
+        redirect_url = self.context.absolute_url() + "/survey_edit"
+        return self.request.RESPONSE.redirect(redirect_url)
 
 
 class SubmitAnswerView(CommonView, BrowserView):
 
     storage_name = "answers"
-
 
     @property
     def storage(self):
@@ -131,7 +138,8 @@ class SubmitAnswerView(CommonView, BrowserView):
             return cookie
         seed = "{0}{1}".format(time(), random.random())
         token = hashlib.sha1(seed).hexdigest()
-        self.request.RESPONSE.setCookie("surveyid", token, path=self.context.absolute_url())
+        cookie_path = self.context.absolute_url()
+        self.request.RESPONSE.setCookie("surveyid", token, path=cookie_path)
         return token
 
     def getUserId(self):
@@ -167,8 +175,8 @@ class ImportExportView(CommonView, BrowserView):
             annotation[name] = PersistentList()
             annotation[name].extend([PersistentDict(x) for x in data[name]])
         self.context.plone_utils.addPortalMessage("Import successful.", 'info')
-        return self.request.RESPONSE.redirect(self.context.absolute_url() + "/survey_edit")
-
+        redirect_url = self.context.absolute_url() + "/survey_edit"
+        return self.request.RESPONSE.redirect(redirect_url)
 
     def exporter(self):
         annotations = IAnnotations(self.context)
@@ -181,3 +189,13 @@ class ImportExportView(CommonView, BrowserView):
         data["questions"] = [dict(x) for x in annotation["questions"]]
         return json.dumps(data, indent=2)
 
+
+class AnswersView(CommonView):
+    storage_name = "answers"
+
+    @property
+    def storage(self):
+        return self.get_storage(default=PersistentDict)
+
+    def answers(self):
+        return self.storage

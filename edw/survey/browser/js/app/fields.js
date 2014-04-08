@@ -1,4 +1,4 @@
-/*global Backbone */
+/*global Backbone _ jQuery document*/
 
 (function($){
 

@@ -27,6 +27,9 @@
   <action title="Edit questions" action_id="survey_edit" category="object" condition_expr="" url_expr="string:${object_url}/survey_edit" visible="True">
     <permission value="Modify portal content"/>
   </action>
+  <action title="Answers" action_id="view_answers" category="object" condition_expr="" url_expr="string:${object_url}/view_answers" visible="True">
+    <permission value="Modify portal content"/>
+  </action>
   <action title="Edit" action_id="edit" category="object" condition_expr="" url_expr="string:${object_url}/edit" visible="True">
     <permission value="Modify portal content"/>
   </action>
