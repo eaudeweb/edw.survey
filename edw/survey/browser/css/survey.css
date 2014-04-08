@@ -34,7 +34,7 @@
 
 
 div.contents {
-    margin-top: 10px;
+    margin: 1px 0 0 0;
 }
 
 .view-mode, .edit-mode {
@@ -50,6 +50,26 @@ div.contents {
 
 .edit-mode textarea.value-grabber {
     height: 100px;
+}
+
+.view-mode * {
+    float: left;
+}
+
+.view-mode td, .view-mode tr  {
+    float: none;
+}
+
+.view-mode {
+    overflow: hidden;
+}
+
+.contents input[type='text'] {
+    max-width: 134px;
+}
+
+.glyphicon {
+    margin: 0 1px 1px 1px;
 }
 
 .editing > .edit-mode {
