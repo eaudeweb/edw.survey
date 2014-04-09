@@ -20,6 +20,15 @@ QUESTIONS = []
 FIELDS = []
 
 
+LABEL_FIELD_TYPES = ["labelField", "textBlockField", "richTextBlockField"]
+INPUT_FIELD_TYPES = [
+    "textInputField",
+    "selectField",
+    "radioField",
+    "checkboxField"
+]
+
+
 def getIndex(collection, value, prop="uuid"):
     for idx, item in enumerate(collection):
         if item[prop] == int(value):
@@ -239,5 +248,33 @@ class AnswersView(CommonView):
     def storage(self):
         return self.get_storage(default=PersistentDict)
 
+    def groupFields(self, fields, questionIds):
+        data = {}
+        last_label = {}
+        for field in fields:
+            parent = field["parentID"]
+            parentdict = data.setdefault(parent, {})
+            fieldType = field["type"]
+            uuid = field["uuid"]
+
+            last_label.setdefault(parent, "")
+
+            data.setdefault(parent, "")
+
+            if fieldType in LABEL_FIELD_TYPES:
+                parentdict.setdefault(uuid, [])
+                last_label[parent] = uuid
+
+            if fieldType in INPUT_FIELD_TYPES:
+                parentdict.setdefault(last_label[parent], []).append(field)
+
+        return data
+
     def answers(self):
-        return self.storage
+        data = {}
+        questionIds = [x["uuid"] for x in self.get_storage("questions")]
+        for userid, fields in self.storage.items():
+            data[userid] = self.groupFields(fields, questionIds)
+        from pprint import pprint
+        pprint(data)
+        return data
