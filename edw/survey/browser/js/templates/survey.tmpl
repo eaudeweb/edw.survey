@@ -13,7 +13,7 @@
 </script>
 <script id="textInputField-template" type="text/x-underscore-template">
   <% var value = data.answer ? data.answer : data.value %>
-  <input type="text" id="textInputField" name="textInputField" value="<%= value %>" />
+  <input type="text" class="input-type-field" name="textInputField" value="<%= value %>" />
 </script>
 <script id="labelField-template" type="text/x-underscore-template">
         <label><%= data.value %></label>
@@ -25,7 +25,7 @@
         <div><%= data.value %></div>
 </script>
 <script id="selectField-template" type="text/x-underscore-template">
-        <select for="textField">
+        <select class="input-type-field" for="textField">
             <% var options = data.value.split("\n"); %>
             <% for(var i = 0; i < options.length; i++) {
                     var val = options[i];
@@ -42,9 +42,9 @@
         <label>
           <%
           if(data.answer === data.value){
-              print('<input name="'+data.parentID+'-'+data.group+'" value="'+data.value+'" type="'+data.fieldType+'" checked="checked"></input>');
+              print('<input class="input-type-field" name="'+data.parentID+'-'+data.group+'" value="'+data.value+'" type="'+data.fieldType+'" checked="checked"></input>');
           } else {
-              print('<input name="'+data.parentID+'-'+data.group+'" value="'+data.value+'" type="'+data.fieldType+'"></input>');
+              print('<input class="input-type-field" name="'+data.parentID+'-'+data.group+'" value="'+data.value+'" type="'+data.fieldType+'"></input>');
          }
           %>
           <%= data.value %>

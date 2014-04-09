@@ -38,7 +38,7 @@
       </thead>
       <tbody>
 	<tr tal:repeat="userid python:answers.keys()">
-	  <td tal:content="userid"></td>
+	  <td><a tal:attributes="href string:${here/absolute_url}?viewAs=${userid}" tal:content="userid"></a></td>
 	  <td tal:define="useranswers python:answers[userid]">
 	    <ul class="list-unstyled">
 	      <li tal:repeat="field useranswers">

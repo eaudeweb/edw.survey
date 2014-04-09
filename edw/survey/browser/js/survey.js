@@ -100,8 +100,14 @@
         rendered_el.addClass("survey-field ");
         rendered_el.data("field-data", field.toJSON());
         $(".question-body", this.$el).append(rendered_el);
-      }
+        this.checkViewAs();
+      },
 
+      checkViewAs: function(){
+        if(App.viewAs){
+          $("#content .question .input-type-field").prop("disabled", true);
+        }
+      }
     });
 
     App.QuestionsView = Backbone.View.extend({
@@ -184,6 +190,9 @@
           var listing = $("#questions-listing");
           form.parent().append(listing);
           form.remove();
+          var info = $('<div class="alert alert-info"></div>');
+          info.html('<strong>Attention!</strong> You are currently viewing the survey as it appears for <strong>' + App.viewAs + '</strong>.');
+          $("#application").prepend(info);
         }
         $("form[action='answer']").on("submit", function(evt){
           evt.preventDefault();

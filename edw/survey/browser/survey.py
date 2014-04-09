@@ -20,9 +20,9 @@ QUESTIONS = []
 FIELDS = []
 
 
-def getIndex(collection, uuid):
+def getIndex(collection, value, prop="uuid"):
     for idx, item in enumerate(collection):
-        if item["uuid"] == int(uuid):
+        if item[prop] == int(value):
             return idx
 
 
@@ -115,10 +115,30 @@ class Collection(CommonView, BrowserView):
         if not idx:
             return self.create()
         self.storage[idx] = PersistentDict(self.payload)
+        self.updateAnswers(self.payload)
 
     def delete(self):
         idx = getIndex(self.storage, self.request_uuid)
+        self.deleteAnswers(self.request_uuid)
         del self.storage[idx]
+
+    def updateAnswers(self, field):
+        storage = self.get_storage("answers", PersistentDict)
+        for userid, fields in storage.items():
+            uuid = field["uuid"]
+            idx = getIndex(fields, uuid)
+            persistentField = PersistentDict(field)
+            if not idx:
+                storage[userid].append(persistentField)
+            else:
+                storage[userid][idx] = persistentField
+
+    def deleteAnswers(self, uuid):
+        storage = self.get_storage("answers", PersistentDict)
+        for userid, fields in storage.items():
+            idx = getIndex(fields, uuid)
+            if idx:
+                del storage[userid][idx]
 
 
 class Fields(Collection):
