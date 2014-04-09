@@ -1,3 +1,4 @@
+from copy import deepcopy
 import json
 import hashlib
 import random
@@ -19,17 +20,46 @@ QUESTIONS = []
 FIELDS = []
 
 
+def getIndex(collection, uuid):
+    for idx, item in enumerate(collection):
+        if item["uuid"] == int(uuid):
+            return idx
+
+
 class CommonView(BrowserView):
 
-    def get_storage(self, default=PersistentList):
+    def get_storage(self, storage_name=None, default=PersistentList):
+        if not storage_name:
+            storage_name = self.storage_name
         annotations = IAnnotations(self.context)
         annotation = annotations.setdefault(PROJECTNAME, OOBTree())
-        store = annotation.get(self.storage_name, [])
+        store = annotation.get(storage_name, [])
         if not store or not isinstance(store, default):
-            annotation[self.storage_name] = default(store)
-        return annotation[self.storage_name]
+            annotation[storage_name] = default(store)
+        return annotation[storage_name]
 
     storage = property(get_storage)
+
+    def getUserId(self):
+        portal_membership = getToolByName(self.context, 'portal_membership')
+        if portal_membership.isAnonymousUser():
+            return self.getToken()
+        else:
+            return portal_membership.getAuthenticatedMember().getId()
+
+    def generateToken(self):
+        seed = "{0}{1}".format(time(), random.random())
+        token = hashlib.sha1(seed).hexdigest()
+        return token
+
+    def getToken(self):
+        cookie = self.request.cookies.get("surveyid", "")
+        if cookie:
+            return cookie
+        token = self.generateToken()
+        cookie_path = self.context.absolute_url()
+        self.request.RESPONSE.setCookie("surveyid", token, path=cookie_path)
+        return token
 
 
 class Collection(CommonView, BrowserView):
@@ -70,11 +100,6 @@ class Collection(CommonView, BrowserView):
         self.request_uuid = name
         return self.handle()
 
-    def getIndex(self, collection, uuid):
-        for idx, item in enumerate(collection):
-            if item["uuid"] == int(uuid):
-                return idx
-
     def create(self):
         data = PersistentDict(self.payload)
         self.storage.append(data)
@@ -86,13 +111,13 @@ class Collection(CommonView, BrowserView):
         return json.dumps(data, indent=2)
 
     def update(self):
-        idx = self.getIndex(self.storage, self.request_uuid)
+        idx = getIndex(self.storage, self.request_uuid)
         if not idx:
             return self.create()
         self.storage[idx] = PersistentDict(self.payload)
 
     def delete(self):
-        idx = self.getIndex(self.storage, self.request_uuid)
+        idx = getIndex(self.storage, self.request_uuid)
         del self.storage[idx]
 
 
@@ -106,12 +131,25 @@ class Questions(Collection):
     storage_name = "questions"
 
 
-class AnswersCollection(Collection):
-    pass
+class AnswerFields(Collection):
+    storage_name = "answers"
+    request_uuid = None
 
+    @property
+    def storage(self):
+        return self.get_storage(default=PersistentDict)
 
-class AnswersFields(Collection):
-    storage_name = "answerfields"
+    def get_fields(self):
+        fields = self.get_storage(storage_name="fields")
+        userid = self.request_uuid or self.getUserId()
+        user_storage = self.storage.setdefault(userid, deepcopy(fields))
+        return user_storage
+
+    def read(self):
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        data = [dict(x) for x in self.get_fields()]
+        return json.dumps(data, indent=2)
 
 
 class ClearDataView(CommonView):
@@ -132,36 +170,20 @@ class SubmitAnswerView(CommonView, BrowserView):
     def storage(self):
         return self.get_storage(default=PersistentDict)
 
-    def generateToken(self):
-        cookie = self.request.cookies.get("surveyid", "")
-        if cookie:
-            return cookie
-        seed = "{0}{1}".format(time(), random.random())
-        token = hashlib.sha1(seed).hexdigest()
-        cookie_path = self.context.absolute_url()
-        self.request.RESPONSE.setCookie("surveyid", token, path=cookie_path)
-        return token
-
-    def getUserId(self):
-        portal_membership = getToolByName(self.context, 'portal_membership')
-        if portal_membership.isAnonymousUser():
-            return self.generateToken()
-        else:
-            return portal_membership.getAuthenticatedMember().getId()
-
     def save(self):
         self.request.stdin.seek(0)
         payload = json.loads(self.request.stdin.read())
         userid = self.getUserId()
-        self.storage[userid] = PersistentDict()
         for key, value in payload.items():
             answer = value["answer"]
             if answer:
-                self.storage[userid][key] = value["answer"]
+                idx = getIndex(self.storage[userid], key)
+                self.storage[userid][idx]["answer"] = value["answer"]
 
         header = self.request.RESPONSE.setHeader
         header("Content-Type", "application/json")
-        return json.dumps(dict(self.storage[userid]), indent=2)
+        data = [dict(field) for field in self.storage[userid]]
+        return json.dumps(data, indent=2)
 
 
 class ImportExportView(CommonView, BrowserView):

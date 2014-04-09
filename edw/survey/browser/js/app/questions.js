@@ -22,8 +22,17 @@
 
     App.FieldsList = Backbone.Collection.extend({
       url: "fields",
-      model: App.Field//,
-      //localStorage: new Backbone.LocalStorage("FieldsListView")
+      model: App.Field
+    });
+
+    App.AnswerFieldsList = App.FieldsList.extend({
+      url: function(){
+          var base = "answer_fields";
+          if(App.viewAs){
+            return base + "/" + App.viewAs;
+          }
+          return base;
+      }
     });
 
     App.Question = Backbone.Model.extend({
@@ -34,7 +43,6 @@
       defaults: function(){
         var def = {
           name:  "the first!"//,
-          //fields: new App.FieldsList()
         };
         return def;
       },

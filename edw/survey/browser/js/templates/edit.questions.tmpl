@@ -4,10 +4,10 @@
             <div class="panel-heading view-mode">
                 <button class="delete-question btn btn-danger btn-xs">
                     <span class="glyphicon glyphicon-remove-sign"></span></button>
-                Question: <%= name %></h2>
+                Question: <%= data.name %></h2>
             </div>
             <div class="panel-heading edit-mode">
-                <input type="text" class="name-grabber" name="name-grabber" value="<%= name %>"/>
+                <input type="text" class="name-grabber" name="name-grabber" value="<%= data.name %>"/>
                 <button class="btn btn-xs btn-question-save">Save</button>
                 <button class="btn btn-xs btn-question-cancel">Cancel</button>
             </div>
@@ -19,38 +19,38 @@
 </script>
 <script id="Field-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <span class="<%= type %> glyphicon glyphicon-th"></span>
+        <span class="<%= data.type %> glyphicon glyphicon-th"></span>
         <div class="contents">
             <!-- Contents via Backbone View -->
         </div>
-        <span class="<%= type %> glyphicon glyphicon-trash"></span>
-        <span class="<%= type %> glyphicon glyphicon-edit"></span>
+        <span class="<%= data.type %> glyphicon glyphicon-trash"></span>
+        <span class="<%= data.type %> glyphicon glyphicon-edit"></span>
     </div>
     <div class="edit-mode">
         <span class="contents">
             <!-- Contents via Backbone View -->
         </span>
-        <span class="<%= type %> glyphicon glyphicon-check"></span>
+        <span class="<%= data.type %> glyphicon glyphicon-check"></span>
     </div>
 </script>
 <script id="textInputField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <input type="text" id="textInputField" name="textInputField" value="<%= value %>" />
+        <input type="text" id="textInputField" name="textInputField" value="<%= data.value %>" />
     </div>
     <div class="edit-mode">
-        <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
+        <input type="text" class="value-grabber" name="value-grabber" value="<%= data.value %>"/>
     </div>
 </script>
 <script id="checkboxField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <label><input name="<%= name %>" value="<%= value %>" type="<%= fieldType %>"></input><%= value %></label>
+        <label><input name="<%= data.name %>" value="<%= data.value %>" type="<%= data.fieldType %>"></input><%= data.value %></label>
     </div>
     <div class="edit-mode">
-        <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
+        <input type="text" class="value-grabber" name="value-grabber" value="<%= data.value %>"/>
         <select class="group-grabber" name="group-grabber">
             <%
                 for (var i=1;i<=7; i++){
-                    if("group" + i === group){
+                    if("group" + i === data.group){
                         var elem = '<option value="group'+ i +'" selected="selected">Group ' + i + '</option>';
                     } else {
                         var elem = '<option value="group'+ i +'">Group ' + i + '</option>';
@@ -64,32 +64,32 @@
 </script>
 <script id="labelField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <label><%= value %></label>
+        <label><%= data.value %></label>
     </div>
     <div class="edit-mode">
-        <input type="text" class="value-grabber" name="value-grabber" value="<%= value %>"/>
+        <input type="text" class="value-grabber" name="value-grabber" value="<%= data.value %>"/>
     </div>
 </script>
 <script id="textBlockField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <p><%= _.escape(value) %></p>
+        <p><%= _.escape(data.value) %></p>
     </div>
     <div class="edit-mode">
-        <textarea class="value-grabber" name="value-grabber" value="<%= value %>"><%= value %></textarea>
+        <textarea class="value-grabber" name="value-grabber" value="<%= data.value %>"><%= data.value %></textarea>
     </div>
 </script>
 <script id="richTextBlockField-template" type="text/x-underscore-template">
     <div class="view-mode">
-        <div><%= value %></div>
+        <div><%= data.value %></div>
     </div>
     <div class="edit-mode">
-        <textarea class="value-grabber wants-tmce" id="<%= type %>-<%= uuid %>" name="value-grabber"><%= value %></textarea>
+        <textarea class="value-grabber wants-tmce" id="<%= data.type %>-<%= data.uuid %>" name="value-grabber"><%= data.value %></textarea>
     </div>
 </script>
 <script id="selectField-template" type="text/x-underscore-template">
     <div class="view-mode">
         <select>
-            <% var options = value.split("\n"); %>
+            <% var options = data.value.split("\n"); %>
             <% for(var i = 0; i < options.length; i++) {
                     var val = options[i];
                     print('<option value="' + val + '">' + val + '</option>');
@@ -98,7 +98,7 @@
         </select>
     </div>
     <div class="edit-mode">
-        <textarea class="value-grabber" name="value-grabber" value="<%= value %>"><%= value %></textarea>
+        <textarea class="value-grabber" name="value-grabber" value="<%= data.value %>"><%= data.value %></textarea>
     </div>
 </script>
 <script id="tableLayout-template" type="text/x-underscore-template">
@@ -109,9 +109,9 @@
         <span class="glyphicon glyphicon-arrow-right"></span>
         <table class="tableLayout">
             <tbody>
-            <% for(var i = 0; i < rows; i++) {
+            <% for(var i = 0; i < data.rows; i++) {
                     var row = ["<tr>"];
-                    for(var j = 0; j < cols; j++){
+                    for(var j = 0; j < data.cols; j++){
                         row.push("<td></td>");
                     }
                     row.push("</tr>");

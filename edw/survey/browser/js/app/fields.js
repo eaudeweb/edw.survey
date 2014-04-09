@@ -102,7 +102,7 @@
         this.set("uuid", new Date().getTime());
       },
       renderTemplate: function(){
-        return App.Templates.compiled[this.get("type")](this.attributes);
+        return App.Templates.compiled[this.get("type")]({data: this.attributes});
       }
     });
   });

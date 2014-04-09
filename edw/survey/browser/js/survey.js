@@ -1,4 +1,4 @@
-/*global Backbone document console jQuery*/
+/*global Backbone document jQuery*/
 
 
 (function($){
@@ -59,13 +59,16 @@
           var viewer = App.FieldMapping[fieldType].viewer;
           var view = new viewer({model: field});
 
+
           var rowIndex = field.get("rowPosition");
           var columnIndex = field.get("columnPosition");
 
           $(view_table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
 
         }, this);
+
         return this;
+
       }
 
     });
@@ -80,7 +83,7 @@
       },
 
       render: function(){
-        this.$el.html(this.model.template(this.model.attributes));
+        this.$el.html(this.model.template({data: this.model.attributes}));
         var fields = App.application.fields.where({parentID: this.model.get("uuid")});
         _.each(fields, function(field){
           this.renderField(field);
@@ -124,6 +127,7 @@
       }
     });
 
+    App.viewAs = $.url().param("viewAs");
 
     App.AppView = Backbone.View.extend({
 
@@ -134,7 +138,7 @@
         this.workshop = $("#workshop");
 
         this.questionsView = new App.QuestionsView();
-        this.fields = new App.FieldsList();
+        this.fields = new App.AnswerFieldsList();
         this.fields.fetch();
 
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
@@ -175,6 +179,12 @@
         App.FieldMapping.init();
         App.application = new App.AppView();
         App.application.render();
+        if (App.viewAs){
+          var form = $("#survey-answer-form");
+          var listing = $("#questions-listing");
+          form.parent().append(listing);
+          form.remove();
+        }
         $("form[action='answer']").on("submit", function(evt){
           evt.preventDefault();
           var answer = App.application.getAnswer();

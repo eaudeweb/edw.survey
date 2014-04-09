@@ -41,9 +41,8 @@
 	  <td tal:content="userid"></td>
 	  <td tal:define="useranswers python:answers[userid]">
 	    <ul class="list-unstyled">
-	      <li tal:repeat="fieldid python: useranswers.keys()">
-		<span tal:replace="fieldid"/>:
-		<span tal:replace="python:useranswers[fieldid]" />
+	      <li tal:repeat="field useranswers">
+		<span tal:replace="field"/>
 	      </li>
 	    </ul>
 	  </td>

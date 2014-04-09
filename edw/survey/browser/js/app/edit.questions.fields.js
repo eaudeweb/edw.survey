@@ -56,7 +56,7 @@
 
       render: function(){
         var modelTemplate = this.model.renderTemplate();
-        this.$el.html(this.template(this.model.attributes));
+        this.$el.html(this.template({data: this.model.attributes}));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
         $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
         return this;
@@ -117,7 +117,7 @@
 
       render: function(){
         var modelTemplate = this.model.renderTemplate();
-        this.$el.html(this.template(this.model.attributes));
+        this.$el.html(this.template({data: this.model.attributes}));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
         $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
         return this;
@@ -241,7 +241,7 @@
 
       render: function(){
         var modelTemplate = this.model.renderTemplate();
-        this.$el.html(this.template(this.model.attributes));
+        this.$el.html(this.template({data: this.model.attributes}));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
 
         this.bindDroppable();

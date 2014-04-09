@@ -2,7 +2,7 @@
     <div class="question">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <%= name %></h2>
+                <%= data.name %></h2>
             </div>
             <div class="panel-body">
                 <div class="question-body"></div>
@@ -12,36 +12,50 @@
     </div>
 </script>
 <script id="textInputField-template" type="text/x-underscore-template">
-        <input type="text" id="textInputField" name="textInputField" value="<%= value %>" />
+  <% var value = data.answer ? data.answer : data.value %>
+  <input type="text" id="textInputField" name="textInputField" value="<%= value %>" />
 </script>
 <script id="labelField-template" type="text/x-underscore-template">
-        <label><%= value %></label>
+        <label><%= data.value %></label>
 </script>
 <script id="textBlockField-template" type="text/x-underscore-template">
-        <p><%= _.escape(value) %></p>
+        <p><%= _.escape(data.value) %></p>
 </script>
 <script id="richTextBlockField-template" type="text/x-underscore-template">
-        <div><%= value %></div>
+        <div><%= data.value %></div>
 </script>
 <script id="selectField-template" type="text/x-underscore-template">
         <select for="textField">
-            <% var options = value.split("\n"); %>
+            <% var options = data.value.split("\n"); %>
             <% for(var i = 0; i < options.length; i++) {
                     var val = options[i];
-                    print('<option value="' + val + '">' + val + '</option>');
+                    if(data.answer === val){
+                        print('<option value="' + val + '">' + val + '</option>');
+                    } else {
+                        print('<option value="' + val + '" selected="selected">' + val + '</option>');
+                    }
                 }
             %>
         </select>
 </script>
 <script id="checkboxField-template" type="text/x-underscore-template">
-        <label><input name="<%= parentID %>-<%= group %>" value="<%= value %>" type="<%= fieldType %>"></input><%= value %></label>
+        <label>
+          <%
+          if(data.answer === data.value){
+              print('<input name="'+data.parentID+'-'+data.group+'" value="'+data.value+'" type="'+data.fieldType+'" checked="checked"></input>');
+          } else {
+              print('<input name="'+data.parentID+'-'+data.group+'" value="'+data.value+'" type="'+data.fieldType+'"></input>');
+         }
+          %>
+          <%= data.value %>
+        </label>
 </script>
 <script id="tableLayout-template" type="text/x-underscore-template">
         <table class="tableLayout">
             <tbody>
-            <% for(var i = 0; i < rows; i++) {
+            <% for(var i = 0; i < data.rows; i++) {
                     var row = ["<tr>"];
-                    for(var j = 0; j < cols; j++){
+                    for(var j = 0; j < data.cols; j++){
                         row.push("<td></td>");
                     }
                     row.push("</tr>");

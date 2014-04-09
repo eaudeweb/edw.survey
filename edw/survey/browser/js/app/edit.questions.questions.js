@@ -47,7 +47,7 @@
       },
 
       render: function(){
-        this.$el.html(this.model.template(this.model.attributes));
+        this.$el.html(this.model.template({data: this.model.attributes}));
         var fields = App.application.fields.where({parentID: this.model.get("uuid")});
         _.each(fields, function(field){
           this.renderField(field);
@@ -65,7 +65,7 @@
       deleteQuestion: function(){
         this.model.destroy();
       },
-      
+
       startEdit: function(){
         this.input = this.$(".edit-mode .name-grabber");
         this.$el.find(".panel").addClass("editing");
