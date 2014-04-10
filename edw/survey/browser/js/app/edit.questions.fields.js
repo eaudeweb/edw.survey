@@ -217,7 +217,7 @@
       bindDroppable: function(){
         this.$el.find("td").droppable({
           hoverClass: "tableLayout-droppable",
-          accept: "#fields-listing .ui-draggable",
+          accept: ".ui-draggable",
           greedy: true,
           tolerance: "pointer",
           drop: _.bind(this.drop, this)
@@ -228,14 +228,22 @@
         var elem = $(ui.draggable);
         var data = elem.data("backbone-view");
         var new_data = data.toJSON();
+        var parentID = data.get("parentID");
+
+        if (parentID){
+          this.fields.findWhere(data.toJSON()).destroy();
+        }
+
         var rowIndex = evt.target.parentNode.rowIndex;
         var columnIndex = evt.target.cellIndex;
         new_data.rowPosition = rowIndex;
         new_data.columnPosition = columnIndex;
         new_data.parentID = this.model.get("uuid");
+
         if (!new_data.uuid){
           new_data.uuid = new Date().getTime();
         }
+
         this.fields.create(new_data);
       },
 
