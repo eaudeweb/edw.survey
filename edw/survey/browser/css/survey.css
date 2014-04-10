@@ -52,7 +52,7 @@ div.contents {
     height: 100px;
 }
 
-.view-mode * {
+.view-mode > * {
     float: left;
 }
 
@@ -81,6 +81,12 @@ div.contents {
 
 .question-droppable .panel-body {
     background: #fbf9ee;
+}
+
+.question-title {
+    margin-left: 5px;
+    position: relative;
+    top: 3px;
 }
 
 .tableLayout-droppable {
