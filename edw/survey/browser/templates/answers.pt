@@ -32,7 +32,9 @@
 
 <metal:main fill-slot="main">
   <div class="bootstrap" tal:define="answers view/answers">
-    <div tal:content="answers"></div>
+    <p tal:content="answers"></p>
+    ]]][[[
+    <p tal:content="view/dataMapping"></p>
     <table class="table">
       <thead>
 	<tr><th>User id</th><th>Answer</th></tr>

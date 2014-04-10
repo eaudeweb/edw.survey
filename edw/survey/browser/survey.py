@@ -248,6 +248,14 @@ class AnswersView(CommonView):
     def storage(self):
         return self.get_storage(default=PersistentDict)
 
+    def dataMapping(self):
+        data = {}
+        for question in self.get_storage("questions"):
+            data.setdefault(question["uuid"], question)
+        for field in self.get_storage("fields"):
+            data[field["parentID"]].setdefault("fields", []).append(field)
+        return data
+
     def groupFields(self, fields, questionIds):
         data = {}
         last_label = {}
