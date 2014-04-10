@@ -112,6 +112,7 @@ class Collection(CommonView, BrowserView):
     def create(self):
         data = PersistentDict(self.payload)
         self.storage.append(data)
+        self.updateAnswers(self.payload)
 
     def read(self):
         header = self.request.RESPONSE.setHeader
@@ -132,6 +133,8 @@ class Collection(CommonView, BrowserView):
         del self.storage[idx]
 
     def updateAnswers(self, field):
+        if "type" not in field:
+            return
         storage = self.get_storage("answers", PersistentDict)
         for userid, fields in storage.items():
             uuid = field["uuid"]
@@ -251,38 +254,46 @@ class AnswersView(CommonView):
     def dataMapping(self):
         data = {}
         for question in self.get_storage("questions"):
-            data.setdefault(question["uuid"], question)
+            data.setdefault(question["uuid"], deepcopy(question))
         for field in self.get_storage("fields"):
-            data[field["parentID"]].setdefault("fields", []).append(field)
+            data.setdefault(field["parentID"], {})
+            fieldcopy = deepcopy(field)
+            data[field["parentID"]].setdefault("fields", []).append(fieldcopy)
         return data
 
     def groupFields(self, fields, questionIds):
-        data = {}
-        last_label = {}
-        for field in fields:
-            parent = field["parentID"]
-            parentdict = data.setdefault(parent, {})
-            fieldType = field["type"]
-            uuid = field["uuid"]
+        data = []
 
-            last_label.setdefault(parent, "")
+        qmap = self.dataMapping()
 
-            data.setdefault(parent, "")
+#        [{qid: qid, labels: [{lid:lid, fields:[]}, {}]}, {}]
 
-            if fieldType in LABEL_FIELD_TYPES:
-                parentdict.setdefault(uuid, [])
-                last_label[parent] = uuid
+        for qid in questionIds:
+            d = {"uuid": qid, "labels": []}
+            for field in qmap[qid]["fields"]:
+                fieldType = field["type"]
+                uuid = field["uuid"]
 
-            if fieldType in INPUT_FIELD_TYPES:
-                parentdict.setdefault(last_label[parent], []).append(field)
+                if fieldType in LABEL_FIELD_TYPES:
+                    d["labels"].append({"uuid": uuid,
+                                        "fields": [],
+                                        "data": field})
 
+                if fieldType in INPUT_FIELD_TYPES:
+                    answer_index = getIndex(fields, uuid)
+                    answer_field = fields[answer_index]
+                    try:
+                        d["labels"][-1]["fields"].append(answer_field)
+                    except IndexError:
+                        d["labels"].append({"uuid": uuid,
+                                            "fields": [answer_field],
+                                            "data": field})
+            data.append(d)
         return data
 
     def answers(self):
         data = {}
         questionIds = [x["uuid"] for x in self.get_storage("questions")]
         for userid, fields in self.storage.items():
-            data[userid] = self.groupFields(fields, questionIds)
-        from pprint import pprint
-        pprint(data)
+            data[userid] = self.groupFields(deepcopy(fields), questionIds)
         return data

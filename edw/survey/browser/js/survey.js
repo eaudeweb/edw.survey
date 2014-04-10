@@ -62,8 +62,11 @@
 
           var rowIndex = field.get("rowPosition");
           var columnIndex = field.get("columnPosition");
+          var rendered_el = $(view.render().el);
+          rendered_el.addClass("survey-field ");
+          rendered_el.data("field-data", field.toJSON());
 
-          $(view_table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
+          $(view_table.rows[rowIndex].cells[columnIndex]).append(rendered_el);
 
         }, this);
 
@@ -146,7 +149,6 @@
         this.questionsView = new App.QuestionsView();
         this.fields = new App.AnswerFieldsList();
         this.fields.fetch();
-
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
       },
 

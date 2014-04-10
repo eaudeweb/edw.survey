@@ -31,10 +31,7 @@
 <body>
 
 <metal:main fill-slot="main">
-  <div class="bootstrap" tal:define="answers view/answers">
-    <p tal:content="answers"></p>
-    ]]][[[
-    <p tal:content="view/dataMapping"></p>
+  <div class="bootstrap" tal:define="answers view/answers; qmap view/dataMapping">
     <table class="table">
       <thead>
 	<tr><th>User id</th><th>Answer</th></tr>
@@ -42,11 +39,21 @@
       <tbody>
 	<tr tal:repeat="userid python:answers.keys()">
 	  <td><a tal:attributes="href string:${here/absolute_url}?viewAs=${userid}" tal:content="userid"></a></td>
-	  <td tal:define="useranswers python:answers[userid]">
-	    <ul class="list-unstyled">
-	      <li tal:repeat="field useranswers">
-		<span tal:replace="field"/>
-	      </li>
+	  <td>
+	    <ul class="list-unstyled" tal:repeat="question python:answers[userid]">
+              <span tal:content="python:qmap[question['uuid']]['name']"></span>
+	      <dl tal:repeat="label python:question['labels']">
+		<dt><span tal:content="structure python:label['data']['value']"></span></dt>
+                <dd>
+                  <ul class="list-unstyled">
+                    <tal:block tal:repeat="field python:label['fields']">
+                      <tal:block define="ans python:field.get('answer', '')">
+                        <li tal:condition="ans" tal:content="ans"></li>
+                      </tal:block>
+                    </tal:block>
+                  </ul>
+                </dd>
+	      </dl>
 	    </ul>
 	  </td>
 	</tr>
