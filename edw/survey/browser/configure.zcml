@@ -19,6 +19,14 @@
         permission="cmf.ModifyPortalContent"
         />
 
+    <browser:page
+        name="survey_logic_editor"
+        for="edw.survey.interfaces.ISurvey"
+        template="templates/logic.pt"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        permission="cmf.ModifyPortalContent"
+        />
+
     <browser:view
         name="questions"
         for="edw.survey.interfaces.ISurvey"

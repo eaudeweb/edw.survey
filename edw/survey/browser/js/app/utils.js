@@ -14,6 +14,9 @@
     else if(window.edw.survey.edit.questions !== undefined) {
       App = window.edw.survey.edit.questions;
     }
+    else if(window.edw.survey.edit.logic !== undefined) {
+      App = window.edw.survey.edit.logic;
+    }
 
     App.Templates.compiled = {};
     App.Templates.load = function(data){

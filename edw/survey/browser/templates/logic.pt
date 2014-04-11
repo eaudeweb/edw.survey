@@ -1,0 +1,48 @@
+
+<html metal:use-macro="here/main_template/macros/master"
+      i18n:domain="plone" >
+
+<metal:block fill-slot="top_slot"
+  tal:define="disable_column_one python:request.set('disable_plone.leftcolumn',1);
+              disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+
+<metal:styleslot fill-slot="style_slot">
+  <link rel="stylesheet" href="++resource++edw.survey.static/bootstrap/css/bootstrap.css" />
+  <link rel="stylesheet" href="++resource++edw.survey.static/css/survey.css" />
+</metal:styleslot>
+
+<metal:javascriptslot fill-slot="javascript_head_slot">
+  <script src="++resource++edw.survey.static/js/lib/jquery-2.0.3.min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/jquery-ui.min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/underscore-min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/backbone-min.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/backbone.localStorage.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/purl.js"></script>
+  <script src="++resource++edw.survey.static/bootstrap/js/bootstrap.js"></script>
+  <script src="++resource++edw.survey.static/js/logic.js"></script>
+  <script src="++resource++edw.survey.static/js/app/utils.js"></script>
+  <script src="++resource++edw.survey.static/js/app/questions.js"></script>
+</metal:javascriptslot>
+
+<body>
+
+<metal:main fill-slot="main">
+  <div class="bootstrap">
+  <div id="application">
+    <h1>Survey - view</h1>
+    <div class="row">
+      <div id="sidebar" class="col-lg-2">
+        <ul id="questions-listing" class="list-unstyled"></ul>
+      </div>
+      <div id="displayarea" class="col-lg-10">
+        <ul class="list-unstyled added-questions">
+        </ul>
+      </div>
+    </div>
+  </div>
+  </div>
+</metal:main>
+
+</body>
+
+</html>
