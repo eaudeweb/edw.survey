@@ -23,8 +23,7 @@
       initialize: function(){
         this.template = App.Templates.compiled.FieldTemplate;
 
-        this.initDraggable();
-
+        this.$el.data('backbone-view', this.model);
         this.listenTo(this.model, "change", this.render);
         this.listenTo(this.model, "destroy", this.remove);
       },
@@ -32,8 +31,15 @@
       initDraggable: function(){
         this.$el.draggable({
           handle: ".glyphicon-th",
-          revert: true,
-          helper: "clone"
+          revert: false,
+          helper: function() {
+            var data = $(this).data("backbone-view");
+            var ret = $(this).clone();
+            ret.data("backbone-view", data);
+            return ret;
+          },
+          connectWith: '.ui-draggable',
+          connectToSortable: '.question-body, .sortable-cell'
         });
         this.$el.data("backbone-view", this.model);
       },
@@ -57,6 +63,7 @@
       render: function(){
         var modelTemplate = this.model.renderTemplate();
         this.$el.html(this.template({data: this.model.attributes}));
+        // this.$el.data('backbone-view', this.model);
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
         $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
         return this;
@@ -214,37 +221,50 @@
         });
       },
 
-      bindDroppable: function(){
-        this.$el.find("td").droppable({
-          hoverClass: "tableLayout-droppable",
-          accept: ".ui-draggable",
-          greedy: true,
+      bindSortable: function(){
+        this.$el.find(".sortable-cell").sortable({
+          items: "li",
+          receive: _.bind(this.receive, this),
+          placeholder: "highlight",
+          helper: "original",
           tolerance: "pointer",
-          drop: _.bind(this.drop, this)
+          connectWith: '.question-body, .sortable-cell',
+          start: function(event, ui) {
+            ui.item.data("backbone-view", ui.helper.data("backbone-view"));
+          },
         });
       },
 
-      drop: function(evt, ui){
-        var elem = $(ui.draggable);
+      receive: function(evt, ui){
+        var elem = $(ui.item);
+        this.fields = App.application.fields;
+        var that = this;
         var data = elem.data("backbone-view");
-        var new_data = data.toJSON();
-        var parentID = data.get("parentID");
-
-        if (parentID){
-          this.fields.findWhere(data.toJSON()).destroy();
+        if (data) {
+          var uuid = data.attributes.uuid;
+        } else {
+          var uuid = parseInt($(elem).attr('uuid'));
         }
 
+        field = this.fields.findWhere({uuid: uuid});
+        if (field) {
+          this.fields.remove(field);
+        } else {
+          field = new App.Field(data.toJSON());
+        }
         var rowIndex = evt.target.parentNode.rowIndex;
         var columnIndex = evt.target.cellIndex;
-        new_data.rowPosition = rowIndex;
-        new_data.columnPosition = columnIndex;
-        new_data.parentID = this.model.get("uuid");
+        field.set("rowPosition", rowIndex);
+        field.set("columnPosition", columnIndex);
 
-        if (!new_data.uuid){
-          new_data.uuid = new Date().getTime();
+        field.set("parentID", this.model.get("uuid"));
+        field.set("order", elem.index());
+        console.log("Index: ", elem.index());
+        if (!field.get("uuid")){
+          field.set("uuid", new Date().getTime());
         }
 
-        this.fields.create(new_data);
+        this.fields.create(field);
       },
 
       render: function(){
@@ -252,7 +272,7 @@
         this.$el.html(this.template({data: this.model.attributes}));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
 
-        this.bindDroppable();
+        this.bindSortable();
 
         var table = this.$el.find("table").get(0);
         var fields = this.fields.where({"parentID": this.model.get("uuid")});

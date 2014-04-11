@@ -4,6 +4,8 @@
             <div class="panel-heading view-mode">
                 <button class="delete-question btn btn-danger btn-xs">
                     <span class="glyphicon glyphicon-remove-sign"></span></button>
+                <button class="save-question btn btn-xs">
+                    <span class="glyphicon glyphicon-check"></span></button>
                 <span class="question-title"><%= data.name %></span>
             </div>
             <div class="panel-heading edit-mode">
@@ -112,7 +114,7 @@
             <% for(var i = 0; i < data.rows; i++) {
                     var row = ["<tr>"];
                     for(var j = 0; j < data.cols; j++){
-                        row.push("<td></td>");
+                        row.push("<td class='sortable-cell'></td>");
                     }
                     row.push("</tr>");
                     print(row.join(""));

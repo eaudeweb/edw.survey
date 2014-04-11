@@ -69,6 +69,7 @@
           var viewer = App.FieldMapping[fieldType].viewer;
           var view = new viewer({model: field});
           this.$el.append(view.render().el);
+          view.initDraggable();
         }, this);
       }
     });
