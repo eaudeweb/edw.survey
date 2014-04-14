@@ -34,15 +34,21 @@
 
       initialize: function(){
         Backbone.View.prototype.initialize.apply(this);
-
+        // this.render();
         this.listenTo(this.model, "destroy", this.remove);
         this.listenTo(this.model, "change", this.render);
-        this.listenTo(App.application.fields, "change reset add remove", this.render);
+        console.log(App.application.fields);
+        this.listenTo(App.application.fields, "change reset add", this.renderField);
+        this.listenTo(App.application.fields, "remove", this.removeField);
+
+        // this.listenTo(App.application.fields, "change reset add remove", this.render);
+        // this.listenTo(App.application.fields, "add", this.renderField);
       },
 
       render: function(){
         this.$el.html(this.model.template({data: this.model.attributes}));
         this.bindIt();
+
         var fields = App.application.fields.where({parentID: this.model.get("uuid")});
         _.each(fields, function(field){
           this.renderField(field);
@@ -69,8 +75,22 @@
         var fieldType = field.get("type");
         var viewer = App.FieldMapping[fieldType].viewer;
         var view = new viewer({model: field});
-        $(".question-body", this.$el).append(view.render().el);
-        $(view.render().el).attr('uuid', field.get('uuid'));
+        console.log(field);
+        // $(".question-body", this.$el).append(view.render().el);
+        // var question = $(".question-body", this.$el);
+        var question = this.$el.find('[question-id=' + field.get('parentID') + ']');
+        var index = field.get("order");
+        var added = question.find('[data-created=' + field.get('created') + ']');
+        if (added.length == 0) {
+          var idx_elem = question.find('li:eq(' + (index - 1) + ')');
+          if (idx_elem.length > 0){
+            idx_elem.after(view.render().el);
+          } else {
+            question.append(view.render().el);
+          }
+          $(view.render().el).attr('uuid', field.get('uuid'));
+          $(view.render().el).attr('data-created', field.get('created'));
+        }
       },
 
       deleteQuestion: function(){
@@ -103,11 +123,15 @@
       },
 
       removeField: function(data){
-        App.application.fields.findWhere(data.toJSON()).destroy();
+        var question = this.$el.find('[question-id=' + data.get('parentID') + ']');
+        var elem = question.find('[data-created=' + data.get('created') + ']');
+        elem.remove();
+        // App.application.fields.findWhere(data.toJSON()).destroy();
       },
 
       addField: function(model){
-        App.application.fields.add(model).save();
+        // App.application.fields.add(model).save();
+        App.application.fields.add(model);
       },
 
       receive: function(event, ui){
@@ -115,6 +139,7 @@
         this.fields = App.application.fields;
         var that = this;
         var data = elem.data("backbone-view");
+        var order = 0;
         if (data) {
           var uuid = data.attributes.uuid;
         } else {
@@ -128,28 +153,56 @@
           field = new App.Field(data.toJSON());
         }
 
+        if (elem.hasClass('question-field')) {
+          order = elem.index();
+        } else {
+          order = $(event.target).find('.ui-draggable').index();
+        }
+        var created = parseInt(elem.attr('data-created'));
         field.set("parentID", this.model.get("uuid"));
-        field.set("order", elem.index());
+        field.set("created", created);
+        field.set("order", order);
         if (!field.get("uuid")){
           field.genUUID();
         }
+        console.log('INDEXING');
+        // this.q_fields = $(event.target).parents('.question').find('li:not([data-created=' + created + '])');
+        this.q_fields = $(event.target).parents('.question').find('li');
+        this.q_fields.each(function (index, field) {
+          var date_created = parseInt($(field).attr('data-created'));
+          if (date_created && date_created !== created) {
+            var model = that.fields.findWhere({created: date_created});
+            model.set('order', index);
+            console.log(model);
+            console.log('type: ', model.get('type'), 'order: ', index);
+          }
+        });
+        console.log('Done indexing');
+        console.log(order);
         this.addField(field);
       },
 
       saveFields: function(event, ui){
         var that = this;
         this.fields = App.application.fields;
-        this.q_fields = $(event.target).parents('.question').find('li')
+        this.q_fields = $(event.target).parents('.question').find('li');
+
         this.q_fields.each(function (index, field) {
-          var uuid = parseInt($(field).attr('uuid'));
-          if (uuid) {
-            var model = that.fields.findWhere({uuid: uuid});
-            console.log(index);
+          var created = parseInt($(field).attr('data-created'));
+          if (created) {
+            var model = that.fields.findWhere({created: created});
             model.set('order', index).save();
+            console.log(model);
+            console.log('type: ', model.get('type'), 'order: ', index, 'comparator: ', model.get('parentID') + model.get('order'));
           }
         });
-        this.fields.sort({silent: true});
-        this.render();
+        console.log('FIELDS', this.fields);
+        // this.fields.each(function(model, index){
+        //   model.save();
+        // });
+        // this.fields.sync();
+        // this.fields.sort({silent: true});
+        // this.render();
       }
     });
   });

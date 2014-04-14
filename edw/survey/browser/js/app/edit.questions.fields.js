@@ -42,6 +42,7 @@
           connectToSortable: '.question-body, .sortable-cell'
         });
         this.$el.data("backbone-view", this.model);
+        this.$el.attr("data-created", new Date().getTime());
       },
 
       startEdit: function(){
@@ -259,6 +260,7 @@
 
         field.set("parentID", this.model.get("uuid"));
         field.set("order", elem.index());
+        field.set("modified", new Date().getTime());
         console.log("Index: ", elem.index());
         if (!field.get("uuid")){
           field.set("uuid", new Date().getTime());

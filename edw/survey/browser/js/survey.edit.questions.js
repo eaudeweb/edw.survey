@@ -78,6 +78,8 @@
     App.AppView = Backbone.View.extend({
 
       el: $("#application"),
+      fieldsReady: false,
+      questionsReady: false,
 
       initialize: function(){
         this.sidebar = $("#sidebar");
@@ -91,16 +93,30 @@
         this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
         this.listenTo(this.questionsView.collection, "remove", this.fieldCleanup);
         this.listenTo(this.fields, "remove", this.fieldCleanup);
+        this.listenTo(this.fields, "sync", function(){
+          this.fieldsReady = true;
+          this.sync()
+        });
+        this.listenTo(this.questionsView.collection, "sync", function() {
+          this.questionsReady = true;
+          this.sync()
+        });
       },
 
       events: {
         "click #add-question": "addQuestion",
         "click #clear-data": "clearData"
       },
-
+      sync: function() {
+        if (this.fieldsReady && this.questionsReady) {
+          console.log('omfg');
+          this.questionsView.render();
+          this.fieldsView.render();
+        }
+      },
       render: function(){
-        this.questionsView.render();
-        this.fieldsView.render();
+        // this.questionsView.render();
+        // this.fieldsView.render();
       },
 
       addQuestion: function(){

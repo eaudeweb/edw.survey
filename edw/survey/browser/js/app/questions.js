@@ -23,30 +23,35 @@
     App.FieldsList = Backbone.Collection.extend({
       url: "fields",
       model: App.Field,
-      comparator: function( a, b ) {
+      // comparator: function(model) {
+      //   // console.log(model.get('parentID') * model.get('order') + -model.get('modified'));
+      //   return model.get('parentID') + model.get('order');
+      //   // return model.get('order');
+      // }
+      // comparator: function( a, b ) {
        
-            var cols = ['parentID', 'order', 'uuid'],
-                dirs = ['desc'],
-                cmp;
+      //       var cols = ['parentID', 'order'],
+      //           dirs = ['desc'],
+      //           cmp;
        
-            // First column that does not have equal values
-            cmp = _.find( cols, function( c ) { return a.attributes[c] != b.attributes[c]; });
+      //       // First column that does not have equal values
+      //       cmp = _.find( cols, function( c ) { return a.attributes[c] != b.attributes[c]; });
        
-            // undefined means they're all equal, so we're done.
-            if ( !cmp ) return 0;
+      //       // undefined means they're all equal, so we're done.
+      //       if ( !cmp ) return 0;
        
-            // Otherwise, use that column to determine the order
-            // match the column sequence to the methods for ascending/descending
-            // default to ascending when not defined.
-            if ( ( dirs[_.indexOf( cols, cmp )] || 'asc' ).toLowerCase() == 'asc' ) {
-               console.log(a.attributes[cmp], b.attributes[cmp]);
-               return a.attributes[cmp] > b.attributes[cmp] ? 1 : -1;
-            } else {
-               console.log(a.attributes[cmp], b.attributes[cmp]);
-               return a.attributes[cmp] < b.attributes[cmp] ? 1 : -1;
-            }
+      //       // Otherwise, use that column to determine the order
+      //       // match the column sequence to the methods for ascending/descending
+      //       // default to ascending when not defined.
+      //       if ( ( dirs[_.indexOf( cols, cmp )] || 'asc' ).toLowerCase() == 'asc' ) {
+      //          console.log('CMP: ', cmp, a.attributes[cmp], b.attributes[cmp]);
+      //          return a.attributes[cmp] > b.attributes[cmp] ? 1 : -1;
+      //       } else {
+      //          console.log('CMP: ', cmp, a.attributes[cmp], b.attributes[cmp]);
+      //          return a.attributes[cmp] < b.attributes[cmp] ? 1 : -1;
+      //       }
        
-         },
+      //    },
     });
 
     App.AnswerFieldsList = App.FieldsList.extend({
