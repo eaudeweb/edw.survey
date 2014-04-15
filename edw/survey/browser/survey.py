@@ -122,7 +122,7 @@ class Collection(CommonView, BrowserView):
 
     def update(self):
         idx = getIndex(self.storage, self.request_uuid)
-        if not idx:
+        if idx is None:
             return self.create()
         self.storage[idx] = PersistentDict(self.payload)
         self.updateAnswers(self.payload)
