@@ -4,6 +4,7 @@ import hashlib
 import random
 
 from time import time
+from time import sleep
 from zope.interface import implements
 from Products.Five.browser import BrowserView
 from zope.publisher.interfaces import IPublishTraverse
@@ -159,6 +160,10 @@ class Questions(Collection):
 
     storage_name = "questions"
 
+    def __call__(self, *args, **kwargs):
+        sleep(1)
+        return super(Collection, self).__call__(*args, **kwargs)
+
 
 class AnswerFields(Collection):
     storage_name = "answers"
@@ -275,6 +280,4 @@ class AnswersView(CommonView):
         questionIds = [x["uuid"] for x in self.get_storage("questions")]
         for userid, fields in self.storage.items():
             data[userid] = self.groupFields(fields, questionIds)
-        from pprint import pprint
-        pprint(data)
         return data

@@ -26,8 +26,6 @@
       collection: null,
       initialize: function(){
         this.collection = new App.QuestionList();
-        this.collection.fetch();
-
       },
 
       render: function(){
@@ -78,8 +76,6 @@
     App.AppView = Backbone.View.extend({
 
       el: $("#application"),
-      fieldsReady: false,
-      questionsReady: false,
 
       initialize: function(){
         this.sidebar = $("#sidebar");
@@ -87,36 +83,24 @@
 
         this.fieldsView = new App.FieldsView();
         this.questionsView = new App.QuestionsView();
+        this.questionsView.collection.fetch();
         this.fields = new App.FieldsList();
-        this.fields.fetch();
 
-        this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
-        this.listenTo(this.questionsView.collection, "remove", this.fieldCleanup);
-        this.listenTo(this.fields, "remove", this.fieldCleanup);
-        this.listenTo(this.fields, "sync", function(){
-          this.fieldsReady = true;
-          this.sync()
-        });
-        this.listenTo(this.questionsView.collection, "sync", function() {
-          this.questionsReady = true;
-          this.sync()
-        });
+        $.when(this.fields.fetch(), this.questionsView.collection.fetch()).then(_.bind(function(){
+          this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
+          this.listenTo(this.questionsView.collection, "remove", this.fieldCleanup);
+          this.listenTo(this.fields, "remove", this.fieldCleanup);
+          this.render();
+        }, this));
       },
 
       events: {
         "click #add-question": "addQuestion",
         "click #clear-data": "clearData"
       },
-      sync: function() {
-        if (this.fieldsReady && this.questionsReady) {
-          console.log('omfg');
-          this.questionsView.render();
-          this.fieldsView.render();
-        }
-      },
       render: function(){
-        // this.questionsView.render();
-        // this.fieldsView.render();
+        this.questionsView.render();
+        this.fieldsView.render();
       },
 
       addQuestion: function(){
@@ -156,7 +140,6 @@
         App.Templates.load(response);
         App.FieldMapping.init();
         App.application = new App.AppView();
-        App.application.render();
       }
     });
   });

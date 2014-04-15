@@ -29,7 +29,7 @@
         "dblclick .panel-heading": "startEdit",
         "click .btn-question-save": "endEdit",
         "click .btn-question-cancel": "cancelEdit",
-        "keyup .name-grabber": "handleKeyUp",
+        "keyup .name-grabber": "handleKeyUp"
       },
 
       initialize: function(){
@@ -67,7 +67,7 @@
           connectWith: '.question-body, .sortable-cell',
           start: function(event, ui) {
             ui.item.data("backbone-view", ui.helper.data("backbone-view"));
-          },
+          }
         });
       },
 
@@ -81,7 +81,7 @@
         var question = this.$el.find('[question-id=' + field.get('parentID') + ']');
         var index = field.get("order");
         var added = question.find('[data-created=' + field.get('created') + ']');
-        if (added.length == 0) {
+        if (added.length === 0) {
           var idx_elem = question.find('li:eq(' + (index - 1) + ')');
           if (idx_elem.length > 0){
             idx_elem.after(view.render().el);
@@ -140,10 +140,11 @@
         var that = this;
         var data = elem.data("backbone-view");
         var order = 0;
+        var uuid;
         if (data) {
-          var uuid = data.attributes.uuid;
+          uuid = data.attributes.uuid;
         } else {
-          var uuid = parseInt($(elem).attr('uuid'));
+          uuid = parseInt($(elem).attr('uuid'), 10);
         }
 
         field = this.fields.findWhere({uuid: uuid});
@@ -158,7 +159,7 @@
         } else {
           order = $(event.target).find('.ui-draggable').index();
         }
-        var created = parseInt(elem.attr('data-created'));
+        var created = parseInt(elem.attr('data-created'), 10);
         field.set("parentID", this.model.get("uuid"));
         field.set("created", created);
         field.set("order", order);
@@ -169,7 +170,7 @@
         // this.q_fields = $(event.target).parents('.question').find('li:not([data-created=' + created + '])');
         this.q_fields = $(event.target).parents('.question').find('li');
         this.q_fields.each(function (index, field) {
-          var date_created = parseInt($(field).attr('data-created'));
+          var date_created = parseInt($(field).attr('data-created'), 10);
           if (date_created && date_created !== created) {
             var model = that.fields.findWhere({created: date_created});
             model.set('order', index);
@@ -188,7 +189,7 @@
         this.q_fields = $(event.target).parents('.question').find('li');
 
         this.q_fields.each(function (index, field) {
-          var created = parseInt($(field).attr('data-created'));
+          var created = parseInt($(field).attr('data-created'), 10);
           if (created) {
             var model = that.fields.findWhere({created: created});
             model.set('order', index).save();
