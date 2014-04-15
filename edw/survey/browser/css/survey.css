@@ -128,29 +128,21 @@ table.tableLayout tr {
     min-height: 500px;
 }
 
+.ui-state-highlight {
+    height: 1.5em;
+    line-height: 1.2em;
+    border: 1px solid #ccf;
+    background-color: #ccc;
+}
 
 .splitter .splitter-questions {
     min-height: 50px;
     width: 94%;
-    float: left;
 }
-
-.splitter .new-split {
-    background-color: #ccf;
-    min-height: 50px;
-    width: 5%;
-    float: right;
-}
-
 
 .splitter-questions {
     min-height: 20px;
 }
-
-.splitter .hidden {
-    display: none;
-}
-
 
 /*
 .affix {

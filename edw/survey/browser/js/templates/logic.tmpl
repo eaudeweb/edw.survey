@@ -10,15 +10,22 @@
 <script id="splitter-template" type="text/x-underscore-template">
     <li class="splitter">
         <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Splitter</span>
+                <button class="remove-split btn btn-danger btn-xs pull-right">
+                    <span class="glyphicon glyphicon-trash" title="Delete split"></span></button>
+                </button>
+                <button class="add-split btn btn-primary btn-xs pull-right">
+                    <span class="glyphicon glyphicon-plus" title="Add split"></span></button>
+                </button>
+            </div>
             <div class="panel-body">
-                <p>SPLITTER</p>
-                <ul class="splitter-questions sortable-listing list-unstyled">
-                </ul>
-                <ul class="splitter-questions sortable-listing new-split">
-                </ul>
-                <ul class="splitter-questions sortable-listing new-split hidden">
-                </ul>
-                <div class="clearfix"></div>
+                    <div id="<%= data.time %>-split-1">
+                        <textarea class="split-condition"></textarea>
+                        <ul class="splitter-questions sortable-listing list-unstyled">
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </li>

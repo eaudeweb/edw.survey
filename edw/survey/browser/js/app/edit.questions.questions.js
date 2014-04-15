@@ -25,10 +25,11 @@
 
       events: {
         "click .delete-question": "deleteQuestion",
+        "click .expand-collapse-question": "expandCollapseQuestion",
         "dblclick .panel-heading": "startEdit",
         "click .btn-question-save": "endEdit",
         "click .btn-question-cancel": "cancelEdit",
-        "keyup .name-grabber": "handleKeyUp",
+        "keyup .name-grabber": "handleKeyUp"
       },
 
       initialize: function(){
@@ -64,6 +65,10 @@
 
       deleteQuestion: function(){
         this.model.destroy();
+      },
+
+      expandCollapseQuestion: function(){
+        this.$(".panel-body").toggle();
       },
 
       startEdit: function(){

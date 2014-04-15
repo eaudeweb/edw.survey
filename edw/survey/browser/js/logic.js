@@ -26,6 +26,18 @@
 
     App.Controller = new Controller();
 
+
+    App.initSortable = function(element, view){
+      element.sortable({
+        connectWith: ".sortable-listing",
+        tolerance: "pointer",
+        dropOnEmpty: true,
+        placeholder: "ui-state-highlight",
+        stop: view.sortableStop
+      }).disableSelection();
+    };
+
+
     App.QuestionList = Backbone.Collection.extend({
       url: "questions",
       initialize: function(){
@@ -45,30 +57,31 @@
       el: $("#sidebar ul#questions-listing"),
       initialize: function(){
         this.collection = App.application.questions;
-        this.$el.sortable({
-          connectWith: ".sortable-listing",
-          tolerance: "pointer",
-          dropOnEmpty: true,
-          stop: function(event, ui){
-            if (!$(ui.item[0]).hasClass("splitter")){
-              return;
-            }
-            if (!ui.item.parent().hasClass("added-questions")){
-              $(this).sortable("cancel");
-              return;
-            }
-            var idx = $(".added-questions").children().index($(ui.item[0])) - 1;
-            var elm = $(ui.item[0]).clone(true);
-            if (idx === -1) {
-              idx = 0;
-            }
-
-            elm.find(".splitter-questions").sortable({connectWith: ".sortable-listing"});
-            $(".added-questions").children(":eq(" + idx + ")").after(elm);
-            $(this).sortable("cancel");
-          }
-        });
+        this.initSortable();
         this.listenTo(App.Controller, "questions-add", this.renderOne);
+      },
+
+      initSortable: function(){
+        App.initSortable(this.$el, this);
+      },
+
+      sortableStop: function(event, ui){
+        if (!$(ui.item[0]).hasClass("splitter")){
+          return;
+        }
+        if (!ui.item.parent().hasClass("added-questions")){
+          $(this).sortable("cancel");
+          return;
+        }
+        var idx = $(".added-questions").children().index($(ui.item[0])) - 1;
+        var elm = $(ui.item[0]).clone(true);
+        if (idx === -1) {
+          idx = 0;
+        }
+
+        elm.find(".splitter-questions").sortable({connectWith: ".sortable-listing"});
+        $(".added-questions").children(":eq(" + idx + ")").after(elm);
+        $(this).sortable("cancel");
       },
 
       render: function(){
@@ -92,19 +105,16 @@
         });
       },
       initSortable: function(){
-        this.sortTarget.sortable({
-          connectWith: ".sortable-listing",
-          tolerance: "pointer",
-          stop: function(event, ui){
-            if (!$(ui.item[0]).hasClass("splitter")){
-              return;
-            }
-            if (ui.item.parent().hasClass("added-questions")){
-              return;
-            }
-            ui.item.remove();
-          }
-        });
+        App.initSortable(this.sortTarget, this);
+      },
+      sortableStop: function(event, ui){
+        if (!$(ui.item[0]).hasClass("splitter")){
+          return;
+        }
+        if (ui.item.parent().hasClass("added-questions")){
+          return;
+        }
+        ui.item.remove();
       },
       render: function(){
         App.Controller.trigger("logic-rendered");
@@ -114,7 +124,9 @@
 
     App.SplitterView = Backbone.View.extend({
       render: function(){
-        return App.Templates.compiled.splitterTemplate();
+        return App.Templates.compiled.splitterTemplate({
+          data: {time: new Date().getTime()}
+        });
       }
     });
 
