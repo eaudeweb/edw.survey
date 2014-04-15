@@ -21,6 +21,11 @@
 
     var App = edw.survey.edit.logic;
 
+    var Controller = Backbone.View.extend({
+    });
+
+    App.Controller = new Controller();
+
     App.QuestionList = Backbone.Collection.extend({
       url: "questions",
       initialize: function(){
@@ -41,8 +46,9 @@
       initialize: function(){
         this.collection = App.application.questions;
         this.$el.sortable({
-          connectWith: ".added-questions",
+          connectWith: ".sortable-listing",
           tolerance: "pointer",
+          dropOnEmpty: true,
           stop: function(event, ui){
             if (!$(ui.item[0]).hasClass("splitter")){
               return;
@@ -56,22 +62,18 @@
             if (idx === -1) {
               idx = 0;
             }
+
+            elm.find(".splitter-questions").sortable({connectWith: ".sortable-listing"});
             $(".added-questions").children(":eq(" + idx + ")").after(elm);
             $(this).sortable("cancel");
           }
         });
-        this.listenTo(this.collection, "reset add", this.renderOne);
+        this.listenTo(App.Controller, "questions-add", this.renderOne);
       },
 
       render: function(){
         var splitter = new App.SplitterView();
         this.$el.append(splitter.render());
-        if (_.isEmpty(this.collection)) {
-          return;
-        }
-        this.collection.each(function(question){
-          this.renderOne(question);
-        }, this);
       },
       renderOne: function(question){
         var view = new App.QuestionView({model: question});
@@ -84,12 +86,14 @@
       el: $("#displayarea"),
       sortTarget: $(".added-questions"),
       initialize: function(){
-        this.initSortable();
-        this.listenTo(App.application.questions, "add change", this.render);
+        this.listenTo(App.Controller, "questions-reset", this.render);
+        this.listenTo(App.Controller, "logic-rendered", function(){
+          this.initSortable();
+        });
       },
       initSortable: function(){
         this.sortTarget.sortable({
-          connectWith: "#questions-listing",
+          connectWith: ".sortable-listing",
           tolerance: "pointer",
           stop: function(event, ui){
             if (!$(ui.item[0]).hasClass("splitter")){
@@ -102,9 +106,8 @@
           }
         });
       },
-      render: function(question){
-        var view = new App.QuestionView({model: question});
-        this.sortTarget.append(view.render().el);
+      render: function(){
+        App.Controller.trigger("logic-rendered");
       }
     });
 
@@ -120,24 +123,19 @@
       el: $("#application"),
 
       initialize: function(){
-        this.sidebar = $("#sidebar");
-        this.workshop = $("#workshop");
-
         App.QuestionList.model = App.Question;
         this.questions = new App.QuestionList();
+        this.listenTo(this.questions, "reset", function(){
+          App.Controller.trigger("questions-reset");
+        });
+        this.listenTo(this.questions, "add", function(question){
+          App.Controller.trigger("questions-add", question);
+        });
         this.questions.fetch();
       },
-
       render: function(){
         this.questionsView.render();
-      },
-
-      getQuestion: function(uuid){
-        return this.questions.findWhere({ uuid: uuid });
-      },
-
-      displayQuestion: function(question){
-        this.questionsView.renderOne(question);
+        this.logicView.render();
       }
     });
 

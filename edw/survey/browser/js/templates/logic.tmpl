@@ -2,10 +2,9 @@
     <div class="question">
         <div class="panel panel-default">
             <div class="panel-body">
-                <%= data.name %></h2>
+                <%= data.name %>
             </div>
         </div>
-        <h2>
     </div>
 </script>
 <script id="splitter-template" type="text/x-underscore-template">
@@ -13,10 +12,14 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <p>SPLITTER</p>
-                <ul class="splitter-questions">
+                <ul class="splitter-questions sortable-listing list-unstyled">
                 </ul>
+                <ul class="splitter-questions sortable-listing new-split">
+                </ul>
+                <ul class="splitter-questions sortable-listing new-split hidden">
+                </ul>
+                <div class="clearfix"></div>
             </div>
         </div>
-        <h2>
     </li>
 </script>
