@@ -36,13 +36,13 @@
             var data = $(this).data("backbone-view");
             var ret = $(this).clone();
             ret.data("backbone-view", data);
+            ret.addClass('dropped');
             return ret;
           },
           connectWith: '.ui-draggable',
           connectToSortable: '.question-body, .sortable-cell'
         });
         this.$el.data("backbone-view", this.model);
-        this.$el.attr("data-created", new Date().getTime());
       },
 
       startEdit: function(){
@@ -64,7 +64,6 @@
       render: function(){
         var modelTemplate = this.model.renderTemplate();
         this.$el.html(this.template({data: this.model.attributes}));
-        // this.$el.data('backbone-view', this.model);
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
         $(".edit-mode .contents", this.$el).html($(modelTemplate).filter(".edit-mode").html());
         return this;
@@ -232,22 +231,18 @@
           connectWith: '.question-body, .sortable-cell',
           start: function(event, ui) {
             ui.item.data("backbone-view", ui.helper.data("backbone-view"));
+            ui.item.addClass('dropped');
           },
         });
       },
 
       receive: function(evt, ui){
-        var elem = $(ui.item);
+        var elem = $(evt.target).find('.dropped');
         this.fields = App.application.fields;
         var that = this;
         var data = elem.data("backbone-view");
-        if (data) {
-          var uuid = data.attributes.uuid;
-        } else {
-          var uuid = parseInt($(elem).attr('uuid'));
-        }
 
-        field = this.fields.findWhere({uuid: uuid});
+        field = this.fields.findWhere({uuid: data.attributes.uuid});
         if (field) {
           this.fields.remove(field);
         } else {
@@ -255,18 +250,18 @@
         }
         var rowIndex = evt.target.parentNode.rowIndex;
         var columnIndex = evt.target.cellIndex;
+
         field.set("rowPosition", rowIndex);
         field.set("columnPosition", columnIndex);
 
         field.set("parentID", this.model.get("uuid"));
         field.set("order", elem.index());
-        field.set("modified", new Date().getTime());
-        console.log("Index: ", elem.index());
+
         if (!field.get("uuid")){
           field.set("uuid", new Date().getTime());
         }
-
         this.fields.create(field);
+        this.render();
       },
 
       render: function(){

@@ -129,8 +129,9 @@ class Collection(CommonView, BrowserView):
 
     def delete(self):
         idx = getIndex(self.storage, self.request_uuid)
-        self.deleteAnswers(self.request_uuid)
-        del self.storage[idx]
+        if idx is not None:
+            self.deleteAnswers(self.request_uuid)
+            del self.storage[idx]
 
     def updateAnswers(self, field):
         storage = self.get_storage("answers", PersistentDict)
@@ -159,10 +160,6 @@ class Fields(Collection):
 class Questions(Collection):
 
     storage_name = "questions"
-
-    def __call__(self, *args, **kwargs):
-        sleep(1)
-        return super(Collection, self).__call__(*args, **kwargs)
 
 
 class AnswerFields(Collection):
