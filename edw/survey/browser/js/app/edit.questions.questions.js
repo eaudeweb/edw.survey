@@ -147,10 +147,10 @@
         this.addField(field);
       },
 
-      saveFields: function(event, ui){
+      saveFields: function(evt, ui){
         var that = this;
         this.fields = App.application.fields;
-        this.q_fields = $(event.target).parents('.question').find('li');
+        this.q_fields = $(evt.target).parents('.question').find('li');
 
         this.q_fields.each(function (index, field) {
           var uuid = parseInt($(field).attr('uuid'), 10);

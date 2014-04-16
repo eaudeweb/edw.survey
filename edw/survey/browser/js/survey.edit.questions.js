@@ -124,23 +124,27 @@
       displayQuestion: function(question){
         this.questionsView.renderOne(question);
       },
-      
-      saveQuestions: function() {
+
+      saveQuestions: function(evt, ui) {
+        evt.preventDefault();
         var that = this;
 
         this.questions = $('.question');
-
+        var deferreds = [];
         this.questions.each(function (index, question) {
           var fields = $(question).find('li');
           $.each(fields, function(idx, field){
             var uuid = parseInt($(field).attr('uuid'), 10);
             if (uuid) {
               var model = that.fields.findWhere({uuid: uuid});
-              model.set('order', idx).save();
+              deferreds.push(
+                model.set('order', idx).save());
             }
           });
         });
-        window.location = 'view';
+        $.when.apply($, deferreds).done(function(){
+          window.location = 'view';
+        });
       },
 
       fieldCleanup: function(question){
