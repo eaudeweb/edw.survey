@@ -18,6 +18,9 @@
       App = window.edw.survey.edit.logic;
     }
 
+    App.genUUID = function(){
+      return new Date().getTime();
+    };
     App.Templates.compiled = {};
     App.Templates.load = function(data){
       var html = $(data);

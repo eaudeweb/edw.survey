@@ -45,7 +45,8 @@
       },
       defaults: function(){
         var def = {
-          name:  "the first!"//,
+          name:  "the first!",
+          type: "question"
         };
         return def;
       },
