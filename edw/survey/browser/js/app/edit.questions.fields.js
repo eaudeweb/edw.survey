@@ -12,12 +12,15 @@
 
     App.FieldView = Backbone.View.extend({
       tagName: "li",
-      //className: "list-group-item",
+      className: "question-field",
 
       events: {
         "click .glyphicon-trash": "deleteField",
         "click .glyphicon-edit": "startEdit",
-        "click .glyphicon-check": "endEdit"
+        "dblclick .view-mode": "startEdit",
+        "click .glyphicon-check": "endEdit",
+        "keyup .value-grabber": "handleKeyUp",
+        "blur .value-grabber": "cancelEdit"
       },
 
       initialize: function(){
@@ -57,8 +60,22 @@
       },
 
       endEdit: function(){
-        this.$el.removeClass("editing");
         this.model.set({value: this.input.val()}).save();
+        this.cancelEdit();
+      },
+
+      cancelEdit: function() {
+        this.$el.removeClass("editing");
+      },
+
+      handleKeyUp: function(e) {
+        var code = e.keyCode || e.which;
+
+        if(code == 13) {
+         this.endEdit();
+        } else if(code == 27) {
+          this.cancelEdit();
+        }
       },
 
       render: function(){

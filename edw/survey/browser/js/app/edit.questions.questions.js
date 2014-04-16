@@ -28,7 +28,7 @@
         "click .save-question": "saveFields",
         "dblclick .panel-heading": "startEdit",
         "click .btn-question-save": "endEdit",
-        "click .btn-question-cancel": "cancelEdit",
+        "blur .name-grabber": "cancelEdit",
         "keyup .name-grabber": "handleKeyUp"
       },
 
