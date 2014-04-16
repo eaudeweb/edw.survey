@@ -113,6 +113,7 @@ class Collection(CommonView, BrowserView):
     def create(self):
         data = PersistentDict(self.payload)
         self.storage.append(data)
+        self.update()
 
     def read(self):
         header = self.request.RESPONSE.setHeader
@@ -124,8 +125,9 @@ class Collection(CommonView, BrowserView):
         idx = getIndex(self.storage, self.request_uuid)
         if idx is None:
             return self.create()
-        self.storage[idx] = PersistentDict(self.payload)
-        self.updateAnswers(self.payload)
+        else:
+            self.storage[idx] = PersistentDict(self.payload)
+            self.updateAnswers(self.payload)
 
     def delete(self):
         idx = getIndex(self.storage, self.request_uuid)
