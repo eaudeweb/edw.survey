@@ -122,7 +122,7 @@ class Collection(CommonView, BrowserView):
 
     def update(self):
         idx = getIndex(self.storage, self.request_uuid)
-        if not idx:
+        if idx is None:
             return self.create()
         self.storage[idx] = PersistentDict(self.payload)
         self.updateAnswers(self.payload)
@@ -139,7 +139,7 @@ class Collection(CommonView, BrowserView):
             uuid = field["uuid"]
             idx = getIndex(fields, uuid)
             persistentField = PersistentDict(field)
-            if not idx:
+            if idx is None:
                 storage[userid].append(persistentField)
             else:
                 storage[userid][idx] = persistentField
@@ -148,7 +148,7 @@ class Collection(CommonView, BrowserView):
         storage = self.get_storage("answers", PersistentDict)
         for userid, fields in storage.items():
             idx = getIndex(fields, uuid)
-            if idx:
+            if idx is not None:
                 del storage[userid][idx]
 
 

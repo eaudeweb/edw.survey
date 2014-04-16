@@ -115,7 +115,7 @@
 
       removeField: function(data){
         var question = this.$el.find('[question-id=' + data.get('parentID') + ']');
-        var elem = question.find('[data-created=' + data.get('created') + ']');
+        var elem = question.find('[uuid=' + data.get('uuid') + ']');
         elem.remove();
       },
 
@@ -142,15 +142,6 @@
         if (!field.get("uuid")){
           field.genUUID();
         }
-
-        this.q_fields = $(evt.target).parents('.question').find('li');
-        this.q_fields.each(function (index, field) {
-          var date_created = parseInt($(field).attr('data-created'), 10);
-          if (date_created && date_created !== data.attributes.created) {
-            var model = that.fields.findWhere({created: date_created});
-            model.set('order', index);
-          }
-        });
 
         elem.remove();
         this.addField(field);

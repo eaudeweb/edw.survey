@@ -96,7 +96,8 @@
 
       events: {
         "click #add-question": "addQuestion",
-        "click #clear-data": "clearData"
+        "click #clear-data": "clearData",
+        "click #save-view": "saveQuestions"
       },
       render: function(){
         this.questionsView.render();
@@ -122,6 +123,24 @@
 
       displayQuestion: function(question){
         this.questionsView.renderOne(question);
+      },
+      
+      saveQuestions: function() {
+        var that = this;
+
+        this.questions = $('.question');
+
+        this.questions.each(function (index, question) {
+          var fields = $(question).find('li');
+          $.each(fields, function(idx, field){
+            var uuid = parseInt($(field).attr('uuid'), 10);
+            if (uuid) {
+              var model = that.fields.findWhere({uuid: uuid});
+              model.set('order', idx).save();
+            }
+          });
+        });
+        window.location = 'view';
       },
 
       fieldCleanup: function(question){
