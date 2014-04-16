@@ -92,9 +92,7 @@
 
     App.Field = Backbone.Model.extend({
       idAttribute: "uuid",
-      // defaults: {
-      //   created: new Date().getTime(),
-      // },
+
       fieldCopy: function(){
         var original = this;
         var copy = original;

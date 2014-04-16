@@ -132,7 +132,8 @@
         this.questions = $('.question');
         var deferreds = [];
         this.questions.each(function (index, question) {
-          var fields = $(question).find('li');
+          var fields = $(question).find('.question-body').find('> li');
+      
           $.each(fields, function(idx, field){
             var uuid = parseInt($(field).attr('uuid'), 10);
             if (uuid) {
