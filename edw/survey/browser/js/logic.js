@@ -25,16 +25,17 @@
     var Controller = Backbone.View.extend({
     });
 
-    App.Controller = new Controller();
-
     App.initSortable = function(element, view){
       element.sortable({
         connectWith: ".sortable-listing",
         tolerance: "pointer",
         dropOnEmpty: true,
         placeholder: "ui-state-highlight",
-        stop: view.sortableStop
+        stop: _.bind(view.sortableStop, view)
       }).disableSelection();
+      element.on("sortupdate", function(event, ui){
+        App.application.trigger("sortupdate", element, event, ui);
+      });
     };
 
     App.Question = Backbone.Model.extend({
@@ -100,10 +101,8 @@
     App.QuestionView = Backbone.View.extend({
       tagName: "li",
       className: "question-item",
-      initialize: function(){
-        this.$el.data("backbone-view", this);
-      },
       render: function(){
+        this.$el.data("backbone-view", this);
         this.$el.html(this.model.template({data: this.model.attributes}));
         return this;
       }
@@ -111,8 +110,16 @@
 
     App.QuestionsView = Backbone.View.extend({
       el: $("#sidebar ul#questions-listing"),
+
+      subviews: [],
+
       initialize: function(){
         this.initSortable();
+        this.subviews.push(new App.SplitterView());
+        App.application.questions.each(function(question){
+          var view = new App.QuestionView({model: question});
+          this.subviews.push(view);
+        }, this);
       },
 
       initSortable: function(){
@@ -127,65 +134,72 @@
         }
 
         // don't move spliter, clone it
-        var item_is_splitter = $(ui.item[0]).hasClass("splitter");
+        var idx = $(".added-questions").children().index(ui.item);
+        var item_is_splitter = ui.item.hasClass("splitter");
+        var item_is_question = ui.item.hasClass("question-item");
         var target_is_logic_view = ui.item.parent().hasClass("added-questions");
 
         if (item_is_splitter && target_is_logic_view){
-
-          var idx = $(".added-questions").children().index(ui.item);
-
           App.application.splitters.add({
-            uuid: App.genUUID(),
-            logic_position: idx
+            uuid: App.genUUID()
           });
-
-          var elm = ui.item.clone(true);
-
-          App.initSortable(elm.find(".splitter-questions"), this);
-          $(".added-questions").children(":eq(" + idx + ")").after(elm);
-          $(this).sortable("cancel");
         }
 
+        if (item_is_question && target_is_logic_view){
+          var view = ui.item.data("backbone-view");
+          var target_view = ui.item.parent().data("backbone-view");
+          var popped_view = App.popViewFromArray(view, this.subviews);
+          target_view.subviews.push(popped_view);
+        }
       },
 
       render: function(){
-        var splitter = new App.SplitterView();
-        this.$el.append(splitter.render());
-        App.application.questions.each(function(question){
-          this.renderOne(question);
+        this.$el.html("");
+        this.$el.data("backbone-view", this);
+        _.each(this.subviews, function(subview){
+          this.$el.append(subview.render().el);
         }, this);
-      },
-
-      renderOne: function(question){
-        var view = new App.QuestionView({model: question});
-        this.$el.append(view.render().el);
       }
     });
 
-
     App.LogicView = Backbone.View.extend({
-      el: $("#displayarea"),
-      sortTarget: $(".added-questions"),
+      el: $("#logic-listing"),
+      subviews: [],
       initialize: function(){
-        this.listenTo(App.Controller, "questions-reset", this.render);
-        this.listenTo(App.Controller, "logic-rendered", function(){
-          this.initSortable();
-        });
+        this.listenTo(App.application.splitters, "add remove", this.update);
       },
       initSortable: function(){
-        App.initSortable(this.sortTarget, this);
+        App.initSortable(this.$el, this);
       },
       sortableStop: function(event, ui){
-        if (!$(ui.item[0]).hasClass("splitter")){
-          return;
+        var view = ui.item.data("backbone-view");
+        var target_view = ui.item.parent().data("backbone-view");
+        var target_is_questions_list = ui.item.parent().is("#questions-listing");
+        var item_is_splitter = ui.item.hasClass("splitter");
+        var item_is_question = ui.item.hasClass("question-item");
+        if (item_is_splitter){
+          ui.item.remove();
+          App.popViewFromArray(view, this.subviews);
+          App.application.splitters.remove(view.model);
+          view.remove();
         }
-        if (ui.item.parent().hasClass("added-questions")){
-          return;
+        if (item_is_question){
+          view.model.unset("logic_position");
+          var popped_view = App.popViewFromArray(view, this.subviews);
+          target_view.subviews.push(popped_view);
         }
-        ui.item.remove();
       },
       render: function(){
-        App.Controller.trigger("logic-rendered");
+        this.$el.html("");
+        this.$el.data("backbone-view", this);
+        this.initSortable();
+        _.each(this.subviews, function(subview){
+          this.$el.append(subview.render().el);
+        }, this);
+      },
+      update: function(model){
+        var view = new App.ModelMapping[model.get("type")]({model: model});
+        this.subviews.push(view);
       }
     });
 
@@ -203,11 +217,12 @@
       },
 
       render: function(){
+        this.$el.data("backbone-view", this);
         var elm = App.Templates.compiled.splitter({
           data: {time: new Date().getTime()}
         });
         this.$el.html(elm);
-        return this.el;
+        return this;
       }
     });
 
@@ -233,19 +248,24 @@
       }
     });
 
+  App.ModelMapping = {
+    splitter: App.SplitterView
+  };
+
+
     $.ajax({
       url: "++resource++edw.survey.static/js/templates/logic.tmpl",
       success: function(response){
         App.Templates.load(response);
         App.application = new App.AppView();
-        App.application.questionsView = new App.QuestionsView();
-        App.application.logicView = new App.LogicView();
 
         $.when(
           App.application.questions.fetch(),
           App.application.splitters.fetch(),
           App.application.splits.fetch()).then(
             _.bind(function(){
+              App.application.questionsView = new App.QuestionsView();
+              App.application.logicView = new App.LogicView();
               App.application.render();
             }, this)
           );
