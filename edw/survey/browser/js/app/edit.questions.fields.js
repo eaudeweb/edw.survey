@@ -19,7 +19,7 @@
         "click .glyphicon-edit": "startEdit",
         "dblclick .view-mode": "startEdit",
         "click .glyphicon-check": "endEdit",
-        "keyup .value-grabber": "handleKeyUp",
+        "keydown .value-grabber": "handleKeyDown",
         "blur .value-grabber": "cancelEdit"
       },
 
@@ -64,15 +64,46 @@
         this.cancelEdit();
       },
 
-      cancelEdit: function() {
+      cancelEdit: function(){
         this.$el.removeClass("editing");
       },
 
-      handleKeyUp: function(e) {
-        var code = e.keyCode || e.which;
+      getCaret: function(el){
+        if (el.selectionStart) {
+          return el.selectionStart;
+        } else if (document.selection) {
+          el.focus();
 
-        if(code == 13) {
-         this.endEdit();
+          var r = document.selection.createRange();
+            if (r == null) {
+              return 0;
+          }
+
+          var re = el.createTextRange(),
+          rc = re.duplicate();
+          re.moveToBookmark(r.getBookmark());
+          rc.setEndPoint('EndToStart', re);
+
+          return rc.text.length;
+        }
+      return 0;
+      },
+
+      handleKeyDown: function(evt) {
+        var code = evt.keyCode || evt.which;
+        if (code == 13 && evt.shiftKey) {
+          evt.stopPropagation();
+          var textarea = this.$el.find('textarea');
+          if (textarea.length > 0) {
+           var content = textarea.val();
+           var caret = this.getCaret(textarea);
+           textarea.value = content.substring(0,caret)+
+                         "\n"+content.substring(caret,content.length);
+          }
+          evt.stopPropagation();
+        } else if(code == 13) {
+          evt.stopPropagation();
+          this.endEdit();
         } else if(code == 27) {
           this.cancelEdit();
         }

@@ -29,7 +29,7 @@
         "dblclick .panel-heading": "startEdit",
         "click .btn-question-save": "endEdit",
         "blur .name-grabber": "cancelEdit",
-        "keyup .name-grabber": "handleKeyUp"
+        "keydown .name-grabber": "handleKeyDown"
       },
 
       initialize: function(){
@@ -106,8 +106,8 @@
         this.$el.find(".panel").removeClass("editing");
       },
 
-      handleKeyUp: function(e) {
-        var code = e.keyCode || e.which;
+      handleKeyDown: function(evt) {
+        var code = evt.keyCode || evt.which;
 
         if(code == 13) {
          this.endEdit();
