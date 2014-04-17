@@ -12,7 +12,7 @@
         <div class="panel-heading">
             <span>Splitter</span>
             <button class="remove-split btn btn-danger btn-xs pull-right">
-                <span class="glyphicon glyphicon-trash" title="Delete split"></span></button>
+                <span class="glyphicon glyphicon-minus" title="Delete split"></span></button>
             </button>
             <button class="add-split btn btn-primary btn-xs pull-right">
                 <span class="glyphicon glyphicon-plus" title="Add split"></span></button>
@@ -23,7 +23,7 @@
     </div>
 </script>
 <script id="split-template" type="text/x-underscore-template">
-    <textarea class="split-condition"></textarea>
+    <textarea class="split-condition" value="<%= data.logic_condition %>"><%= data.logic_condition %></textarea>
     <ul class="splitter-questions sortable-listing list-unstyled">
     </ul>
 </script>

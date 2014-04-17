@@ -282,7 +282,8 @@
       },
 
       events: {
-        "click .add-split": "addSplit"
+        "click .add-split": "addSplit",
+        "click .remove-split": "removeSplit"
       },
 
       addSplit: function(){
@@ -290,6 +291,20 @@
           uuid: App.genUUID(),
           logic_parent: this.model.get("uuid")
         });
+      },
+
+      removeSplit: function(){
+        var last = App.application.splits.pop({
+          logic_parent: this.model.get("uuid")
+        });
+        var questions = App.application.questions.where({
+          logic_parent: last.get("uuid")
+        });
+        _.each(questions, function(question){
+          question.unset("logic_parent");
+          question.unset("logic_position");
+        });
+        App.application.renderSubViews();
       },
 
       render: function(){
@@ -307,7 +322,7 @@
 
         _.each(my_splits, function(split){
           var view = new App.ModelMapping[split.get("type")]({model: split});
-          this.$el.find(".panel-body").append(view.render().el);
+          this.$el.find(".panel-body:first").append(view.render().el);
         }, this);
         return this;
       }
@@ -317,6 +332,10 @@
       tagName: "div",
       className: "split",
 
+      events: {
+        "keypress .split-condition": "setCondition"
+      },
+
       sortableStop: function(){
       },
 
@@ -325,12 +344,14 @@
         App.initSortable(sortableList, this);
       },
 
+      setCondition: function(){
+        this.model.set("logic_condition", this.$el.find(".split-condition").val());
+      },
+
       render: function(){
-        this.$el.html(App.Templates.compiled.split());
+        this.$el.html(App.Templates.compiled.split({data: this.model.attributes}));
         this.$el.data("backbone-view", this);
         this.initSortable();
-
-        console.log("RERENDER!!!");
 
         var questions = App.application.questions.where({
           logic_parent: this.model.get("uuid")
@@ -347,6 +368,19 @@
     App.AppView = Backbone.View.extend({
 
       el: $("#application"),
+
+      events: {
+        "click #save-logic": "saveLogic"
+      },
+
+      saveLogic: function(){
+        var to_save = [this.questions, this.splitters, this.splits];
+        _.each(to_save, function(collection){
+          collection.each(function(model){
+            model.save();
+          });
+        });
+      },
 
       initialize: function(){
         App.QuestionList.model = App.Question;
@@ -371,7 +405,6 @@
     question: App.QuestionView,
     split: App.SplitView
   };
-
 
     $.ajax({
       url: "++resource++edw.survey.static/js/templates/logic.tmpl",

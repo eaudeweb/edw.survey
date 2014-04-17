@@ -333,11 +333,25 @@ class LogicQuestions(Collection):
 
         for key, value in self.storage.items():
             key_type = value.get("type", None)
-            position = value.get("logic_position", None)
-            if key_type == "question" and position is None:
+            if key_type == "question":
                 result.append(dict(value))
         return sorted(result, key=lambda item: item.get("uuid"))
 
+    def create(self):
+        print("SHOULD NOT CREATE QUESTIONS!")
+
+    def update(self):
+        question = self.storage.get(int(self.request_uuid), None)
+        if question is None:
+            print("NOT GOOD!")
+            return
+        question.update(PersistentDict(self.payload))
+        for key in question.keys():
+            if key.startswith("logic_") and key not in self.payload:
+                del question[key]
+
+    def delete(self):
+        print("SHOULD NOT DELETE QUESTIONS!")
 
     def read(self):
         header = self.request.RESPONSE.setHeader
@@ -350,6 +364,7 @@ class LogicSplitters(Collection):
     storage_name = "logic"
     request_uuid = None
 
+
     @property
     def storage(self):
         return self.get_storage(default=PersistentDict)
@@ -359,10 +374,25 @@ class LogicSplitters(Collection):
 
         for key, value in self.storage.items():
             key_type = value.get("type", None)
-            position = value.get("logic_position", None)
-            if key_type == "splitter" and position is not None:
+            if key_type == "splitter":
                 result.append(dict(value))
         return sorted(result, key=lambda item: item.get("logic_position"))
+
+    def create(self):
+        data = PersistentDict(self.payload)
+        self.storage.setdefault(int(self.request_uuid), data)
+
+    def update(self):
+        splitter = self.storage.get(int(self.request_uuid), None)
+        if splitter is None:
+            return self.create()
+        splitter.update(PersistentDict(self.payload))
+        for key in splitter.keys():
+            if key.startswith("logic_") and key not in self.payload:
+                del splitter[key]
+
+    def delete(self):
+        del self.storage[int(self.request_uuid)]
 
     def read(self):
         header = self.request.RESPONSE.setHeader
@@ -384,10 +414,25 @@ class LogicSplits(Collection):
 
         for key, value in self.storage.items():
             key_type = value.get("type", None)
-            position = value.get("logic_position", None)
-            if key_type == "split" and position is not None:
+            if key_type == "split":
                 result.append(dict(value))
         return sorted(result, key=lambda item: item.get("logic_position"))
+
+    def create(self):
+        data = PersistentDict(self.payload)
+        self.storage.setdefault(int(self.request_uuid), data)
+
+    def update(self):
+        split = self.storage.get(int(self.request_uuid), None)
+        if split is None:
+            return self.create()
+        split.update(PersistentDict(self.payload))
+        for key in split.keys():
+            if key.startswith("logic_") and key not in self.payload:
+                del split[key]
+
+    def delete(self):
+        del self.storage[int(self.request_uuid)]
 
     def read(self):
         header = self.request.RESPONSE.setHeader
