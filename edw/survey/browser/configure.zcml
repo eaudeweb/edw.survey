@@ -70,6 +70,14 @@
         />
 
     <browser:view
+        name="answer_questions"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.AnswerQuestions"
+        permission="zope2.View"
+        />
+
+    <browser:view
         name="logic_questions"
         for="edw.survey.interfaces.ISurvey"
         layer="edw.survey.interfaces.ISurveyInstalled"

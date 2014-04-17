@@ -333,7 +333,7 @@
       className: "split",
 
       events: {
-        "keypress .split-condition": "setCondition"
+        "keyup .split-condition": "setCondition"
       },
 
       sortableStop: function(){

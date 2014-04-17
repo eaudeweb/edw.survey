@@ -215,6 +215,45 @@ class ClearDataView(CommonView):
         return self.request.RESPONSE.redirect(redirect_url)
 
 
+class AnswerQuestions(Collection):
+
+    storage_name = "questions"
+
+    @property
+    def logic_storage(self):
+        return self.get_storage("logic", default=PersistentDict)
+
+    def get_data(self):
+        ordered_questions = []
+        splits_by_parent = {}
+
+        for key, value in self.logic_storage.items():
+            parent = value.get("logic_parent", None)
+            splits_by_parent.setdefault(parent, []).append(value)
+
+
+        for key, value in splits_by_parent.items():
+            splits_by_parent[key] = sorted(value, key=lambda item: item.get("logic_position", None))
+
+        for item in splits_by_parent["logic"]:
+            if item["type"] == "question":
+                ordered_questions.append(item)
+            if item["type"] == "splitter":
+                for split in splits_by_parent[item["uuid"]]:
+                    condition = split["logic_condition"]
+                    for question in splits_by_parent[split["uuid"]]:
+                        question["logic_condition"] = condition
+                        ordered_questions.append(question)
+
+        return ordered_questions
+
+
+    def read(self):
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        data = [dict(x) for x in self.get_data()]
+        return json.dumps(data, indent=2)
+
 class SubmitAnswerView(CommonView, BrowserView):
 
     storage_name = "answers"
@@ -330,7 +369,6 @@ class LogicQuestions(Collection):
 
     def get_data(self):
         result = []
-
         for key, value in self.storage.items():
             key_type = value.get("type", None)
             if key_type == "question":
