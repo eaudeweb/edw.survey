@@ -48,13 +48,13 @@
       initialize: function(){
         this.collection = new App.FieldsList();
         this.collection.add([
-          new App.Field({type: "textInputField", value: "TEXT INPUT"}),
-          new App.Field({type: "richTextBlockField", value: "RICH TEXT BLOCK", uuid: null}),
-          new App.Field({type: "textBlockField", value: "TEXT BLOCK"}),
-          new App.Field({type: "labelField", value: "LABEL FIELD"}),
+          new App.Field({type: "textInputField", value: ""}),
+          new App.Field({type: "richTextBlockField", value: "Formatted text block", uuid: null}),
+          new App.Field({type: "textBlockField", value: "Unformatted text block"}),
+          new App.Field({type: "labelField", value: "Label field"}),
           new App.Field({type: "selectField", value: "option1\noption2\noption3"}),
-          new App.Field({type: "radioField", fieldType: "radio", value: "I LIKE", group: "group1"}),
-          new App.Field({type: "checkboxField", fieldType: "checkbox", value: "I LIKE", group: "group1"}),
+          new App.Field({type: "radioField", fieldType: "radio", value: "Radio option", group: "group1"}),
+          new App.Field({type: "checkboxField", fieldType: "checkbox", value: "Checkbox option", group: "group1"}),
           new App.Field({type: "tableLayout", rows: 3, cols: 3})
           ]);
 

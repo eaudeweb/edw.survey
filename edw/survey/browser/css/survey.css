@@ -113,6 +113,10 @@ table.tableLayout tr {
     border-collapse: collapse;
 }
 
+#content div.bootstrap .panel-body {
+    padding: 10px;
+}
+
 #content div.bootstrap table.tableLayout td {
     min-width: 50px;
     height: 50px;
