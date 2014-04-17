@@ -132,12 +132,13 @@
         var that = this;
         var data = elem.data("backbone-view");
         var order = 0;
+        var existing = false;
 
         field = this.fields.findWhere({uuid: data.attributes.uuid});
-        if (field) {
-          this.fields.remove(field);
-        } else {
+        if (!field) {
           field = new App.Field(data.toJSON());
+        } else {
+          existing = true;
         }
 
         field.set("parentID", this.model.get("uuid"));
@@ -147,7 +148,9 @@
         }
 
         elem.remove();
-        this.addField(field);
+        if (!existing) {
+          this.addField(field);
+        }
       },
 
       saveFields: function(evt, ui){

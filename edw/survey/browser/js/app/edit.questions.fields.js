@@ -289,13 +289,15 @@
         this.fields = App.application.fields;
         var that = this;
         var data = elem.data("backbone-view");
+        var existing = false;
 
         field = this.fields.findWhere({uuid: data.attributes.uuid});
-        if (field) {
-          this.fields.remove(field);
-        } else {
+        if (!field) {
           field = new App.Field(data.toJSON());
+        } else {
+          existing = true;
         }
+
         var rowIndex = evt.target.parentNode.rowIndex;
         var columnIndex = evt.target.cellIndex;
 
@@ -308,7 +310,12 @@
         if (!field.get("uuid")){
           field.set("uuid", new Date().getTime());
         }
-        this.fields.create(field);
+        if (!existing) {
+          this.fields.create(field);
+        } else {
+          field.save();
+        }
+        
         this.render();
       },
 
@@ -330,7 +337,7 @@
 
           var view = new viewer({model: field});
           $(table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
-
+          $(view.render().el).attr('uuid', field.get('uuid'));
         }, this);
         return this;
       }
