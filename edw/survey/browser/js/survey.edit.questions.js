@@ -26,8 +26,6 @@
       collection: null,
       initialize: function(){
         this.collection = new App.QuestionList();
-        this.collection.fetch();
-
       },
 
       render: function(){
@@ -69,6 +67,7 @@
           var viewer = App.FieldMapping[fieldType].viewer;
           var view = new viewer({model: field});
           this.$el.append(view.render().el);
+          view.initDraggable();
         }, this);
       }
     });
@@ -84,19 +83,22 @@
 
         this.fieldsView = new App.FieldsView();
         this.questionsView = new App.QuestionsView();
+        this.questionsView.collection.fetch();
         this.fields = new App.FieldsList();
-        this.fields.fetch();
 
-        this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
-        this.listenTo(this.questionsView.collection, "remove", this.fieldCleanup);
-        this.listenTo(this.fields, "remove", this.fieldCleanup);
+        $.when(this.fields.fetch(), this.questionsView.collection.fetch()).then(_.bind(function(){
+          this.listenTo(this.questionsView.collection, 'add', this.displayQuestion);
+          this.listenTo(this.questionsView.collection, "remove", this.fieldCleanup);
+          this.listenTo(this.fields, "remove", this.fieldCleanup);
+          this.render();
+        }, this));
       },
 
       events: {
         "click #add-question": "addQuestion",
-        "click #clear-data": "clearData"
+        "click #clear-data": "clearData",
+        "click #save-view": "saveQuestions"
       },
-
       render: function(){
         this.questionsView.render();
         this.fieldsView.render();
@@ -123,6 +125,29 @@
         this.questionsView.renderOne(question);
       },
 
+      saveQuestions: function(evt, ui) {
+        evt.preventDefault();
+        var that = this;
+
+        this.questions = $('.question');
+        var deferreds = [];
+        this.questions.each(function (index, question) {
+          var fields = $(question).find('.question-body').find('> li');
+      
+          $.each(fields, function(idx, field){
+            var uuid = parseInt($(field).attr('uuid'), 10);
+            if (uuid) {
+              var model = that.fields.findWhere({uuid: uuid});
+              deferreds.push(
+                model.set('order', idx).save());
+            }
+          });
+        });
+        $.when.apply($, deferreds).done(function(){
+          window.location = 'view';
+        });
+      },
+
       fieldCleanup: function(question){
         var uuid = question.get("uuid");
         var questionFields = App.application.fields.where({parentID: uuid});
@@ -139,7 +164,6 @@
         App.Templates.load(response);
         App.FieldMapping.init();
         App.application = new App.AppView();
-        App.application.render();
       }
     });
   });

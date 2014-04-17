@@ -79,6 +79,19 @@ div.contents {
     display: none;
 }
 
+.sortable-cell, .question-body {
+    min-height: 30px;
+}
+
+.highlight {
+    min-height: 50px;
+    min-width: 50px;
+    border: 1px solid red;
+}
+
+td.ui-droppable {
+    z-index: 999;
+}
 .question-droppable .panel-body {
     background: #fbf9ee;
 }

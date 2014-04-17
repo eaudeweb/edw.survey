@@ -12,19 +12,21 @@
 
     App.FieldView = Backbone.View.extend({
       tagName: "li",
-      //className: "list-group-item",
+      className: "question-field",
 
       events: {
         "click .glyphicon-trash": "deleteField",
         "click .glyphicon-edit": "startEdit",
-        "click .glyphicon-check": "endEdit"
+        "dblclick .view-mode": "startEdit",
+        "click .glyphicon-check": "endEdit",
+        "keydown .value-grabber": "handleKeyDown",
+        "blur .value-grabber": "cancelEdit"
       },
 
       initialize: function(){
         this.template = App.Templates.compiled.FieldTemplate;
 
-        this.initDraggable();
-
+        this.$el.data('backbone-view', this.model);
         this.listenTo(this.model, "change", this.render);
         this.listenTo(this.model, "destroy", this.remove);
       },
@@ -32,8 +34,16 @@
       initDraggable: function(){
         this.$el.draggable({
           handle: ".glyphicon-th",
-          revert: true,
-          helper: "clone"
+          revert: false,
+          helper: function() {
+            var data = $(this).data("backbone-view");
+            var ret = $(this).clone();
+            ret.data("backbone-view", data);
+            ret.addClass('dropped');
+            return ret;
+          },
+          connectWith: '.ui-draggable',
+          connectToSortable: '.question-body, .sortable-cell'
         });
         this.$el.data("backbone-view", this.model);
       },
@@ -50,8 +60,53 @@
       },
 
       endEdit: function(){
-        this.$el.removeClass("editing");
         this.model.set({value: this.input.val()}).save();
+        this.cancelEdit();
+      },
+
+      cancelEdit: function(){
+        this.$el.removeClass("editing");
+      },
+
+      getCaret: function(el){
+        if (el.selectionStart) {
+          return el.selectionStart;
+        } else if (document.selection) {
+          el.focus();
+
+          var r = document.selection.createRange();
+            if (r == null) {
+              return 0;
+          }
+
+          var re = el.createTextRange(),
+          rc = re.duplicate();
+          re.moveToBookmark(r.getBookmark());
+          rc.setEndPoint('EndToStart', re);
+
+          return rc.text.length;
+        }
+      return 0;
+      },
+
+      handleKeyDown: function(evt) {
+        var code = evt.keyCode || evt.which;
+        if (code == 13 && evt.shiftKey) {
+          evt.stopPropagation();
+          var textarea = this.$el.find('textarea');
+          if (textarea.length > 0) {
+           var content = textarea.val();
+           var caret = this.getCaret(textarea);
+           textarea.value = content.substring(0,caret)+
+                         "\n"+content.substring(caret,content.length);
+          }
+          evt.stopPropagation();
+        } else if(code == 13) {
+          evt.stopPropagation();
+          this.endEdit();
+        } else if(code == 27) {
+          this.cancelEdit();
+        }
       },
 
       render: function(){
@@ -214,37 +269,47 @@
         });
       },
 
-      bindDroppable: function(){
-        this.$el.find("td").droppable({
-          hoverClass: "tableLayout-droppable",
-          accept: ".ui-draggable",
-          greedy: true,
+      bindSortable: function(){
+        this.$el.find(".sortable-cell").sortable({
+          items: "li",
+          receive: _.bind(this.receive, this),
+          placeholder: "highlight",
+          helper: "original",
           tolerance: "pointer",
-          drop: _.bind(this.drop, this)
+          connectWith: '.question-body, .sortable-cell',
+          start: function(event, ui) {
+            ui.item.data("backbone-view", ui.helper.data("backbone-view"));
+            ui.item.addClass('dropped');
+          },
         });
       },
 
-      drop: function(evt, ui){
-        var elem = $(ui.draggable);
+      receive: function(evt, ui){
+        var elem = $(evt.target).find('.dropped');
+        this.fields = App.application.fields;
+        var that = this;
         var data = elem.data("backbone-view");
-        var new_data = data.toJSON();
-        var parentID = data.get("parentID");
 
-        if (parentID){
-          this.fields.findWhere(data.toJSON()).destroy();
+        field = this.fields.findWhere({uuid: data.attributes.uuid});
+        if (field) {
+          this.fields.remove(field);
+        } else {
+          field = new App.Field(data.toJSON());
         }
-
         var rowIndex = evt.target.parentNode.rowIndex;
         var columnIndex = evt.target.cellIndex;
-        new_data.rowPosition = rowIndex;
-        new_data.columnPosition = columnIndex;
-        new_data.parentID = this.model.get("uuid");
 
-        if (!new_data.uuid){
-          new_data.uuid = new Date().getTime();
+        field.set("rowPosition", rowIndex);
+        field.set("columnPosition", columnIndex);
+
+        field.set("parentID", this.model.get("uuid"));
+        field.set("order", elem.index());
+
+        if (!field.get("uuid")){
+          field.set("uuid", new Date().getTime());
         }
-
-        this.fields.create(new_data);
+        this.fields.create(field);
+        this.render();
       },
 
       render: function(){
@@ -252,7 +317,7 @@
         this.$el.html(this.template({data: this.model.attributes}));
         $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
 
-        this.bindDroppable();
+        this.bindSortable();
 
         var table = this.$el.find("table").get(0);
         var fields = this.fields.where({"parentID": this.model.get("uuid")});

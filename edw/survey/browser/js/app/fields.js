@@ -92,6 +92,7 @@
 
     App.Field = Backbone.Model.extend({
       idAttribute: "uuid",
+
       fieldCopy: function(){
         var original = this;
         var copy = original;

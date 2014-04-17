@@ -25,7 +25,10 @@
 
     App.FieldsList = Backbone.Collection.extend({
       url: "fields",
-      model: App.Field
+      model: App.Field,
+      comparator: function(model) {
+        return model.get('order');
+      }
     });
 
     App.AnswerFieldsList = App.FieldsList.extend({

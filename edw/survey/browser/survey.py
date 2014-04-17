@@ -4,6 +4,7 @@ import hashlib
 import random
 
 from time import time
+from time import sleep
 from zope.interface import implements
 from Products.Five.browser import BrowserView
 from zope.publisher.interfaces import IPublishTraverse
@@ -112,7 +113,7 @@ class Collection(CommonView, BrowserView):
     def create(self):
         data = PersistentDict(self.payload)
         self.storage.append(data)
-        self.updateAnswers(self.payload)
+        self.update()
 
     def read(self):
         header = self.request.RESPONSE.setHeader
@@ -124,13 +125,15 @@ class Collection(CommonView, BrowserView):
         idx = getIndex(self.storage, self.request_uuid)
         if idx is None:
             return self.create()
-        self.storage[idx] = PersistentDict(self.payload)
-        self.updateAnswers(self.payload)
+        else:
+            self.storage[idx] = PersistentDict(self.payload)
+            self.updateAnswers(self.payload)
 
     def delete(self):
         idx = getIndex(self.storage, self.request_uuid)
-        self.deleteAnswers(self.request_uuid)
-        del self.storage[idx]
+        if idx is not None:
+            self.deleteAnswers(self.request_uuid)
+            del self.storage[idx]
 
     def updateAnswers(self, field):
         if "type" not in field:
@@ -140,7 +143,7 @@ class Collection(CommonView, BrowserView):
             uuid = field["uuid"]
             idx = getIndex(fields, uuid)
             persistentField = PersistentDict(field)
-            if not idx:
+            if idx is None:
                 storage[userid].append(persistentField)
             else:
                 storage[userid][idx] = persistentField
@@ -149,7 +152,7 @@ class Collection(CommonView, BrowserView):
         storage = self.get_storage("answers", PersistentDict)
         for userid, fields in storage.items():
             idx = getIndex(fields, uuid)
-            if idx:
+            if idx is not None:
                 del storage[userid][idx]
 
 

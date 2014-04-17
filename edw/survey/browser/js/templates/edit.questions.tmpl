@@ -1,36 +1,37 @@
 <script id="question-template" type="text/x-underscore-template">
     <div class="question">
         <div class="panel panel-default">
-            <div class="panel-heading view-mode">
-                <button class="delete-question btn btn-danger btn-xs">
+            <div class="panel-heading view-mode" title="Double click to edit">
+                <button class="delete-question btn btn-danger btn-xs" title="Delete">
                     <span class="glyphicon glyphicon-remove-sign"></span></button>
+                <button class="save-question btn btn-xs" title="Save">
+                    <span class="glyphicon glyphicon-check"></span></button>
                 <span class="question-title"><%= data.name %></span>
             </div>
             <div class="panel-heading edit-mode">
                 <input type="text" class="name-grabber" name="name-grabber" value="<%= data.name %>"/>
                 <button class="btn btn-xs btn-question-save">Save</button>
-                <button class="btn btn-xs btn-question-cancel">Cancel</button>
             </div>
             <div class="panel-body">
-                <div class="question-body"></div>
+                <div class="question-body" question-id="<%= data.uuid %>"></div>
             </div>
         </div>
     </div>
 </script>
 <script id="Field-template" type="text/x-underscore-template">
-    <div class="view-mode">
-        <span class="<%= data.type %> glyphicon glyphicon-th"></span>
+    <div class="view-mode" title="Double click to edit">
+        <span class="<%= data.type %> glyphicon glyphicon-th" title="Drag"></span>
         <div class="contents">
             <!-- Contents via Backbone View -->
         </div>
-        <span class="<%= data.type %> glyphicon glyphicon-trash"></span>
-        <span class="<%= data.type %> glyphicon glyphicon-edit"></span>
+        <span class="<%= data.type %> glyphicon glyphicon-trash" title="Delete"></span>
+        <span class="<%= data.type %> glyphicon glyphicon-edit" title="Edit"></span>
     </div>
     <div class="edit-mode">
         <span class="contents">
             <!-- Contents via Backbone View -->
         </span>
-        <span class="<%= data.type %> glyphicon glyphicon-check"></span>
+        <span class="<%= data.type %> glyphicon glyphicon-check" title="Save"></span>
     </div>
 </script>
 <script id="textInputField-template" type="text/x-underscore-template">
@@ -103,16 +104,16 @@
 </script>
 <script id="tableLayout-template" type="text/x-underscore-template">
     <div class="view-mode edit-mode">
-        <span class="glyphicon glyphicon-arrow-left"></span>
-        <span class="glyphicon glyphicon-arrow-up"></span>
-        <span class="glyphicon glyphicon-arrow-down"></span>
-        <span class="glyphicon glyphicon-arrow-right"></span>
+        <span class="glyphicon glyphicon-arrow-left" title="Remove column"></span>
+        <span class="glyphicon glyphicon-arrow-up" title="Remove row"></span>
+        <span class="glyphicon glyphicon-arrow-down" title="Add row"></span>
+        <span class="glyphicon glyphicon-arrow-right" title="Add column"></span>
         <table class="tableLayout">
             <tbody>
             <% for(var i = 0; i < data.rows; i++) {
                     var row = ["<tr>"];
                     for(var j = 0; j < data.cols; j++){
-                        row.push("<td></td>");
+                        row.push("<td class='sortable-cell'></td>");
                     }
                     row.push("</tr>");
                     print(row.join(""));
