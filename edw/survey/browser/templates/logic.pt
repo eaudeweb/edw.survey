@@ -32,7 +32,8 @@
     <h1>Survey - view</h1>
     <div class="row">
       <div id="sidebar" class="col-lg-2">
-        <ul id="questions-listing" class="list-unstyled sortable-listing"></ul>
+        <ul id="questions-listing" class="list-unstyled sortable-listing">
+        </ul>
       </div>
       <div id="displayarea" class="col-lg-10">
         <ul id="logic-listing" class="list-unstyled added-questions sortable-listing">
