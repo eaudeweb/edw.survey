@@ -33,9 +33,6 @@
         placeholder: "ui-state-highlight",
         stop: _.bind(view.sortableStop, view)
       }).disableSelection();
-      element.on("sortupdate", function(event, ui){
-        App.application.trigger("sortupdate", element, event, ui);
-      });
     };
 
     App.Question = Backbone.Model.extend({
@@ -115,7 +112,9 @@
 
       initialize: function(){
         this.initSortable();
-        this.subviews.push(new App.SplitterView());
+        var splitterView = new App.SplitterView();
+        splitterView.stopListening();
+        this.subviews.push(splitterView);
         App.application.questions.each(function(question){
           var view = new App.QuestionView({model: question});
           this.subviews.push(view);
@@ -129,7 +128,7 @@
       sortableStop: function(event, ui){
         // don't sort in left-picker list
         if (ui.item.parent().is("#questions-listing")){
-          $(this).sortable("cancel");
+          this.$el.sortable("cancel");
           return;
         }
 
@@ -139,18 +138,29 @@
         var item_is_question = ui.item.hasClass("question-item");
         var target_is_logic_view = ui.item.parent().hasClass("added-questions");
 
+        var view = ui.item.data("backbone-view");
+        var target_view = ui.item.parent().data("backbone-view");
+
         if (item_is_splitter && target_is_logic_view){
-          App.application.splitters.add({
-            uuid: App.genUUID()
+          var splitter = new App.Splitter({
+            uuid: App.genUUID(),
+            logic_position: idx
           });
+          debugger;
+          App.application.splitters.add(splitter);
+          splitter_view = new App.SplitterView({model: splitter});
+          ui.item.data("backbone-view", splitter_view);
+          target_view.subviews.push(splitter_view);
         }
 
         if (item_is_question && target_is_logic_view){
-          var view = ui.item.data("backbone-view");
-          var target_view = ui.item.parent().data("backbone-view");
+          view.model.set("logic_position", idx);
           var popped_view = App.popViewFromArray(view, this.subviews);
           target_view.subviews.push(popped_view);
         }
+
+        this.$el.sortable("cancel");
+        App.application.renderSubViews();
       },
 
       render: function(){
@@ -166,7 +176,7 @@
       el: $("#logic-listing"),
       subviews: [],
       initialize: function(){
-        this.listenTo(App.application.splitters, "add remove", this.update);
+        //this.listenTo(App.application.splitters, "add remove", this.update);
       },
       initSortable: function(){
         App.initSortable(this.$el, this);
@@ -188,11 +198,14 @@
           var popped_view = App.popViewFromArray(view, this.subviews);
           target_view.subviews.push(popped_view);
         }
+        this.$el.sortable("cancel");
+        App.application.renderSubViews();
       },
       render: function(){
         this.$el.html("");
         this.$el.data("backbone-view", this);
         this.initSortable();
+
         _.each(this.subviews, function(subview){
           this.$el.append(subview.render().el);
         }, this);
@@ -207,21 +220,60 @@
     App.SplitterView = Backbone.View.extend({
       tagName: "li",
       className: "splitter",
+      subviews: [],
+
+      initialize: function(){
+        this.listenTo(App.application.splits, "add", this.update);
+      },
 
       events: {
         "click .add-split": "addSplit"
       },
 
       addSplit: function(){
-        this.$el.find(".panel-body").append(this.$el.find(".new-split.hidden").clone().removeClass("hidden"));
+        console.log("MUIE!!!!");
+        App.application.splits.add({
+          uuid: App.genUUID(),
+          parentID: this.model.get("uuid")
+        });
       },
 
       render: function(){
         this.$el.data("backbone-view", this);
-        var elm = App.Templates.compiled.splitter({
-          data: {time: new Date().getTime()}
-        });
+        var elm = App.Templates.compiled.splitter();
         this.$el.html(elm);
+        _.each(this.subviews, function(subview){
+          var subview_el = subview.render().el;
+          this.$el.find(".panel-body").append(subview_el);
+        }, this);
+        return this;
+      },
+
+      update: function(model){
+        if (model.get("parentID") !== this.model.get("uuid")) {
+          return;
+        }
+        var view = new App.ModelMapping[model.get("type")]({model: model});
+        this.subviews.push(view);
+        this.render();
+      }
+    });
+
+    App.SplitView = Backbone.View.extend({
+      tagName: "div",
+      className: "split",
+
+      sortableStop: function(){
+      },
+
+      initSortable: function(){
+        var sortableList = this.$el.find(".sortable-listing");
+        App.initSortable(sortableList, this);
+      },
+
+      render: function(){
+        this.$el.html(App.Templates.compiled.split());
+        this.initSortable();
         return this;
       }
     });
@@ -237,19 +289,21 @@
         this.splits = new App.SplitList();
       },
       render: function(){
-        this.listenTo(this.splitters, "add remove", this.renderSubViews);
-        this.listenTo(this.questions, "add remove", this.renderSubViews);
-        this.listenTo(this.splits, "add remove", this.renderSubViews);
+        //this.listenTo(this.splitters, "add remove", this.renderSubViews);
+        //this.listenTo(this.questions, "add remove", this.renderSubViews);
+        //this.listenTo(this.splits, "add remove", this.renderSubViews);
         this.renderSubViews();
       },
       renderSubViews: function(){
+        console.log("RERENDER!!!");
         this.questionsView.render();
         this.logicView.render();
       }
     });
 
   App.ModelMapping = {
-    splitter: App.SplitterView
+    splitter: App.SplitterView,
+    split: App.SplitView
   };
 
 
