@@ -31,11 +31,17 @@
   <div id="application">
     <h1>Survey - view</h1>
     <div class="row">
+      <div class="col-lg-3">
+        <button id="save-logic" class="btn btn-primary btn-xs">Save logic</button>
+      </div>
+    </div>
+    <div class="row">
       <div id="sidebar" class="col-lg-2">
-        <ul id="questions-listing" class="list-unstyled"></ul>
+        <ul id="questions-listing" class="list-unstyled sortable-listing">
+        </ul>
       </div>
       <div id="displayarea" class="col-lg-10">
-        <ul class="list-unstyled added-questions">
+        <ul id="logic-listing" class="list-unstyled added-questions sortable-listing">
         </ul>
       </div>
     </div>

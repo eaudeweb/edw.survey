@@ -29,7 +29,8 @@
         "dblclick .panel-heading": "startEdit",
         "click .btn-question-save": "endEdit",
         "blur .name-grabber": "cancelEdit",
-        "keydown .name-grabber": "handleKeyDown"
+        "keydown .name-grabber": "handleKeyDown",
+        "click .expand-collapse-question": "expandCollapseQuestion"
       },
 
       initialize: function(){
@@ -89,6 +90,10 @@
 
       deleteQuestion: function(){
         this.model.destroy();
+      },
+
+      expandCollapseQuestion: function(){
+        this.$(".panel-body").toggle();
       },
 
       startEdit: function(){

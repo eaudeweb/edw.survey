@@ -18,6 +18,15 @@
       App = window.edw.survey.edit.logic;
     }
 
+    App.genUUID = function(){
+      return new Date().getTime();
+    };
+    App.popViewFromArray = function(view, array){
+      index = _.map(array, function(el){
+        return el.model == view.model;
+      }).indexOf(true);
+      return array.splice(index, 1)[0];
+    };
     App.Templates.compiled = {};
     App.Templates.load = function(data){
       var html = $(data);

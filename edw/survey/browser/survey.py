@@ -114,6 +114,8 @@ class Collection(CommonView, BrowserView):
         data = PersistentDict(self.payload)
         self.storage.append(data)
         self.update()
+        self.updateAnswers(self.payload)
+        self.updateLogic(self.payload)
 
     def read(self):
         header = self.request.RESPONSE.setHeader
@@ -128,12 +130,32 @@ class Collection(CommonView, BrowserView):
         else:
             self.storage[idx] = PersistentDict(self.payload)
             self.updateAnswers(self.payload)
+            self.updateLogic(self.payload)
 
     def delete(self):
         idx = getIndex(self.storage, self.request_uuid)
         if idx is not None:
             self.deleteAnswers(self.request_uuid)
+            self.deleteLogic(self.request_uuid)
             del self.storage[idx]
+
+    def updateLogic(self, data):
+        if data["type"] != "question":
+            return
+        storage = self.get_storage("logic", PersistentDict)
+        uuid = data["uuid"]
+        storage.setdefault(uuid, PersistentDict({})).update(data)
+        if "deleted" in storage[uuid]:
+            storage[uuid]["deleted"] = False
+
+    def deleteLogic(self, uuid):
+        storage = self.get_storage("logic", PersistentDict)
+        data = storage.get(int(uuid), None)
+        if data is None:
+            return
+        if data["type"] != "question":
+            return
+        del storage[int(uuid)]
 
     def updateAnswers(self, field):
         if "type" not in field:
@@ -196,6 +218,45 @@ class ClearDataView(CommonView):
         redirect_url = self.context.absolute_url() + "/survey_edit"
         return self.request.RESPONSE.redirect(redirect_url)
 
+
+class AnswerQuestions(Collection):
+
+    storage_name = "questions"
+
+    @property
+    def logic_storage(self):
+        return self.get_storage("logic", default=PersistentDict)
+
+    def get_data(self):
+        ordered_questions = []
+        splits_by_parent = {}
+
+        for key, value in self.logic_storage.items():
+            parent = value.get("logic_parent", None)
+            splits_by_parent.setdefault(parent, []).append(value)
+
+
+        for key, value in splits_by_parent.items():
+            splits_by_parent[key] = sorted(value, key=lambda item: item.get("logic_position", None))
+
+        for item in splits_by_parent["logic"]:
+            if item["type"] == "question":
+                ordered_questions.append(item)
+            if item["type"] == "splitter":
+                for split in splits_by_parent[item["uuid"]]:
+                    condition = split["logic_condition"]
+                    for question in splits_by_parent[split["uuid"]]:
+                        question["logic_condition"] = condition
+                        ordered_questions.append(question)
+
+        return ordered_questions
+
+
+    def read(self):
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        data = [dict(x) for x in self.get_data()]
+        return json.dumps(data, indent=2)
 
 class SubmitAnswerView(CommonView, BrowserView):
 
@@ -300,3 +361,125 @@ class AnswersView(CommonView):
         for userid, fields in self.storage.items():
             data[userid] = self.groupFields(deepcopy(fields), questionIds)
         return data
+
+
+class LogicQuestions(Collection):
+    storage_name = "logic"
+    request_uuid = None
+
+    @property
+    def storage(self):
+        return self.get_storage(default=PersistentDict)
+
+    def get_data(self):
+        result = []
+        for key, value in self.storage.items():
+            key_type = value.get("type", None)
+            if key_type == "question":
+                result.append(dict(value))
+        return sorted(result, key=lambda item: item.get("uuid"))
+
+    def create(self):
+        print("SHOULD NOT CREATE QUESTIONS!")
+
+    def update(self):
+        question = self.storage.get(int(self.request_uuid), None)
+        if question is None:
+            print("NOT GOOD!")
+            return
+        question.update(PersistentDict(self.payload))
+        for key in question.keys():
+            if key.startswith("logic_") and key not in self.payload:
+                del question[key]
+
+    def delete(self):
+        print("SHOULD NOT DELETE QUESTIONS!")
+
+    def read(self):
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        data = self.get_data()
+        return json.dumps(data, indent=2)
+
+
+class LogicSplitters(Collection):
+    storage_name = "logic"
+    request_uuid = None
+
+
+    @property
+    def storage(self):
+        return self.get_storage(default=PersistentDict)
+
+    def get_data(self):
+        result = []
+
+        for key, value in self.storage.items():
+            key_type = value.get("type", None)
+            if key_type == "splitter":
+                result.append(dict(value))
+        return sorted(result, key=lambda item: item.get("logic_position"))
+
+    def create(self):
+        data = PersistentDict(self.payload)
+        self.storage.setdefault(int(self.request_uuid), data)
+
+    def update(self):
+        splitter = self.storage.get(int(self.request_uuid), None)
+        if splitter is None:
+            return self.create()
+        splitter.update(PersistentDict(self.payload))
+        for key in splitter.keys():
+            if key.startswith("logic_") and key not in self.payload:
+                del splitter[key]
+
+    def delete(self):
+        del self.storage[int(self.request_uuid)]
+
+    def read(self):
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        data = self.get_data()
+        return json.dumps(data, indent=2)
+
+
+class LogicSplits(Collection):
+    storage_name = "logic"
+    request_uuid = None
+
+    @property
+    def storage(self):
+        return self.get_storage(default=PersistentDict)
+
+    def get_data(self):
+        result = []
+
+        for key, value in self.storage.items():
+            key_type = value.get("type", None)
+            if key_type == "split":
+                result.append(dict(value))
+        return sorted(result, key=lambda item: item.get("logic_position"))
+
+    def create(self):
+        data = PersistentDict(self.payload)
+        self.storage.setdefault(int(self.request_uuid), data)
+
+    def update(self):
+        split = self.storage.get(int(self.request_uuid), None)
+        if split is None:
+            return self.create()
+        split.update(PersistentDict(self.payload))
+        for key in split.keys():
+            if key.startswith("logic_") and key not in self.payload:
+                del split[key]
+
+    def delete(self):
+        del self.storage[int(self.request_uuid)]
+
+    def read(self):
+        header = self.request.RESPONSE.setHeader
+        header("Content-Type", "application/json")
+        data = self.get_data()
+        return json.dumps(data, indent=2)
+
+

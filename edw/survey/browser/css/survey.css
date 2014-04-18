@@ -137,6 +137,28 @@ table.tableLayout tr {
 /* Logic editor */
 
 
+.added-questions {
+    min-height: 500px;
+}
+
+.questions-listing {
+    min-height: 500px;
+}
+
+.ui-state-highlight {
+    height: 5em;
+    line-height: 5em;
+    border: 1px solid #ccf;
+    background-color: #ccc;
+}
+
+.splitter .splitter-questions {
+    min-height: 50px;
+}
+
+.splitter-questions {
+    min-height: 20px;
+}
 
 /*
 .affix {
