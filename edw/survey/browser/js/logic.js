@@ -205,9 +205,10 @@
         var target_view = ui.item.parent().data("backbone-view");
 
         if (item_is_splitter && target_is_questions_listing){
-          ui.item.remove();
-          App.application.splitters.remove(view.model);
-          view.remove();
+          //ui.item.remove();
+          view.model.destroy();
+          //App.application.splitters.remove(view.model);
+          //view.remove();
         }
         if (item_is_question && target_is_questions_listing){
           view.model.unset("logic_position");
@@ -279,11 +280,26 @@
 
       initialize: function(){
         this.listenTo(App.application.splits, "add", this.render);
+        if(this.model){
+          this.listenTo(this.model, "destroy", this.cleanup);
+        }
       },
 
       events: {
         "click .add-split": "addSplit",
         "click .remove-split": "removeSplit"
+      },
+
+      getSplits: function(){
+        return App.application.splits.where({
+          logic_parent: this.model.get("uuid")
+        });
+      },
+
+      cleanup: function(){
+        _.each(this.getSplits(), function(split){
+          split.destroy();
+        });
       },
 
       addSplit: function(){
@@ -316,11 +332,7 @@
           return this;
         }
 
-        var my_splits = App.application.splits.where({
-          logic_parent: this.model.get("uuid")
-        });
-
-        _.each(my_splits, function(split){
+        _.each(this.getSplits(), function(split){
           var view = new App.ModelMapping[split.get("type")]({model: split});
           this.$el.find(".panel-body:first").append(view.render().el);
         }, this);
@@ -334,6 +346,23 @@
 
       events: {
         "keyup .split-condition": "setCondition"
+      },
+
+      initialize: function(){
+        this.listenTo(this.model, "destroy", this.cleanup);
+      },
+
+      getQuestions: function(){
+        return App.application.questions.where({
+          logic_parent: this.model.get("uuid")
+        });
+      },
+
+      cleanup: function(){
+        _.each(this.getQuestions(), function(question){
+          question.unset("logic_position");
+          question.unset("logic_parent");
+        });
       },
 
       sortableStop: function(){
@@ -353,11 +382,7 @@
         this.$el.data("backbone-view", this);
         this.initSortable();
 
-        var questions = App.application.questions.where({
-          logic_parent: this.model.get("uuid")
-        });
-
-        _.each(questions, function(model){
+        _.each(this.getQuestions(), function(model){
           var view = new App.ModelMapping[model.get("type")]({model: model});
           this.$el.find(".splitter-questions").append(view.render().el);
         }, this);

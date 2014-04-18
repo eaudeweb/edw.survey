@@ -113,13 +113,15 @@
           var name = question_field_name[2];
 
           var question = App.application.questions.findWhere({name: "Question " + question_id});
-          var field = App.application.fields.where({
+          var condition_field = App.application.fields.where({
             parentID: question.get("uuid")
           })[field_id - 1];
 
           this.displayIf = function(field){
+            if (condition_field.get("uuid") != field.model.get("uuid")){
+              return;
+            }
             var value = field.getValue();
-            console.log(field.getValue());
             if(value == cond_val){
               this.$el.show();
             } else {
