@@ -35,8 +35,12 @@
         "keyup": "announceKeypress"
       },
 
+      initialize: function(){
+        this.model.view = this;
+      },
+
       announceKeypress: function(){
-        App.application.trigger("field-modified", this);
+        App.application.trigger("field-modified", this.model);
       },
 
       getValue: function(){
@@ -113,21 +117,26 @@
           var name = question_field_name[2];
 
           var question = App.application.questions.findWhere({name: "Question " + question_id});
-          var condition_field = App.application.fields.where({
+          this.condition_field = App.application.fields.where({
             parentID: question.get("uuid")
           })[field_id - 1];
 
           this.displayIf = function(field){
-            if (condition_field.get("uuid") != field.model.get("uuid")){
+            if (this.condition_field.get("uuid") != field.get("uuid")){
               return;
             }
-            var value = field.getValue();
+            var value = field.view.getValue();
             if(value == cond_val){
               this.$el.show();
             } else {
               this.$el.hide();
             }
           };
+
+          App.application.fields.each(function(field){
+            this.displayIf(field);
+          }, this);
+
         }
       },
 
@@ -139,6 +148,7 @@
           this.renderField(field);
         }, this);
         this.checkCondition();
+        this.checkViewAs();
         return this;
       },
 
@@ -152,7 +162,6 @@
         rendered_el.data("field-data", field.toJSON());
         rendered_el.data("backbone-view", view);
         $(".question-body", this.$el).append(rendered_el);
-        this.checkViewAs();
       },
 
       checkViewAs: function(){

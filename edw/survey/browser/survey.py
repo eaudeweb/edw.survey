@@ -334,7 +334,10 @@ class AnswersView(CommonView):
 
         for qid in questionIds:
             d = {"uuid": qid, "labels": []}
-            for field in qmap[qid]["fields"]:
+            question_fields = qmap[qid].get("fields", None)
+            if question_fields is None:
+                continue
+            for field in question_fields:
                 fieldType = field["type"]
                 uuid = field["uuid"]
 
