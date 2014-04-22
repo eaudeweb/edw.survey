@@ -127,9 +127,9 @@
             }
             var value = field.view.getValue();
             if(value == cond_val){
-              this.$el.show();
+              this.$el.fadeIn();
             } else {
-              this.$el.hide();
+              this.$el.fadeOut();
             }
           };
 
