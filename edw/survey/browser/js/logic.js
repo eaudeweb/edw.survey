@@ -344,6 +344,7 @@
     App.FieldsView = Backbone.View.extend({
         tagName: "select",
         id: "field-selector",
+        className: "selector",
 
         initialize: function() {
             this.fields = App.application.fields.where({
@@ -369,7 +370,8 @@
       className: "split",
 
       events: {
-        "keyup .split-condition": "setCondition",
+        "change .selector": "setCondition",
+        "keyup #cmp": "setCondition",
         "change #question-selector": "changedQuestion"
       },
 
@@ -400,7 +402,12 @@
       },
 
       setCondition: function(){
-        this.model.set("logic_condition", this.$el.find(".split-condition").val());
+        this.model.set("logic_condition", {
+            question: this.$el.find("#question-selector").val(),
+            field: this.$el.find("#field-selector").val(),
+            operator: this.$el.find("#operator-selector").val(),
+            cmp: this.$el.find("#cmp").val()
+        });
       },
 
       changedQuestion: function(event) {
@@ -409,16 +416,30 @@
                 parentID: parseInt(event.val, 10)
             })
         );
-          this.fieldsView.render();
-          this.$el.find("#field-selector").select2();
+
+        this.fieldsView.render();
+        this.$el.find("#field-selector").select2();
       },
 
       render: function(){
         this.$el.html(App.Templates.compiled.split({
-            data: this.model.attributes,
             questions: App.application.questions.toJSON(),
             }
         ));
+
+        var condition = this.model.get("logic_condition");
+        if(condition) {
+            this.$el.find("#question-selector").val(condition.question);
+            this.$el.find("#field-selector").val(condition.field);
+            this.$el.find("#operator-selector").val(condition.operator);
+            this.$el.find("#cmp").val(condition.cmp);
+            this.fieldsView.setFields(
+                App.application.fields.where({
+                    parentID: parseInt(condition.question, 10)
+                })
+            );
+        }
+
         this.$el.find("#question-selector").after(this.fieldsView.render().el);
         this.$el.find("#field-selector").select2();
         this.$el.find("#question-selector").select2();

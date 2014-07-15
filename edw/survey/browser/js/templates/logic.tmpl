@@ -23,22 +23,21 @@
     </div>
 </script>
 <script id="split-template" type="text/x-underscore-template">
-    <textarea class="split-condition" value="<%= data.logic_condition %>"><%= data.logic_condition %></textarea>
-    <select id="question-selector">
+    <select id="question-selector" class="selector">
         <%
             _.each(questions, function(question) {
                 %> <option value="<%= question.uuid %>"><%= question.name %></option> <%
             });
         %>
     </select>
-    <select id="operator-selector">
+    <select id="operator-selector" class="selector">
         <option value="eq">eq</option>
         <option value="lt">lt</option>
         <option value="gt">gt</option>
         <option value="le">le</option>
         <option value="ge">ge</option>
     </select>
-    <input type="text" name="cmp-value">
+    <input type="text" id="cmp" name="cmp-value">
     <ul class="splitter-questions sortable-listing list-unstyled">
     </ul>
 </script>
@@ -46,7 +45,7 @@
 <script id="fields-template" type="text/x-underscore-template">
         <%
             _.each(fields, function(field) {
-                %> <option value="<%= field.type %>"><%= field.type %></option> <%
+                %> <option value="<%= field.uuid %>"><%= field.type %></option> <%
             });
         %>
 </script>
