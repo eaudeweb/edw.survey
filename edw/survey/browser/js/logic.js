@@ -370,9 +370,9 @@
       className: "split",
 
       events: {
+        "change #question-selector": "changedQuestion",
         "change .selector": "setCondition",
         "keyup #cmp": "setCondition",
-        "change #question-selector": "changedQuestion"
       },
 
       initialize: function(){
@@ -430,7 +430,6 @@
         var condition = this.model.get("logic_condition");
         if(condition) {
             this.$el.find("#question-selector").val(condition.question);
-            this.$el.find("#field-selector").val(condition.field);
             this.$el.find("#operator-selector").val(condition.operator);
             this.$el.find("#cmp").val(condition.cmp);
             this.fieldsView.setFields(
@@ -441,6 +440,9 @@
         }
 
         this.$el.find("#question-selector").after(this.fieldsView.render().el);
+        if(condition)
+            this.$el.find("#field-selector").val(condition.field);
+
         this.$el.find("#field-selector").select2();
         this.$el.find("#question-selector").select2();
         this.$el.find("#operator-selector").select2();
