@@ -375,7 +375,7 @@
 
       initialize: function(){
         this.listenTo(this.model, "destroy", this.cleanup);
-        this.fields = new App.FieldsView();
+        this.fieldsView = new App.FieldsView();
       },
 
       getQuestions: function(){
@@ -404,12 +404,12 @@
       },
 
       changedQuestion: function(event) {
-        this.fields.setFields(
+        this.fieldsView.setFields(
             App.application.fields.where({
                 parentID: parseInt(event.val, 10)
             })
         );
-          this.fields.render();
+          this.fieldsView.render();
           this.$el.find("#field-selector").select2();
       },
 
@@ -419,7 +419,7 @@
             questions: App.application.questions.toJSON(),
             }
         ));
-        this.$el.find("#question-selector").after(this.fields.render().el);
+        this.$el.find("#question-selector").after(this.fieldsView.render().el);
         this.$el.find("#field-selector").select2();
         this.$el.find("#question-selector").select2();
         this.$el.find("#operator-selector").select2();
