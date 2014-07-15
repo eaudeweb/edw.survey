@@ -9,6 +9,7 @@
 <metal:styleslot fill-slot="style_slot">
   <link rel="stylesheet" href="++resource++edw.survey.static/bootstrap/css/bootstrap.css" />
   <link rel="stylesheet" href="++resource++edw.survey.static/css/survey.css" />
+  <link rel="stylesheet" href="++resource++edw.survey.static/js/lib/select2-3.4.6/select2.css" />
 </metal:styleslot>
 
 <metal:javascriptslot fill-slot="javascript_head_slot">
@@ -17,10 +18,12 @@
   <script src="++resource++edw.survey.static/js/lib/underscore-min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/backbone-min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/backbone.localStorage.js"></script>
+  <script src="++resource++edw.survey.static/js/lib/select2-3.4.6/select2.min.js"></script>
   <script src="++resource++edw.survey.static/js/lib/purl.js"></script>
   <script src="++resource++edw.survey.static/bootstrap/js/bootstrap.js"></script>
   <script src="++resource++edw.survey.static/js/logic.js"></script>
   <script src="++resource++edw.survey.static/js/app/utils.js"></script>
+  <script src="++resource++edw.survey.static/js/app/fields.js"></script>
   <script src="++resource++edw.survey.static/js/app/questions.js"></script>
 </metal:javascriptslot>
 

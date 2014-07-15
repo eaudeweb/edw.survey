@@ -15,7 +15,8 @@
       Templates: {
         sources: [
           {"name": "splitter", "target": "#splitter-template"},
-          {"name": "split", "target": "#split-template"}
+          {"name": "split", "target": "#split-template"},
+          {"name": "fields", "target": "#fields-template"},
         ]
       }
     };
@@ -340,16 +341,41 @@
       }
     });
 
+    App.FieldsView = Backbone.View.extend({
+        tagName: "select",
+        id: "field-selector",
+
+        initialize: function() {
+            this.fields = App.application.fields.where({
+                parentID: parseInt(App.application.questions.at(0).get('uuid'), 10)
+            });
+        },
+
+        setFields: function(fields) {
+            this.fields = fields;
+        },
+
+        render: function(){
+             this.$el.html(App.Templates.compiled.fields({
+                 fields: _.invoke(this.fields, "toJSON"),
+                 }
+             ));
+             return this;
+        },
+    });
+
     App.SplitView = Backbone.View.extend({
       tagName: "div",
       className: "split",
 
       events: {
-        "keyup .split-condition": "setCondition"
+        "keyup .split-condition": "setCondition",
+        "change #question-selector": "changedQuestion"
       },
 
       initialize: function(){
         this.listenTo(this.model, "destroy", this.cleanup);
+        this.fields = new App.FieldsView();
       },
 
       getQuestions: function(){
@@ -377,8 +403,26 @@
         this.model.set("logic_condition", this.$el.find(".split-condition").val());
       },
 
+      changedQuestion: function(event) {
+        this.fields.setFields(
+            App.application.fields.where({
+                parentID: parseInt(event.val, 10)
+            })
+        );
+          this.fields.render();
+          this.$el.find("#field-selector").select2();
+      },
+
       render: function(){
-        this.$el.html(App.Templates.compiled.split({data: this.model.attributes}));
+        this.$el.html(App.Templates.compiled.split({
+            data: this.model.attributes,
+            questions: App.application.questions.toJSON(),
+            }
+        ));
+        this.$el.find("#question-selector").after(this.fields.render().el);
+        this.$el.find("#field-selector").select2();
+        this.$el.find("#question-selector").select2();
+        this.$el.find("#operator-selector").select2();
         this.$el.data("backbone-view", this);
         this.initSortable();
 
@@ -412,6 +456,7 @@
         this.questions = new App.QuestionList();
         this.splitters = new App.SplitterList();
         this.splits = new App.SplitList();
+        this.fields = new App.FieldsList();
       },
       render: function(){
         //this.listenTo(this.splitters, "add remove", this.renderSubViews);
@@ -439,6 +484,7 @@
 
         $.when(
           App.application.questions.fetch(),
+          App.application.fields.fetch(),
           App.application.splitters.fetch(),
           App.application.splits.fetch()).then(
             _.bind(function(){
