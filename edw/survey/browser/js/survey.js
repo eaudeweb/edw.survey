@@ -107,26 +107,37 @@
         if(condition){
           this.$el.hide();
           this.listenTo(App.application, "field-modified", this.listenForFields);
-          var cond_target_val = condition.split("==");
-          var cond_target = cond_target_val[0].split(" ");
-          var cond_val = cond_target_val[1].split("\"")[1];
-          var cond = cond_target[0];
-          var question_field_name = cond_target[1].split(".");
-          var question_id = question_field_name[0].slice(-1);
-          var field_id = parseInt(question_field_name[1].slice(-1), 10);
-          var name = question_field_name[2];
 
-          var question = App.application.questions.findWhere({name: "Question " + question_id});
-          this.condition_field = App.application.fields.where({
-            parentID: question.get("uuid")
-          })[field_id - 1];
+          this.condition_field = App.application.fields.findWhere({uuid: parseInt(condition.field)});
+          cond_val = condition.cmp;
 
           this.displayIf = function(field){
             if (this.condition_field.get("uuid") != field.get("uuid")){
               return;
             }
             var value = field.view.getValue();
-            if(value == cond_val){
+            var flag = false;
+
+            if(value) {
+              if(condition.operator == "eq")
+                flag = value == cond_val;
+
+              if(condition.operator == "lt")
+                flag = Number(value) < Number(cond_val);
+
+              if(condition.operator == "gt")
+                flag = Number(value) > Number(cond_val);
+
+              if(condition.operator == "le")
+                flag = Number(value) <= Number(cond_val);
+
+              if(condition.operator == "ge")
+                flag = Number(value) >= Number(cond_val);
+
+              if(condition.operator == "contains")
+                flag = value.indexOf(cond_val) != -1;
+            }
+            if(flag){
               this.$el.fadeIn();
             } else {
               this.$el.fadeOut();
