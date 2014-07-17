@@ -18,6 +18,12 @@
       App = window.edw.survey.edit.logic;
     }
 
+    App.haveSameGroup = function(field1, field2) {
+      return field1.get("group") === field2.get("group");
+    };
+    App.haveSameUUID = function(field1, field2) {
+      return field1.get("uuid") === field2.get("uuid");
+    };
     App.genUUID = function(){
       return new Date().getTime();
     };

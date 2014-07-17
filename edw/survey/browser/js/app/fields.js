@@ -94,6 +94,36 @@
       }
     };
 
+    App.LogicMapping = {
+      "radio": function(field, question) {
+        if(!question.condition_field.isRadio())
+          return false;
+
+        if(!App.haveSameGroup(field, question.condition_field)) {
+          return false;
+        } else if(!App.haveSameUUID(field, question.condition_field)) {
+            question.$el.fadeOut();
+            return false;
+        }
+
+        return true;
+      },
+      "checkbox": function(field, question) {
+        if(!question.condition_field.isCheckbox())
+          return false;
+
+        if(!App.haveSameGroup(field, question.condition_field)) {
+          return false;
+        } else if(!field.view.$el.find("input").is(":checked") &&
+                       App.haveSameUUID(field, question.condition_field)) {
+            question.$el.fadeOut();
+            return false;
+        }
+
+        return true;
+      },
+    };
+
     App.Field = Backbone.Model.extend({
       idAttribute: "uuid",
 
@@ -115,41 +145,16 @@
             return true;
         return false;
       },
-      isCheckedCheckbox: function() {
-        if(this.isCheckbox() && this.view.$el.find("input").is(":checked"))
-          return true;
-        return false;
-      },
-      haveSameGroup: function(field) {
-        return this.get("group") === field.get("group");
-      },
-      haveSameUUID: function(field) {
-        return this.get("uuid") === field.get("uuid");
-      },
       check: function(condition, question) {
         if(this.get("parentID") !== question.condition_field.get("parentID"))
           return;
 
-        if(this.isRadio() && question.condition_field.isRadio())
-          if(!this.haveSameGroup(question.condition_field))
-            return;
-
-        if(this.isCheckbox() && question.condition_field.isCheckbox()) {
-          if(!this.haveSameGroup(question.condition_field)) {
-            return;
-          } else {
-            if(!this.isCheckedCheckbox && this.haveSameUUID(question.condition_field)) {
-                question.$el.fadeOut();
-                return;
-              }
-          }
-        }
-
-        if(question.condition_field.get("uuid") !== this.get("uuid")) {
-          if(this.isRadio() && question.condition_field.isRadio())
-            question.$el.fadeOut();
+        if(this.get("group") && !App.LogicMapping[this.get("fieldType") ](this, question)) {
           return;
         }
+
+        if(!App.haveSameUUID(question.condition_field, this))
+          return;
 
         var value = this.view.getValue();
         var flag = false;
