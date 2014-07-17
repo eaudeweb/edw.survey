@@ -109,39 +109,9 @@
           this.listenTo(App.application, "field-modified", this.listenForFields);
 
           this.condition_field = App.application.fields.findWhere({uuid: parseInt(condition.field)});
-          cond_val = condition.cmp;
 
           this.displayIf = function(field){
-            if (this.condition_field.get("uuid") != field.get("uuid")){
-              return;
-            }
-            var value = field.view.getValue();
-            var flag = false;
-
-            if(value) {
-              if(condition.operator == "eq")
-                flag = value == cond_val;
-
-              if(condition.operator == "lt")
-                flag = Number(value) < Number(cond_val);
-
-              if(condition.operator == "gt")
-                flag = Number(value) > Number(cond_val);
-
-              if(condition.operator == "le")
-                flag = Number(value) <= Number(cond_val);
-
-              if(condition.operator == "ge")
-                flag = Number(value) >= Number(cond_val);
-
-              if(condition.operator == "contains")
-                flag = value.indexOf(cond_val) != -1;
-            }
-            if(flag){
-              this.$el.fadeIn();
-            } else {
-              this.$el.fadeOut();
-            }
+            field.check(condition, this);
           };
 
           App.application.fields.each(function(field){
