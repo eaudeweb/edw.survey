@@ -1,16 +1,27 @@
+.btn.btn-default.import-file {
+  min-width: 160px;
+  width: 75%;
+  padding: 5px!important;
+}
+.import-file > input {
+  width: 100%;
+}
+#import-btn {
+  width: 25%;
+}
+.form-import-file {
+  display: inline;
+}
+#toolbar {
+  margin-bottom: 5px;
+}
+
 .view-mode .glyphicon,
 .edit-mode .glyphicon {
-    border: 1px solid #dddddd;
     padding: 3px;
     border-radius: 5px;
     width: initial !important;
 }
-
-.view-mode .glyphicon:hover,
-.edit-mode .glyphicon:hover {
-    background: #dddddd;
-}
-
 
 .group-color-chooser {
     width: 16px;
@@ -41,7 +52,6 @@ div.contents {
     padding: 5px;
     padding-top: 10px;
     border: 1px dotted #dddddd;
-    margin: 5px;
 }
 
 .edit-mode {

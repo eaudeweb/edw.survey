@@ -34,6 +34,26 @@
   <div class="bootstrap">
   <div id="application">
     <h1>Survey - create</h1>
+    <div class="row" id="toolbar">
+      <div class="col-lg-9">
+        <div class="pull-right">
+          <button id="add-question" class="btn btn-success">Add question</button>
+          <button id="save-view" class="btn btn-primary">Save & View</button>
+          <a href="export" id="survey-index" class="btn btn-warning">Export</a>
+          <a href="clear" id="clear-data" class="btn btn-danger">Clear data</a>
+        </div>
+      </div>
+      <div class="col-lg-3">
+        <form class="form-import-file" action="import" method="POST" enctype="multipart/form-data">
+        <div class="btn-group">
+          <div class="btn btn-default import-file">
+            <input type="file" name="importfile" />
+          </div>
+          <input class="btn btn-default" id="import-btn" type="submit" value="Import" />
+        </div>
+        </form>
+      </div>
+    </div>
     <div class="row">
       <div id="workshop" class="col-lg-9">
         <ul id="questions-listing" class="list-unstyled"></ul>
@@ -41,18 +61,6 @@
       <div id="sidebar" class="col-lg-3">
         <!--div data-spy="affix" data-offset-top="300"-->
         <div>
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <button id="add-question" class="btn btn-success">Add question</button>
-              <button id="save-view" class="btn btn-primary">Save & View</button>
-              <a href="export" id="survey-index" class="btn btn-warning">Export</a>
-              <a href="clear" id="clear-data" class="btn btn-danger">Clear data</a>
-              <form action="import" method="POST" enctype="multipart/form-data">
-                  <input type="file" name="importfile" />
-                  <input type="submit" value="Import" />
-              </form>
-            </div>
-          </div>
           <div class="panel panel-default">
             <div class="panel-heading">Toolbox</div>
             <div class="panel-body">
