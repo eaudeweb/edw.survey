@@ -149,7 +149,7 @@
         if(this.get("parentID") !== question.condition_field.get("parentID"))
           return;
 
-        if(this.get("group") && !App.LogicMapping[this.get("fieldType") ](this, question)) {
+        if(this.get("group") && !App.LogicMapping[this.get("fieldType")](this, question)) {
           return;
         }
 

@@ -20,7 +20,7 @@
         "dblclick .view-mode": "startEdit",
         "click .glyphicon-check": "endEdit",
         "keydown .value-grabber": "handleKeyDown",
-        "blur .value-grabber": "cancelEdit"
+        //"blur .value-grabber": "cancelEdit"
       },
 
       initialize: function(){
@@ -315,7 +315,7 @@
         } else {
           field.save();
         }
-        
+
         this.render();
       },
 
