@@ -25,7 +25,8 @@
       {"name": "selectField", "target": "#selectField-template"},
       {"name": "radioField", "target": "#checkboxField-template"},
       {"name": "checkboxField", "target": "#checkboxField-template"},
-      {"name": "tableLayout", "target": "#tableLayout-template"}
+      {"name": "tableLayout", "target": "#tableLayout-template"},
+      {"name": "rowLayout", "target": "#rowLayout-template"}
     ];
     _.each(templates, function(val){
       App.Templates.sources.push(val);
@@ -90,6 +91,10 @@
         this.tableLayout = {
           viewer: App.TableLayoutView,
           valueGetter: function(){ return false; }
+        };
+          this.rowLayout = {
+          viewer: App.RowLayoutView,
+          valueGetter: function() { return false; }
         };
       }
     };

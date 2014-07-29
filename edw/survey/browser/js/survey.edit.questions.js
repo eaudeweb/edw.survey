@@ -55,7 +55,8 @@
           new App.Field({type: "selectField", value: "option1\noption2\noption3"}),
           new App.Field({type: "radioField", fieldType: "radio", value: "Radio option", group: "group1"}),
           new App.Field({type: "checkboxField", fieldType: "checkbox", value: "Checkbox option", group: "group1"}),
-          new App.Field({type: "tableLayout", rows: 3, cols: 3})
+          new App.Field({type: "tableLayout", rows: 3, cols: 3}),
+          new App.Field({type: "rowLayout"})
           ]);
 
         this.listenTo(this.collection, "change", this.render);
@@ -133,7 +134,7 @@
         var deferreds = [];
         this.questions.each(function (index, question) {
           var fields = $(question).find('.question-body').find('> li');
-      
+
           $.each(fields, function(idx, field){
             var uuid = parseInt($(field).attr('uuid'), 10);
             if (uuid) {

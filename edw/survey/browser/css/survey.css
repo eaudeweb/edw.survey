@@ -1,3 +1,9 @@
+.inline {
+  display: inline;
+}
+#content .sortable-list li {
+  display: inline-block;
+}
 .btn.btn-default.import-file {
   min-width: 160px;
   width: 75%;

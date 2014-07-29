@@ -43,7 +43,7 @@
             return ret;
           },
           connectWith: '.ui-draggable',
-          connectToSortable: '.question-body, .sortable-cell'
+          connectToSortable: '.question-body, .sortable-cell, .sortable-list'
         });
         this.$el.data("backbone-view", this.model);
       },
@@ -337,6 +337,121 @@
 
           var view = new viewer({model: field});
           $(table.rows[rowIndex].cells[columnIndex]).append(view.render().el);
+          $(view.render().el).attr('uuid', field.get('uuid'));
+        }, this);
+        return this;
+      }
+
+    });
+
+    App.RowLayoutView = App.FieldView.extend({
+      events: {
+        "click .rowLayout.glyphicon-trash": "deleteField",
+        "click .rowLayout.glyphicon-edit": "startEdit",
+        "click .rowLayout.glyphicon-check": "endEdit",
+      },
+
+      initialize: function(){
+        App.FieldView.prototype.initialize.apply(this);
+        this.fields = App.application.fields;
+        this.listenTo(this.fields, "change", function(){
+          this.render();
+        });
+      },
+
+      startEdit: function(){
+        this.$el.addClass("editing");
+      },
+
+      endEdit: function(){
+        this.$el.removeClass("editing");
+        var question = App.application.getQuestion(this.model.get("parentID"));
+        question.save();
+      },
+
+      bindSortable: function(){
+        this.$el.find(".sortable-list").sortable({
+          items: "li",
+          receive: _.bind(this.receive, this),
+          stop: _.bind(this.stop, this),
+          placeholder: "highlight",
+          helper: "original",
+          tolerance: "pointer",
+          connectWith: ['.question-body', '.sortable-list'],
+          start: function(event, ui) {
+            ui.item.data("backbone-view", ui.helper.data("backbone-view"));
+            ui.item.addClass('dropped');
+          },
+        });
+      },
+
+      stop: function(evt, ui){
+        var idx = ui.item.parent().children().index(ui.item);
+        var previous = ui.item.prevAll();
+        var after = ui.item.nextAll();
+
+        var field = App.application.fields.findWhere({uuid: parseInt(ui.item.attr("uuid"))});
+        field.set("order", idx).save();
+
+        for (var i = 0; i < after.length; i++){
+          field = App.application.fields.findWhere({uuid: parseInt($(after[i]).attr("uuid"))});
+          field.set("order", i + idx + 1).save();
+        }
+
+        for (var j = 0; j < previous.length; j++){
+          field = App.application.fields.findWhere({uuid: parseInt($(previous[j]).attr("uuid"))});
+          field.set("order",(idx - (j + 1))).save();
+        }
+      },
+
+      receive: function(evt, ui){
+        var elem = $(evt.target).find('.dropped');
+        this.fields = App.application.fields;
+        var that = this;
+        var data = elem.data("backbone-view");
+        var existing = false;
+
+        field = this.fields.findWhere({uuid: data.attributes.uuid});
+        if (!field) {
+          field = new App.Field(data.toJSON());
+        } else {
+          existing = true;
+        }
+
+        field.set("parentID", this.model.get("uuid"));
+        field.set("order", elem.index());
+        field.view = data;
+
+        if (!field.get("uuid")){
+          field.set("uuid", new Date().getTime());
+        }
+        if (!existing) {
+          this.fields.create(field);
+        } else {
+          field.save();
+        }
+
+        elem.attr("uuid", field.get("uuid"));
+        elem.data("backbone-model", field);
+        this.render();
+      },
+
+      render: function(){
+        var modelTemplate = this.model.renderTemplate();
+        this.$el.html(this.template({data: this.model.attributes}));
+        $(".view-mode .contents", this.$el).html($(modelTemplate).filter(".view-mode").html());
+
+        this.bindSortable();
+
+        var list = this.$el.find(".sortable-list");
+        var fields = this.fields.where({"parentID": this.model.get("uuid")});
+        _.each(fields, function(field){
+          var fieldType = field.get("type");
+          var viewer = App.FieldMapping[fieldType].viewer;
+          var view = new viewer({model: field});
+          var el = $(view.render().el);
+          el.data("backbone-model", field);
+          $(list).append(el);
           $(view.render().el).attr('uuid', field.get('uuid'));
         }, this);
         return this;

@@ -59,6 +59,45 @@
 
     App.RichTextBlockFieldView = App.FieldView.extend({});
 
+    App.RowLayoutView = App.FieldView.extend({
+      events: {
+        "click .glyphicon-plus": "addRow",
+      },
+
+      initialize: function(){
+        App.FieldView.prototype.initialize.apply(this);
+        this.fields = App.application.fields;
+      },
+
+      addRow: function(event) {
+        var row = $(event.target).parent().parent();
+        row.parent().append(row.clone());
+      },
+
+      render: function(){
+        this.$el.html(this.model.renderTemplate());
+
+        var view_list = this.$el.find(".sortable-list").get(0);
+        var fields = this.fields.where({"parentID": this.model.get("uuid")});
+        console.log(fields);
+        _.each(fields, function(field){
+          var fieldType = field.get("type");
+          var viewer = App.FieldMapping[fieldType].viewer;
+          var view = new viewer({model: field});
+
+          var rendered_el = $(view.render().el);
+          rendered_el.addClass("survey-field ");
+          rendered_el.data("field-data", field.toJSON());
+
+          $(view_list).append(rendered_el);
+
+        }, this);
+
+        return this;
+      }
+
+    });
+
     App.TableLayoutView = App.FieldView.extend({
 
       initialize: function(){
