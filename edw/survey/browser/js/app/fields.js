@@ -92,7 +92,7 @@
           viewer: App.TableLayoutView,
           valueGetter: function(){ return false; }
         };
-          this.rowLayout = {
+        this.rowLayout = {
           viewer: App.RowLayoutView,
           valueGetter: function() { return false; }
         };

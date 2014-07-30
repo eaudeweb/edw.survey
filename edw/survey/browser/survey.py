@@ -271,15 +271,21 @@ class SubmitAnswerView(CommonView, BrowserView):
         payload = json.loads(self.request.stdin.read())
         userid = self.getUserId()
         for key, value in payload.items():
-            answer = value["answer"]
-            if answer:
-                idx = getIndex(self.storage[userid], key)
-                self.storage[userid][idx]["answer"] = value["answer"]
+            idx = getIndex(self.storage[userid], key)
+            if idx is None:
+                self.storage[userid].append(value["field"])
+            else:
+                self.storage[userid][idx] = value["field"]
 
         header = self.request.RESPONSE.setHeader
         header("Content-Type", "application/json")
         data = [dict(field) for field in self.storage[userid]]
         return json.dumps(data, indent=2)
+
+    def delete_for_userid(self):
+        userid = self.getUserId()
+        del self.storage[userid]
+        return "Deleted storage!"
 
 
 class ImportExportView(CommonView, BrowserView):

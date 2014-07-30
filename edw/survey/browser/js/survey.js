@@ -71,7 +71,17 @@
 
       addRow: function(event) {
         var row = $(event.target).parent().parent();
-        row.parent().append(row.clone());
+        var clone = row.clone();
+        _.each(row.find(".survey-field"), function(field) {
+          var model = $(field).data("field-data");
+          var newModel = new App.Field(model);
+          newModel.set({uuid: App.genUUID()});
+          this.fields.add(newModel);
+          var index = $(field, row).index();
+          var clonedField = $(".survey-field", clone).get(index);
+          $(clonedField).data("field-data", newModel.toJSON());
+        }, this);
+        row.parent().append(clone);
       },
 
       render: function(){
@@ -79,7 +89,6 @@
 
         var view_list = this.$el.find(".sortable-list").get(0);
         var fields = this.fields.where({"parentID": this.model.get("uuid")});
-        console.log(fields);
         _.each(fields, function(field){
           var fieldType = field.get("type");
           var viewer = App.FieldMapping[fieldType].viewer;
