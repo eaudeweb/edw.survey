@@ -70,12 +70,17 @@
       },
 
       addRow: function(event) {
+        var rowNumber = this.model.get("rows");
+        this.model.set({rows:  rowNumber + 1});
+        this.$el.data("field-data", this.model.toJSON());
+        //this.model.save();
+
         var row = $(event.target).parent().parent();
         var clone = row.clone();
         _.each(row.find(".survey-field"), function(field) {
           var model = $(field).data("field-data");
           var newModel = new App.Field(model);
-          newModel.set({uuid: App.genUUID()});
+          newModel.set({uuid: App.genUUID(), row: rowNumber});
           this.fields.add(newModel);
           var index = $(field, row).index();
           var clonedField = $(".survey-field", clone).get(index);
@@ -87,24 +92,30 @@
       render: function(){
         this.$el.html(this.model.renderTemplate());
 
-        var view_list = this.$el.find(".sortable-list").get(0);
-        var fields = this.fields.where({"parentID": this.model.get("uuid")});
-        _.each(fields, function(field){
-          var fieldType = field.get("type");
-          var viewer = App.FieldMapping[fieldType].viewer;
-          var view = new viewer({model: field});
+        var rowNumber = 0;
+        while(true) {
+          var fields = this.fields.where({parentID: this.model.get("uuid"), row: rowNumber});
+          if(fields.length === 0) break;
 
-          var rendered_el = $(view.render().el);
-          rendered_el.addClass("survey-field ");
-          rendered_el.data("field-data", field.toJSON());
+          var lineContainer = this.$el.find(".line").get(rowNumber);
+          var view_list = $(lineContainer).find(".sortable-list").get(0);
+          _.each(fields, function(field) {
+            var fieldType = field.get("type");
+            var viewer = App.FieldMapping[fieldType].viewer;
+            var view = new viewer({model: field});
 
-          $(view_list).append(rendered_el);
+            var rendered_el = $(view.render().el);
+            rendered_el.addClass("survey-field ");
+            rendered_el.data("field-data", field.toJSON());
 
-        }, this);
+            $(view_list).append(rendered_el);
+          }, this);
+
+          rowNumber++;
+        }
 
         return this;
       }
-
     });
 
     App.TableLayoutView = App.FieldView.extend({
@@ -285,7 +296,7 @@
             contentType: "application/json",
             data: JSON.stringify(answer),
             success: function(response){
-              window.location.reload();
+              //window.location.reload();
             }
           });
           return false;

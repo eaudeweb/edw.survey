@@ -419,6 +419,7 @@
         }
 
         field.set("parentID", this.model.get("uuid"));
+        field.set("row", 0);
         field.set("order", elem.index());
         field.view = data;
 

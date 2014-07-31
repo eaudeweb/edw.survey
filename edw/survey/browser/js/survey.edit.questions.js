@@ -56,7 +56,7 @@
           new App.Field({type: "radioField", fieldType: "radio", value: "Radio option", group: "group1"}),
           new App.Field({type: "checkboxField", fieldType: "checkbox", value: "Checkbox option", group: "group1"}),
           new App.Field({type: "tableLayout", rows: 3, cols: 3}),
-          new App.Field({type: "rowLayout"})
+          new App.Field({type: "rowLayout", rows: 1})
           ]);
 
         this.listenTo(this.collection, "change", this.render);

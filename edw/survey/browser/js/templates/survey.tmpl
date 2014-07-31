@@ -67,12 +67,14 @@
 </script>
 <script id="rowLayout-template" type="text/x-underscore-template">
   <div>
-    <div class="line">
-      <div class="sortable-list inline" style="min-height:20px; min-width:100px;">
+    <%  for(var i = 0; i < data.rows; i++) { %>
+      <div class="line">
+        <div class="sortable-list inline" style="min-height:20px; min-width:100px;">
+        </div>
+        <div class="inline">
+          <span class="glyphicon glyphicon-plus" title="Add row"></span>
+        </div>
       </div>
-      <div class="inline">
-        <span class="glyphicon glyphicon-plus" title="Add row"></span>
-      </div>
-    </div>
+    <% } %>
   </div>
 </script>
