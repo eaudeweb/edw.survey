@@ -73,7 +73,6 @@
         var rowNumber = this.model.get("rows");
         this.model.set({rows:  rowNumber + 1});
         this.$el.data("field-data", this.model.toJSON());
-        //this.model.save();
 
         var row = $(event.target).parent().parent();
         var clone = row.clone();

@@ -101,7 +101,7 @@ div.contents {
 
 .highlight {
     min-height: 50px;
-    min-width: 50px;
+    min-width: 150px;
     border: 1px solid red;
 }
 
