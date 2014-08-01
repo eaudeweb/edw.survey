@@ -270,6 +270,7 @@ class SubmitAnswerView(CommonView, BrowserView):
         self.request.stdin.seek(0)
         payload = json.loads(self.request.stdin.read())
         userid = self.getUserId()
+        # import pdb; pdb.set_trace()
         for key, value in payload.items():
             answer = value["answer"]
             idx = getIndex(self.storage[userid], key)
@@ -282,6 +283,9 @@ class SubmitAnswerView(CommonView, BrowserView):
 
             if answer:
                 field["answer"] = answer
+
+            for propname, propvalue in value["properties"].items():
+              field[propname] = propvalue
 
         header = self.request.RESPONSE.setHeader
         header("Content-Type", "application/json")
@@ -496,5 +500,3 @@ class LogicSplits(Collection):
         header("Content-Type", "application/json")
         data = self.get_data()
         return json.dumps(data, indent=2)
-
-

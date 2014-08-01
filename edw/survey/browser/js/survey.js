@@ -251,8 +251,10 @@
           var $elem = $(elem);
           var data = $elem.data("field-data");
           var value = App.FieldMapping[data.type].valueGetter($elem);
+          var props = App.FieldMapping[data.type].getExtra($elem);
           answer[data.uuid] = {
             field: data,
+            properties: props,
             answer: value
           };
         }, this);

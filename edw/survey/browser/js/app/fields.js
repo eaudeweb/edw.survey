@@ -36,34 +36,71 @@
       init: function(){
         this.labelField = {
           viewer: App.FieldView,
+          getExtra: function(elem) { return {}; },
           valueGetter: function(){ return false; }
         };
         this.richTextBlockField = {
           viewer: App.RichTextBlockFieldView,
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            if(data.row)
+              return {row: data.row};
+            return {};
+          },
           valueGetter: function(){ return false; }
         };
         this.textBlockField = {
           viewer: App.FieldView,
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            if(data.row)
+              return {row: data.row};
+            return {};
+          },
           valueGetter: function(){ return false; }
         };
         this.textInputField = {
           viewer: App.FieldView,
           valueGetter: function(elem){
             return elem.find("input").val();
-          }
+          },
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            if(data.row)
+              return {row: data.row};
+            return {};
+          },
         };
         this.textField = {
           viewer: App.FieldView,
-          valueGetter: function(){ return false; }
+          valueGetter: function(){ return false; },
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            if(data.row)
+              return {row: data.row};
+            return {};
+          },
         };
         this.selectField = {
           viewer: App.FieldView,
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            if(data.row)
+              return {row: data.row};
+            return {};
+          },
           valueGetter: function(elem){
             return elem.find("select").val();
           }
         };
         this.radioField = {
           viewer: App.CheckboxFieldView,
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            if(data.row)
+              return {row: data.row};
+            return {};
+          },
           valueGetter: function(elem){
             var input = elem.find("input");
             var value;
@@ -77,6 +114,12 @@
         };
         this.checkboxField = {
           viewer: App.CheckboxFieldView,
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            if(data.row)
+              return {row: data.row};
+            return {};
+          },
           valueGetter: function(elem){
             var input = elem.find("input");
             var value;
@@ -90,10 +133,15 @@
         };
         this.tableLayout = {
           viewer: App.TableLayoutView,
+          getExtra: function(elem) { return {}; },
           valueGetter: function(){ return false; }
         };
         this.rowLayout = {
           viewer: App.RowLayoutView,
+          getExtra: function(elem) {
+            var data = elem.data("field-data");
+            return {rows: data.rows};
+          },
           valueGetter: function() { return false; }
         };
       }
