@@ -271,13 +271,17 @@ class SubmitAnswerView(CommonView, BrowserView):
         payload = json.loads(self.request.stdin.read())
         userid = self.getUserId()
         for key, value in payload.items():
+            answer = value["answer"]
             idx = getIndex(self.storage[userid], key)
+            field = None
             if idx is None:
-                self.storage[userid].append(value["field"])
+                field = value["field"]
+                self.storage[userid].append(field)
             else:
-                self.storage[userid][idx] = value["field"]
+                field = self.storage[userid][idx]
 
-            self.storage[userid][idx]["answer"] = value["answer"]
+            if answer:
+                field["answer"] = answer
 
         header = self.request.RESPONSE.setHeader
         header("Content-Type", "application/json")
