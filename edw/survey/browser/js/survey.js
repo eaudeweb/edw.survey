@@ -295,7 +295,7 @@
             contentType: "application/json",
             data: JSON.stringify(answer),
             success: function(response){
-              //window.location.reload();
+              window.location.reload();
             }
           });
           return false;

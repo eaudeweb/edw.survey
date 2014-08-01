@@ -118,14 +118,15 @@
         attribute="exporter"
         permission="zope2.View"
         />
+
     <browser:page
-    name="deleteuserstorage"
-    for="edw.survey.interfaces.ISurvey"
-    layer="edw.survey.interfaces.ISurveyInstalled"
-    class=".survey.SubmitAnswerView"
-    attribute="delete_for_userid"
-    permission="zope2.View"
-    />
+        name="deleteuserstorage"
+        for="edw.survey.interfaces.ISurvey"
+        layer="edw.survey.interfaces.ISurveyInstalled"
+        class=".survey.SubmitAnswerView"
+        attribute="delete_for_userid"
+        permission="zope2.View"
+      />
 
     <browser:page
         name="import"

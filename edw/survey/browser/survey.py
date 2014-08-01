@@ -277,6 +277,8 @@ class SubmitAnswerView(CommonView, BrowserView):
             else:
                 self.storage[userid][idx] = value["field"]
 
+            self.storage[userid][idx]["answer"] = value["answer"]
+
         header = self.request.RESPONSE.setHeader
         header("Content-Type", "application/json")
         data = [dict(field) for field in self.storage[userid]]
