@@ -347,13 +347,23 @@
         className: "selector",
 
         initialize: function() {
-            this.fields = App.application.fields.where({
+            this.setFields(App.application.fields.where({
                 parentID: parseInt(App.application.questions.at(0).get('uuid'), 10)
-            });
+            }));
         },
 
         setFields: function(fields) {
-            this.fields = fields;
+            var tmp = [];
+            _.each(fields, function(field) {
+              if(field.get('type') === "rowLayout" || field.get('type') === "tableLayout") {
+                tmp.push.apply(tmp, App.application.fields.where({
+                    parentID: parseInt(field.get('uuid'), 10)
+                }));
+              } else {
+                tmp.push(field);
+              }
+            }, this);
+            this.fields = tmp;
         },
 
         render: function(){
