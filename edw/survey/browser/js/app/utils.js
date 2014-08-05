@@ -27,6 +27,14 @@
     App.genUUID = function(){
       return new Date().getTime();
     };
+    App.sleep = function(milliseconds) {
+      var start = new Date().getTime();
+      for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+          break;
+        }
+      }
+    };
     App.popViewFromArray = function(view, array){
       index = _.map(array, function(el){
         return el.model == view.model;

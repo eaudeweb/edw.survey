@@ -206,8 +206,15 @@
           return;
         }
 
-        if(!App.haveSameUUID(question.condition_field, this))
-          return;
+        if(!App.haveSameUUID(question.condition_field, this)) {
+          if(this.has("copyOf")) {
+            var field = App.application.fields.findWhere({uuid: this.get("copyOf")});
+            if(!App.haveSameUUID(question.condition_field, field))
+              return;
+          } else {
+            return;
+          }
+        }
 
         var value = this.view.getValue();
         var flag = false;

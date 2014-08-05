@@ -78,14 +78,21 @@
         var clone = row.clone();
         _.each(row.find(".survey-field"), function(field) {
           var model = $(field).data("field-data");
+
+          var originalModel = this.fields.findWhere({uuid: model.uuid});
+          var value = App.FieldMapping[model.type].valueGetter($(field));
+          if(value)
+          originalModel.set({value:  value});
+
           var newModel = new App.Field(model);
+          App.sleep(1);
           newModel.set({uuid: App.genUUID(), row: rowNumber});
+          if(!_.has(model, "copyOf")) {
+            newModel.set("copyOf", model.uuid);
+          }
           this.fields.add(newModel);
-          var index = $(field, row).index();
-          var clonedField = $(".survey-field", clone).get(index);
-          $(clonedField).data("field-data", newModel.toJSON());
         }, this);
-        row.parent().append(clone);
+        this.render();
       },
 
       render: function(){
@@ -146,9 +153,7 @@
         }, this);
 
         return this;
-
       }
-
     });
 
 
