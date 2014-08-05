@@ -216,29 +216,42 @@
           }
         }
 
-        var value = this.view.getValue();
-        var flag = false;
-
-        if(value) {
-          if(condition.operator === "eq")
-            flag = value === condition.cmp;
-
-          if(condition.operator === "lt")
-            flag = Number(value) < Number(condition.cmp);
-
-          if(condition.operator === "gt")
-            flag = Number(value) > Number(condition.cmp);
-
-          if(condition.operator === "le")
-            flag = Number(value) <= Number(condition.cmp);
-
-          if(condition.operator === "ge")
-            flag = Number(value) >= Number(condition.cmp);
-
-          if(condition.operator === "contains")
-            flag = value.indexOf(condition.cmp) !== -1;
+        var fields = [];
+        var parent = App.application.fields.findWhere({uuid: this.get("parentID")});
+        if(parent && parent.has("type") && parent.get("type") === "rowLayout") {
+          fields = App.application.fields.where({parentID: this.get("parentID")});
+        } else {
+          fields.push(this);
         }
-        if(flag){
+
+        var show = false;
+        _.each(fields, function(field) {
+          var value = field.view.getValue();
+          var flag = false;
+
+          if(value) {
+            if(condition.operator === "eq")
+              flag = value === condition.cmp;
+
+            if(condition.operator === "lt")
+              flag = Number(value) < Number(condition.cmp);
+
+            if(condition.operator === "gt")
+              flag = Number(value) > Number(condition.cmp);
+
+            if(condition.operator === "le")
+              flag = Number(value) <= Number(condition.cmp);
+
+            if(condition.operator === "ge")
+              flag = Number(value) >= Number(condition.cmp);
+
+            if(condition.operator === "contains")
+              flag = value.indexOf(condition.cmp) !== -1;
+          }
+          show = show || flag;
+        }, this);
+
+        if(show){
           question.$el.fadeIn();
         } else {
           question.$el.fadeOut();

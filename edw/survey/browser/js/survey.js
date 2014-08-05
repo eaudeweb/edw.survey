@@ -74,16 +74,20 @@
         this.model.set({rows:  rowNumber + 1});
         this.$el.data("field-data", this.model.toJSON());
 
-        var row = $(event.target).parent().parent();
-        var clone = row.clone();
-        _.each(row.find(".survey-field"), function(field) {
+        //save all fields
+        _.each(this.$el.find(".survey-field"), function(field) {
           var model = $(field).data("field-data");
 
           var originalModel = this.fields.findWhere({uuid: model.uuid});
           var value = App.FieldMapping[model.type].valueGetter($(field));
           if(value)
-          originalModel.set({value:  value});
+            originalModel.set({value:  value});
+        }, this);
 
+        var row = $(event.target).parent().parent();
+        var clone = row.clone();
+        _.each(row.find(".survey-field"), function(field) {
+          var model = $(field).data("field-data");
           var newModel = new App.Field(model);
           App.sleep(1);
           newModel.set({uuid: App.genUUID(), row: rowNumber});
