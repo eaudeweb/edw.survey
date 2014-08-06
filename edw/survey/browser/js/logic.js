@@ -356,9 +356,17 @@
             var tmp = [];
             _.each(fields, function(field) {
               if(field.get('type') === "rowLayout" || field.get('type') === "tableLayout") {
-                tmp.push.apply(tmp, App.application.fields.where({
+                _.each(App.application.fields.where({
                     parentID: parseInt(field.get('uuid'), 10)
-                }));
+                }), function(field) {
+                  if(field.get('type') === "rowLayout" || field.get('type') === "tableLayout") {
+                    tmp.push.apply(tmp, App.application.fields.where({
+                        parentID: parseInt(field.get('uuid'), 10)
+                    }));
+                  } else {
+                    tmp.push(field);
+                  }
+                }, this);
               } else {
                 tmp.push(field);
               }
