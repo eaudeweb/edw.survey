@@ -352,21 +352,30 @@
             }));
         },
 
+        getFields:function(field) {
+          var tmp = [];
+          var fields = App.application.fields.where({
+              parentID: parseInt(field.get('uuid'), 10)
+          });
+
+          _.each(fields, function(field) {
+            if(field.get('type') === "rowLayout" || field.get('type') === "tableLayout") {
+              tmp.push.apply(tmp, App.application.fields.where({
+                  parentID: parseInt(field.get('uuid'), 10)
+              }));
+            } else {
+              tmp.push(field);
+            }
+          }, this);
+
+          return tmp;
+        },
+
         setFields: function(fields) {
             var tmp = [];
             _.each(fields, function(field) {
               if(field.get('type') === "rowLayout" || field.get('type') === "tableLayout") {
-                _.each(App.application.fields.where({
-                    parentID: parseInt(field.get('uuid'), 10)
-                }), function(field) {
-                  if(field.get('type') === "rowLayout" || field.get('type') === "tableLayout") {
-                    tmp.push.apply(tmp, App.application.fields.where({
-                        parentID: parseInt(field.get('uuid'), 10)
-                    }));
-                  } else {
-                    tmp.push(field);
-                  }
-                }, this);
+                tmp.push.apply(tmp, this.getFields(field));
               } else {
                 tmp.push(field);
               }
